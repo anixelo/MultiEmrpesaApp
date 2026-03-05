@@ -37,12 +37,6 @@ class SubscriptionController extends Controller
 
         $plan = Plan::findOrFail($request->plan_id);
 
-        // For paid plans, we'd normally initiate Stripe here.
-        // For now, we handle free plans directly.
-        if (!$plan->isFree()) {
-            return back()->with('error', 'Para planes de pago, contacta con el administrador del sistema.');
-        }
-
         Subscription::updateOrCreate(
             ['empresa_id' => $company->id],
             [

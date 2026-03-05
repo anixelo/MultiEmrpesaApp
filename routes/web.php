@@ -13,6 +13,8 @@ use App\Http\Controllers\SuperAdmin\IncidentController as SuperAdminIncidentCont
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\SubscriptionController as AdminSubscriptionController;
 use App\Http\Controllers\Admin\IncidentController as AdminIncidentController;
+use App\Http\Controllers\Admin\TaskController as AdminTaskController;
+use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\Worker\DashboardController as WorkerDashboardController;
 use App\Http\Controllers\Worker\IncidentController as WorkerIncidentController;
 use Illuminate\Support\Facades\Route;
@@ -78,6 +80,12 @@ Route::middleware(['auth', 'two_factor'])->group(function () {
         // Admin incidents
         Route::get('/admin/incidents', [AdminIncidentController::class, 'index'])->name('admin.incidents.index');
         Route::get('/admin/incidents/{incident}', [AdminIncidentController::class, 'show'])->name('admin.incidents.show');
+
+        // Admin tasks
+        Route::resource('admin/tasks', AdminTaskController::class)->names('admin.tasks')->except(['show']);
+
+        // Admin users
+        Route::resource('admin/users', AdminUserController::class)->names('admin.users')->except(['show']);
     });
 
     // Superadmin routes

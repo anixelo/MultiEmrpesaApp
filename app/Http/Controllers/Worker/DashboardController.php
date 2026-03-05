@@ -11,6 +11,17 @@ class DashboardController extends Controller
     public function index(Request $request)
     {
         $user = $request->user();
+        $company = $user->company;
+
+        // If the company's plan does not include tasks, show a message
+        if ($company && !$company->canUseTasks()) {
+            return view('worker.dashboard', [
+                'tasks'   => collect(),
+                'stats'   => ['total' => 0, 'pendiente' => 0, 'en_progreso' => 0, 'completada' => 0],
+                'user'    => $user,
+                'tasksDisabled' => true,
+            ]);
+        }
 
         $tasks = Task::where('assigned_to', $user->id)
             ->orderByRaw("FIELD(priority, 'urgente', 'alta', 'media', 'baja')")
@@ -24,12 +35,19 @@ class DashboardController extends Controller
             'completada'  => Task::where('assigned_to', $user->id)->where('status', 'completada')->count(),
         ];
 
-        return view('worker.dashboard', compact('tasks', 'stats', 'user'));
+        return view('worker.dashboard', compact('tasks', 'stats', 'user') + ['tasksDisabled' => false]);
     }
 
     public function updateTaskStatus(Request $request, Task $task)
     {
-        if ($task->assigned_to !== $request->user()->id) {
+        $user = $request->user();
+        $company = $user->company;
+
+        if ($company && !$company->canUseTasks()) {
+            abort(403, 'Tu plan no incluye gestión de tareas.');
+        }
+
+        if ($task->assigned_to !== $user->id) {
             abort(403);
         }
 

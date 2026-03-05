@@ -31,10 +31,12 @@ class PlanController extends Controller
             'max_users' => 'required|integer|min:1',
             'max_incidents' => 'required|integer|min:1',
             'features' => 'nullable|string',
+            'has_tasks' => 'boolean',
             'active' => 'boolean',
         ]);
 
         $validated['active'] = $request->boolean('active', true);
+        $validated['has_tasks'] = $request->boolean('has_tasks', false);
         $validated['features'] = $request->features
             ? array_filter(array_map('trim', explode("\n", $request->features)))
             : [];
@@ -60,10 +62,12 @@ class PlanController extends Controller
             'max_users' => 'required|integer|min:1',
             'max_incidents' => 'required|integer|min:1',
             'features' => 'nullable|string',
+            'has_tasks' => 'boolean',
             'active' => 'boolean',
         ]);
 
         $validated['active'] = $request->boolean('active');
+        $validated['has_tasks'] = $request->boolean('has_tasks');
         $validated['features'] = $request->features
             ? array_filter(array_map('trim', explode("\n", $request->features)))
             : [];

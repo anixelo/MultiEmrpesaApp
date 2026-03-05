@@ -36,10 +36,17 @@
                                   {{ request()->routeIs('admin.dashboard') ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50' }}">
                             Panel Admin
                         </a>
-                        <a href="{{ route('worker.dashboard') }}"
+                        @if(auth()->user()->company?->canUseTasks())
+                        <a href="{{ route('admin.tasks.index') }}"
                            class="px-3 py-2 rounded-lg text-sm font-medium transition
-                                  {{ request()->routeIs('worker.dashboard') ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50' }}">
+                                  {{ request()->routeIs('admin.tasks.*') ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50' }}">
                             Tareas
+                        </a>
+                        @endif
+                        <a href="{{ route('admin.users.index') }}"
+                           class="px-3 py-2 rounded-lg text-sm font-medium transition
+                                  {{ request()->routeIs('admin.users.*') ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50' }}">
+                            Usuarios
                         </a>
                         <a href="{{ route('admin.incidents.index') }}"
                            class="px-3 py-2 rounded-lg text-sm font-medium transition
@@ -177,7 +184,10 @@
 
             @if(auth()->user()->isAdmin())
             <a href="{{ route('admin.dashboard') }}" class="block px-3 py-2 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50">Panel Admin</a>
-            <a href="{{ route('worker.dashboard') }}" class="block px-3 py-2 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50">Tareas</a>
+            @if(auth()->user()->company?->canUseTasks())
+            <a href="{{ route('admin.tasks.index') }}" class="block px-3 py-2 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50">Tareas</a>
+            @endif
+            <a href="{{ route('admin.users.index') }}" class="block px-3 py-2 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50">Usuarios</a>
             <a href="{{ route('admin.incidents.index') }}" class="block px-3 py-2 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50">Incidencias</a>
             <a href="{{ route('admin.subscription') }}" class="block px-3 py-2 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50">Suscripción</a>
             @endif

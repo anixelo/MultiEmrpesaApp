@@ -28,6 +28,7 @@ class DatabaseSeeder extends Seeder
                 'price_yearly' => 0,
                 'max_users' => 3,
                 'max_incidents' => 5,
+                'has_tasks' => false,
                 'features' => ['3 usuarios', '5 incidencias activas', 'Soporte por email'],
                 'active' => true,
             ]
@@ -41,7 +42,8 @@ class DatabaseSeeder extends Seeder
                 'price_yearly' => 299.99,
                 'max_users' => 20,
                 'max_incidents' => 50,
-                'features' => ['20 usuarios', '50 incidencias activas', 'Soporte prioritario', 'Informes avanzados'],
+                'has_tasks' => true,
+                'features' => ['20 usuarios', '50 incidencias activas', 'Soporte prioritario', 'Informes avanzados', 'Gestión de tareas'],
                 'active' => true,
             ]
         );
@@ -54,7 +56,8 @@ class DatabaseSeeder extends Seeder
                 'price_yearly' => 999.99,
                 'max_users' => 999,
                 'max_incidents' => 999,
-                'features' => ['Usuarios ilimitados', 'Incidencias ilimitadas', 'Soporte 24/7', 'API access', 'SSO'],
+                'has_tasks' => true,
+                'features' => ['Usuarios ilimitados', 'Incidencias ilimitadas', 'Soporte 24/7', 'API access', 'SSO', 'Gestión de tareas'],
                 'active' => true,
             ]
         );
