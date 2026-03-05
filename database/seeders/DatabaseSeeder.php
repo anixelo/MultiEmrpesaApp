@@ -3,6 +3,8 @@
 namespace Database\Seeders;
 
 use App\Models\Company;
+use App\Models\Plan;
+use App\Models\Subscription;
 use App\Models\Task;
 use App\Models\User;
 use Illuminate\Database\Seeder;
@@ -17,6 +19,46 @@ class DatabaseSeeder extends Seeder
         $admin      = Role::firstOrCreate(['name' => 'administrador']);
         $worker     = Role::firstOrCreate(['name' => 'trabajador']);
 
+        // Create plans
+        $freePlan = Plan::firstOrCreate(
+            ['name' => 'Gratuito'],
+            [
+                'description' => 'Plan básico gratuito para pequeñas empresas.',
+                'price_monthly' => 0,
+                'price_yearly' => 0,
+                'max_users' => 3,
+                'max_incidents' => 5,
+                'features' => ['3 usuarios', '5 incidencias activas', 'Soporte por email'],
+                'active' => true,
+            ]
+        );
+
+        $proPlan = Plan::firstOrCreate(
+            ['name' => 'Profesional'],
+            [
+                'description' => 'Plan profesional para empresas en crecimiento.',
+                'price_monthly' => 29.99,
+                'price_yearly' => 299.99,
+                'max_users' => 20,
+                'max_incidents' => 50,
+                'features' => ['20 usuarios', '50 incidencias activas', 'Soporte prioritario', 'Informes avanzados'],
+                'active' => true,
+            ]
+        );
+
+        Plan::firstOrCreate(
+            ['name' => 'Empresarial'],
+            [
+                'description' => 'Plan empresarial para grandes organizaciones.',
+                'price_monthly' => 99.99,
+                'price_yearly' => 999.99,
+                'max_users' => 999,
+                'max_incidents' => 999,
+                'features' => ['Usuarios ilimitados', 'Incidencias ilimitadas', 'Soporte 24/7', 'API access', 'SSO'],
+                'active' => true,
+            ]
+        );
+
         // Create demo company
         $company = Company::firstOrCreate(
             ['slug' => 'demo-empresa'],
@@ -26,6 +68,17 @@ class DatabaseSeeder extends Seeder
                 'phone'   => '+34 900 000 000',
                 'address' => 'Calle Principal 1, Madrid',
                 'active'  => true,
+            ]
+        );
+
+        // Assign free plan to demo company
+        Subscription::firstOrCreate(
+            ['empresa_id' => $company->id],
+            [
+                'plan_id' => $freePlan->id,
+                'status' => 'active',
+                'started_at' => now(),
+                'expires_at' => null,
             ]
         );
 
