@@ -43,6 +43,18 @@
                               class="w-full border-gray-300 rounded-xl text-sm focus:ring-indigo-500 focus:border-indigo-500">{{ old('address', $company->address) }}</textarea>
                 </div>
 
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Plan de suscripción</label>
+                    <select name="plan_id" class="w-full border-gray-300 rounded-xl text-sm focus:ring-indigo-500 focus:border-indigo-500">
+                        <option value="">— Sin plan —</option>
+                        @foreach($plans as $plan)
+                        <option value="{{ $plan->id }}" {{ old('plan_id', $currentPlanId) == $plan->id ? 'selected' : '' }}>
+                            {{ $plan->name }} — {{ $plan->isFree() ? 'Gratis' : '€'.number_format($plan->price_monthly,2).'/mes' }}
+                        </option>
+                        @endforeach
+                    </select>
+                </div>
+
                 <div class="flex items-center gap-3">
                     <input type="checkbox" name="active" id="active" value="1" {{ old('active', $company->active) ? 'checked' : '' }}
                            class="w-4 h-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500">

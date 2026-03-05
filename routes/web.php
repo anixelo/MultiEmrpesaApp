@@ -39,6 +39,9 @@ Route::middleware(['auth', 'two_factor'])->group(function () {
     // Main dashboard router
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
+    // Stop impersonation (accessible by any authenticated user while impersonating)
+    Route::post('/impersonate/stop', [SuperAdminUserController::class, 'stopImpersonating'])->name('impersonate.stop');
+
     // Profile
     Route::get('/profile',    [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile',  [ProfileController::class, 'update'])->name('profile.update');
@@ -96,6 +99,7 @@ Route::middleware(['auth', 'two_factor'])->group(function () {
         Route::resource('users', SuperAdminUserController::class)->except(['show']);
         Route::resource('plans', SuperAdminPlanController::class)->except(['show']);
         Route::post('/companies/{company}/assign-plan', [SuperAdminPlanController::class, 'assignPlan'])->name('companies.assign-plan');
+        Route::post('/users/{user}/impersonate', [SuperAdminUserController::class, 'impersonate'])->name('users.impersonate');
 
         // Superadmin incidents
         Route::get('/incidents', [SuperAdminIncidentController::class, 'index'])->name('incidents.index');

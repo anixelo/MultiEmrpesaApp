@@ -31,7 +31,7 @@
                         <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider hidden md:table-cell">Usuarios</th>
                         <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider hidden md:table-cell">Incidencias</th>
                         <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider hidden lg:table-cell">Suscripciones</th>
-                        <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Estado</th>
+                        <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider hidden sm:table-cell">Estado</th>
                         <th class="px-6 py-3 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider">Acciones</th>
                     </tr>
                 </thead>
@@ -41,6 +41,17 @@
                         <td class="px-6 py-4">
                             <div class="font-medium text-gray-900">{{ $plan->name }}</div>
                             <div class="text-xs text-gray-400 mt-0.5 max-w-xs truncate">{{ $plan->description }}</div>
+                            {{-- Mobile card details --}}
+                            <div class="mt-1.5 flex flex-wrap gap-1.5 sm:hidden">
+                                <span class="inline-flex px-2 py-0.5 rounded-full text-xs font-medium {{ $plan->active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
+                                    {{ $plan->active ? 'Activo' : 'Inactivo' }}
+                                </span>
+                                <span class="text-xs font-semibold text-gray-700">
+                                    {{ $plan->isFree() ? 'Gratis' : '€'.number_format($plan->price_monthly,2).'/mes' }}
+                                </span>
+                                <span class="text-xs text-gray-500">{{ $plan->max_users }} usuarios</span>
+                                <span class="text-xs text-gray-500">{{ $plan->max_incidents }} incidencias</span>
+                            </div>
                         </td>
                         <td class="px-6 py-4 hidden sm:table-cell">
                             <span class="text-sm font-semibold text-gray-900">
@@ -58,7 +69,7 @@
                                 {{ $plan->subscriptions_count }}
                             </span>
                         </td>
-                        <td class="px-6 py-4">
+                        <td class="px-6 py-4 hidden sm:table-cell">
                             <span class="inline-flex px-2.5 py-0.5 rounded-full text-xs font-medium {{ $plan->active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
                                 {{ $plan->active ? 'Activo' : 'Inactivo' }}
                             </span>

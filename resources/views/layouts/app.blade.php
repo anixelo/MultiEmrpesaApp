@@ -64,6 +64,18 @@
 </div>
 
 @livewireScripts
+@if(session('impersonating_original_id'))
+<div class="fixed bottom-6 left-1/2 -translate-x-1/2 z-50">
+    <form method="POST" action="{{ route('impersonate.stop') }}">
+        @csrf
+        <button type="submit"
+                class="inline-flex items-center gap-2 px-5 py-3 bg-amber-500 hover:bg-amber-600 text-white rounded-full shadow-xl font-medium text-sm transition">
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+            Dejar de suplantar a {{ auth()->user()->name }}
+        </button>
+    </form>
+</div>
+@endif
 <script>
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {

@@ -3,12 +3,16 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\Company;
+use App\Models\Plan;
+use App\Models\Subscription;
 use App\Models\User;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rules;
 use Illuminate\View\View;
 
@@ -30,16 +34,47 @@ class RegisteredUserController extends Controller
     public function store(Request $request): RedirectResponse
     {
         $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            'company_name' => ['required', 'string', 'max:255'],
+            'name'         => ['required', 'string', 'max:255'],
+            'email'        => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
+            'password'     => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
 
-        $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
+        // Create the company with a unique slug
+        $slug = Str::slug($request->company_name);
+        $base = $slug;
+        $count = 1;
+        while (Company::where('slug', $slug)->exists()) {
+            $slug = $base . '-' . $count++;
+        }
+
+        $company = Company::create([
+            'name'   => $request->company_name,
+            'slug'   => $slug,
+            'active' => true,
         ]);
+
+        // Assign free plan to the new company
+        $freePlan = Plan::where('price_monthly', 0)->where('active', true)->first();
+        if ($freePlan) {
+            Subscription::create([
+                'empresa_id' => $company->id,
+                'plan_id'    => $freePlan->id,
+                'status'     => 'active',
+                'started_at' => now(),
+            ]);
+        }
+
+        // Create the admin user linked to this company
+        $user = User::create([
+            'name'              => $request->name,
+            'email'             => $request->email,
+            'password'          => Hash::make($request->password),
+            'company_id'        => $company->id,
+            'email_verified_at' => now(),
+        ]);
+
+        $user->assignRole('administrador');
 
         event(new Registered($user));
 
