@@ -28,7 +28,7 @@
                     <tr>
                         <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Tarea</th>
                         <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider hidden md:table-cell">Asignado a</th>
-                        <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Estado</th>
+                        <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider hidden sm:table-cell">Estado</th>
                         <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider hidden sm:table-cell">Prioridad</th>
                         <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider hidden lg:table-cell">Vencimiento</th>
                         <th class="px-6 py-3 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider">Acciones</th>
@@ -48,6 +48,23 @@
                             @if($task->description)
                             <div class="text-xs text-gray-400 mt-0.5 max-w-xs truncate">{{ $task->description }}</div>
                             @endif
+                            {{-- Mobile card details --}}
+                            <div class="mt-1.5 flex flex-wrap gap-1.5 sm:hidden">
+                                <span class="inline-flex px-2.5 py-0.5 rounded-full text-xs font-medium bg-{{ $statusColors[$task->status] }}-100 text-{{ $statusColors[$task->status] }}-800">
+                                    {{ $statusLabels[$task->status] }}
+                                </span>
+                                <span class="inline-flex px-2.5 py-0.5 rounded-full text-xs font-medium bg-{{ $priorityColors[$task->priority] }}-100 text-{{ $priorityColors[$task->priority] }}-800">
+                                    {{ $priorityLabels[$task->priority] }}
+                                </span>
+                                @if($task->assignedUser)
+                                <span class="text-xs text-gray-500">{{ $task->assignedUser->name }}</span>
+                                @endif
+                                @if($task->due_date)
+                                <span class="text-xs {{ $task->due_date->isPast() && $task->status !== 'completada' ? 'text-red-500 font-medium' : 'text-gray-400' }}">
+                                    {{ $task->due_date->format('d/m/Y') }}
+                                </span>
+                                @endif
+                            </div>
                         </td>
                         <td class="px-6 py-4 hidden md:table-cell">
                             @if($task->assignedUser)
@@ -61,7 +78,7 @@
                             <span class="text-xs text-gray-400">Sin asignar</span>
                             @endif
                         </td>
-                        <td class="px-6 py-4">
+                        <td class="px-6 py-4 hidden sm:table-cell">
                             <span class="inline-flex px-2.5 py-0.5 rounded-full text-xs font-medium bg-{{ $statusColors[$task->status] }}-100 text-{{ $statusColors[$task->status] }}-800">
                                 {{ $statusLabels[$task->status] }}
                             </span>

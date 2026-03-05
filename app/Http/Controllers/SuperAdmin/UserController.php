@@ -113,4 +113,37 @@ class UserController extends Controller
         return redirect()->route('superadmin.users.index')
             ->with('success', 'Usuario eliminado correctamente.');
     }
+
+    public function impersonate(User $user)
+    {
+        if ($user->id === auth()->id()) {
+            return back()->with('error', 'No puedes suplantarte a ti mismo.');
+        }
+
+        // Store the original superadmin's ID in session
+        session(['impersonating_original_id' => auth()->id()]);
+
+        auth()->login($user);
+
+        return redirect()->route('dashboard')
+            ->with('success', 'Estás suplantando a ' . $user->name . '. Usa el botón flotante para dejar de suplantar.');
+    }
+
+    public function stopImpersonating()
+    {
+        $originalId = session('impersonating_original_id');
+
+        if (!$originalId) {
+            return redirect()->route('dashboard');
+        }
+
+        $originalUser = User::findOrFail($originalId);
+
+        session()->forget('impersonating_original_id');
+
+        auth()->login($originalUser);
+
+        return redirect()->route('superadmin.users.index')
+            ->with('success', 'Has dejado de suplantar al usuario.');
+    }
 }

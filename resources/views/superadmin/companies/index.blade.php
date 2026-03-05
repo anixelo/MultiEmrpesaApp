@@ -36,16 +36,39 @@
                         <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Empresa</th>
                         <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider hidden sm:table-cell">Contacto</th>
                         <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider hidden md:table-cell">Usuarios</th>
-                        <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Estado</th>
+                        <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider hidden lg:table-cell">Plan</th>
+                        <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider hidden sm:table-cell">Estado</th>
                         <th class="px-6 py-3 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider">Acciones</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-50">
                     @forelse($companies as $company)
+                    @php $activePlan = $company->subscription?->plan; @endphp
                     <tr class="hover:bg-gray-50 transition">
                         <td class="px-6 py-4">
                             <div class="font-medium text-gray-900">{{ $company->name }}</div>
                             <div class="text-xs text-gray-400">{{ $company->slug }}</div>
+                            {{-- Mobile card details --}}
+                            <div class="mt-2 flex flex-wrap gap-1.5 sm:hidden">
+                                <span class="inline-flex px-2 py-0.5 rounded-full text-xs font-medium {{ $company->active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
+                                    {{ $company->active ? 'Activa' : 'Inactiva' }}
+                                </span>
+                                @if($activePlan)
+                                <span class="inline-flex px-2 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800">
+                                    {{ $activePlan->name }}
+                                </span>
+                                @endif
+                                @if($company->email)
+                                <span class="inline-flex items-center gap-1 text-xs text-gray-500">
+                                    <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+                                    {{ $company->email }}
+                                </span>
+                                @endif
+                                <span class="inline-flex items-center gap-1 text-xs text-gray-500">
+                                    <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                                    {{ $company->users_count }} usuarios
+                                </span>
+                            </div>
                         </td>
                         <td class="px-6 py-4 hidden sm:table-cell">
                             <div class="text-sm text-gray-600">{{ $company->email ?? '—' }}</div>
@@ -54,7 +77,16 @@
                         <td class="px-6 py-4 hidden md:table-cell">
                             <span class="text-sm font-medium text-gray-700">{{ $company->users_count }}</span>
                         </td>
-                        <td class="px-6 py-4">
+                        <td class="px-6 py-4 hidden lg:table-cell">
+                            @if($activePlan)
+                            <span class="inline-flex px-2.5 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800">
+                                {{ $activePlan->name }}
+                            </span>
+                            @else
+                            <span class="text-xs text-gray-400">Sin plan</span>
+                            @endif
+                        </td>
+                        <td class="px-6 py-4 hidden sm:table-cell">
                             <span class="inline-flex px-2.5 py-0.5 rounded-full text-xs font-medium {{ $company->active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
                                 {{ $company->active ? 'Activa' : 'Inactiva' }}
                             </span>
@@ -80,7 +112,7 @@
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="5" class="px-6 py-12 text-center text-gray-400 text-sm">
+                        <td colspan="6" class="px-6 py-12 text-center text-gray-400 text-sm">
                             No se encontraron empresas.
                         </td>
                     </tr>

@@ -7,13 +7,14 @@ use App\Models\Company;
 use App\Models\Plan;
 use App\Models\Subscription;
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 
 class CompanyController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Company::withCount('users');
+        $query = Company::withCount('users')->with('subscription.plan');
 
         if ($search = $request->get('search')) {
             $query->where('name', 'like', "%{$search}%")
@@ -68,7 +69,10 @@ class CompanyController extends Controller
 
     public function edit(Company $company)
     {
-        return view('superadmin.companies.edit', compact('company'));
+        $plans = Plan::where('active', true)->orderBy('price_monthly')->get();
+        $currentPlanId = $company->subscription?->plan_id;
+
+        return view('superadmin.companies.edit', compact('company', 'plans', 'currentPlanId'));
     }
 
     public function update(Request $request, Company $company)
@@ -79,11 +83,27 @@ class CompanyController extends Controller
             'phone'   => 'nullable|string|max:50',
             'address' => 'nullable|string|max:500',
             'active'  => 'boolean',
+            'plan_id' => 'nullable|exists:plans,id',
         ]);
 
         $validated['active'] = $request->boolean('active');
 
-        $company->update($validated);
+        $company->update(Arr::except($validated, ['plan_id']));
+
+        // Update plan if provided
+        if ($request->filled('plan_id')) {
+            $subscription = $company->subscription;
+            if ($subscription) {
+                $subscription->update(['plan_id' => $validated['plan_id']]);
+            } else {
+                Subscription::create([
+                    'empresa_id' => $company->id,
+                    'plan_id'    => $validated['plan_id'],
+                    'status'     => 'active',
+                    'started_at' => now(),
+                ]);
+            }
+        }
 
         return redirect()->route('superadmin.companies.index')
             ->with('success', 'Empresa actualizada correctamente.');

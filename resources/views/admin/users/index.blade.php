@@ -35,7 +35,7 @@
                     <tr>
                         <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Usuario</th>
                         <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider hidden sm:table-cell">Email</th>
-                        <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Rol</th>
+                        <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider hidden sm:table-cell">Rol</th>
                         <th class="px-6 py-3 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider">Acciones</th>
                     </tr>
                 </thead>
@@ -47,11 +47,23 @@
                                 <div class="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-700 text-xs font-bold shrink-0">
                                     {{ strtoupper(substr($user->name, 0, 1)) }}
                                 </div>
-                                <span class="font-medium text-gray-900">{{ $user->name }}</span>
+                                <div>
+                                    <span class="font-medium text-gray-900">{{ $user->name }}</span>
+                                    {{-- Mobile card details --}}
+                                    <div class="mt-1 flex flex-wrap gap-1.5 sm:hidden">
+                                        <span class="text-xs text-gray-500">{{ $user->email }}</span>
+                                        @if($role = $user->roles->first())
+                                        <span class="inline-flex px-2 py-0.5 rounded-full text-xs font-medium
+                                            {{ $role->name === 'administrador' ? 'bg-blue-100 text-blue-800' : 'bg-gray-100 text-gray-700' }}">
+                                            {{ $role->name }}
+                                        </span>
+                                        @endif
+                                    </div>
+                                </div>
                             </div>
                         </td>
                         <td class="px-6 py-4 hidden sm:table-cell text-sm text-gray-500">{{ $user->email }}</td>
-                        <td class="px-6 py-4">
+                        <td class="px-6 py-4 hidden sm:table-cell">
                             @if($role = $user->roles->first())
                             <span class="inline-flex px-2.5 py-0.5 rounded-full text-xs font-medium
                                 {{ $role->name === 'administrador' ? 'bg-blue-100 text-blue-800' : 'bg-gray-100 text-gray-700' }}">

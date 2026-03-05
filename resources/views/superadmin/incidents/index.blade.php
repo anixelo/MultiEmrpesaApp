@@ -37,8 +37,8 @@
                         <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Incidencia</th>
                         <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider hidden sm:table-cell">Empresa</th>
                         <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider hidden md:table-cell">Creada por</th>
-                        <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Prioridad</th>
-                        <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Estado</th>
+                        <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider hidden sm:table-cell">Prioridad</th>
+                        <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider hidden sm:table-cell">Estado</th>
                         <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider hidden lg:table-cell">Fecha</th>
                         <th class="px-6 py-3 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider">Acción</th>
                     </tr>
@@ -52,6 +52,19 @@
                     <tr class="hover:bg-gray-50 transition">
                         <td class="px-6 py-4">
                             <div class="font-medium text-gray-900 truncate max-w-xs">{{ $incident->title }}</div>
+                            {{-- Mobile card details --}}
+                            <div class="mt-1.5 flex flex-wrap gap-1.5 sm:hidden">
+                                <span class="inline-flex px-2 py-0.5 rounded-full text-xs font-medium {{ $priorityColors[$incident->priority] ?? 'bg-gray-100 text-gray-600' }}">
+                                    {{ $incident->priority_label }}
+                                </span>
+                                <span class="inline-flex px-2 py-0.5 rounded-full text-xs font-medium {{ $statusColors[$incident->status] ?? 'bg-gray-100 text-gray-600' }}">
+                                    {{ $incident->status_label }}
+                                </span>
+                                @if($incident->company)
+                                <span class="text-xs text-gray-500">{{ $incident->company->name }}</span>
+                                @endif
+                                <span class="text-xs text-gray-400">{{ $incident->created_at->format('d/m/Y') }}</span>
+                            </div>
                         </td>
                         <td class="px-6 py-4 hidden sm:table-cell">
                             <div class="text-sm text-gray-600">{{ $incident->company?->name ?? '—' }}</div>
@@ -59,12 +72,12 @@
                         <td class="px-6 py-4 hidden md:table-cell">
                             <div class="text-sm text-gray-700">{{ $incident->user->name }}</div>
                         </td>
-                        <td class="px-6 py-4">
+                        <td class="px-6 py-4 hidden sm:table-cell">
                             <span class="inline-flex px-2 py-0.5 rounded-full text-xs font-medium {{ $priorityColors[$incident->priority] ?? 'bg-gray-100 text-gray-600' }}">
                                 {{ $incident->priority_label }}
                             </span>
                         </td>
-                        <td class="px-6 py-4">
+                        <td class="px-6 py-4 hidden sm:table-cell">
                             <span class="inline-flex px-2 py-0.5 rounded-full text-xs font-medium {{ $statusColors[$incident->status] ?? 'bg-gray-100 text-gray-600' }}">
                                 {{ $incident->status_label }}
                             </span>

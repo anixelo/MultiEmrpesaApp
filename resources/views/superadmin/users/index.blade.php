@@ -58,15 +58,35 @@
                         <td class="px-6 py-4">
                             <div class="flex items-center gap-3">
                                 @if($user->avatar)
-                                <img src="{{ $user->avatar }}" class="w-8 h-8 rounded-full object-cover" alt="">
+                                <img src="{{ $user->avatar }}" class="w-8 h-8 rounded-full object-cover shrink-0" alt="">
                                 @else
-                                <div class="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-700 text-xs font-bold">
+                                <div class="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-700 text-xs font-bold shrink-0">
                                     {{ strtoupper(substr($user->name, 0, 1)) }}
                                 </div>
                                 @endif
                                 <div>
                                     <p class="text-sm font-medium text-gray-900">{{ $user->name }}</p>
                                     <p class="text-xs text-gray-400">{{ $user->email }}</p>
+                                    {{-- Mobile card details --}}
+                                    <div class="mt-1.5 flex flex-wrap gap-1.5 sm:hidden">
+                                        @if($user->roles->first())
+                                        <span class="inline-flex px-2 py-0.5 rounded-full text-xs font-medium
+                                            @if($user->roles->first()->name === 'superadministrador') bg-purple-100 text-purple-800
+                                            @elseif($user->roles->first()->name === 'administrador') bg-blue-100 text-blue-800
+                                            @else bg-green-100 text-green-800 @endif">
+                                            {{ $user->roles->first()->name }}
+                                        </span>
+                                        @endif
+                                        @if($user->company)
+                                        <span class="inline-flex items-center gap-1 text-xs text-gray-500">
+                                            <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
+                                            {{ $user->company->name }}
+                                        </span>
+                                        @endif
+                                        <span class="inline-flex px-2 py-0.5 rounded-full text-xs font-medium {{ $user->two_factor_enabled ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500' }}">
+                                            2FA: {{ $user->two_factor_enabled ? 'Activo' : 'Inactivo' }}
+                                        </span>
+                                    </div>
                                 </div>
                             </div>
                         </td>
@@ -91,7 +111,18 @@
                             </span>
                         </td>
                         <td class="px-6 py-4 text-right">
-                            <div class="flex items-center justify-end gap-2">
+                            <div class="flex items-center justify-end gap-2 flex-wrap">
+                                @if($user->id !== auth()->id())
+                                <form method="POST" action="{{ route('superadmin.users.impersonate', $user) }}">
+                                    @csrf
+                                    <button type="submit"
+                                            class="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-medium text-amber-700 bg-amber-50 rounded-lg hover:bg-amber-100 transition"
+                                            title="Suplantar usuario">
+                                        <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+                                        Suplantar
+                                    </button>
+                                </form>
+                                @endif
                                 <a href="{{ route('superadmin.users.edit', $user) }}"
                                    class="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-medium text-indigo-700 bg-indigo-50 rounded-lg hover:bg-indigo-100 transition">
                                     <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
