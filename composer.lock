@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "630cc62c93226f5c22aad2ffeac2a44e",
+    "content-hash": "2328100b53ffc7f9097a57268dc9513c",
     "packages": [
         {
             "name": "bacon/bacon-qr-code",
@@ -2567,6 +2567,122 @@
                 }
             ],
             "time": "2026-01-02T08:56:05+00:00"
+        },
+        {
+            "name": "multiempresaapp/incidents",
+            "version": "dev-copilot/move-tasks-issues-notifications-plans",
+            "dist": {
+                "type": "path",
+                "url": "packages/multiempresaapp/incidents",
+                "reference": "b768fa7225e2919adf0901253d0398746cb3faa5"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "MultiempresaApp\\Incidents\\IncidentsServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "MultiempresaApp\\Incidents\\": "src/"
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "description": "Incidents functionality package for MultiEmpresaApp",
+            "transport-options": {
+                "relative": true
+            }
+        },
+        {
+            "name": "multiempresaapp/notifications",
+            "version": "dev-copilot/move-tasks-issues-notifications-plans",
+            "dist": {
+                "type": "path",
+                "url": "packages/multiempresaapp/notifications",
+                "reference": "d8826df7848fd0299a7512b6a47a8efebf7ea531"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "MultiempresaApp\\Notifications\\NotificationsServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "MultiempresaApp\\Notifications\\": "src/"
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "description": "Notifications functionality package for MultiEmpresaApp",
+            "transport-options": {
+                "relative": true
+            }
+        },
+        {
+            "name": "multiempresaapp/plans",
+            "version": "dev-copilot/move-tasks-issues-notifications-plans",
+            "dist": {
+                "type": "path",
+                "url": "packages/multiempresaapp/plans",
+                "reference": "fa3ade8222b858e938754e126b1f86487ac43e32"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "MultiempresaApp\\Plans\\PlansServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "MultiempresaApp\\Plans\\": "src/"
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "description": "Plans functionality package for MultiEmpresaApp",
+            "transport-options": {
+                "relative": true
+            }
+        },
+        {
+            "name": "multiempresaapp/tasks",
+            "version": "dev-copilot/move-tasks-issues-notifications-plans",
+            "dist": {
+                "type": "path",
+                "url": "packages/multiempresaapp/tasks",
+                "reference": "6d702e245af6fe69a88147a41d2a0de8f5dd2031"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "MultiempresaApp\\Tasks\\TasksServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "MultiempresaApp\\Tasks\\": "src/"
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "description": "Tasks functionality package for MultiEmpresaApp",
+            "transport-options": {
+                "relative": true
+            }
         },
         {
             "name": "nesbot/carbon",
@@ -9259,7 +9375,12 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {},
+    "stability-flags": {
+        "multiempresaapp/incidents": 20,
+        "multiempresaapp/notifications": 20,
+        "multiempresaapp/plans": 20,
+        "multiempresaapp/tasks": 20
+    },
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {

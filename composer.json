@@ -29,7 +29,11 @@
         "psr-4": {
             "App\\": "app/",
             "Database\\Factories\\": "database/factories/",
-            "Database\\Seeders\\": "database/seeders/"
+            "Database\\Seeders\\": "database/seeders/",
+            "MultiempresaApp\\Tasks\\": "packages/multiempresaapp/tasks/src/",
+            "MultiempresaApp\\Incidents\\": "packages/multiempresaapp/incidents/src/",
+            "MultiempresaApp\\Notifications\\": "packages/multiempresaapp/notifications/src/",
+            "MultiempresaApp\\Plans\\": "packages/multiempresaapp/plans/src/"
         },
         "files": [
             "app/Helpers/QrHelper.php"

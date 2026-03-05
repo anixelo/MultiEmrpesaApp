@@ -3,20 +3,20 @@
 use App\Http\Controllers\Auth\GoogleController;
 use App\Http\Controllers\Auth\TwoFactorController;
 use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SuperAdmin\CompanyController;
 use App\Http\Controllers\SuperAdmin\UserController as SuperAdminUserController;
 use App\Http\Controllers\SuperAdmin\DashboardController as SuperAdminDashboardController;
-use App\Http\Controllers\SuperAdmin\PlanController as SuperAdminPlanController;
-use App\Http\Controllers\SuperAdmin\IncidentController as SuperAdminIncidentController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
-use App\Http\Controllers\Admin\SubscriptionController as AdminSubscriptionController;
-use App\Http\Controllers\Admin\IncidentController as AdminIncidentController;
-use App\Http\Controllers\Admin\TaskController as AdminTaskController;
 use App\Http\Controllers\Admin\UserController as AdminUserController;
-use App\Http\Controllers\Worker\DashboardController as WorkerDashboardController;
-use App\Http\Controllers\Worker\IncidentController as WorkerIncidentController;
+use MultiempresaApp\Notifications\Http\Controllers\NotificationController;
+use MultiempresaApp\Tasks\Http\Controllers\Admin\TaskController as AdminTaskController;
+use MultiempresaApp\Tasks\Http\Controllers\Worker\DashboardController as WorkerDashboardController;
+use MultiempresaApp\Incidents\Http\Controllers\Admin\IncidentController as AdminIncidentController;
+use MultiempresaApp\Incidents\Http\Controllers\SuperAdmin\IncidentController as SuperAdminIncidentController;
+use MultiempresaApp\Incidents\Http\Controllers\Worker\IncidentController as WorkerIncidentController;
+use MultiempresaApp\Plans\Http\Controllers\SuperAdmin\PlanController as SuperAdminPlanController;
+use MultiempresaApp\Plans\Http\Controllers\Admin\SubscriptionController as AdminSubscriptionController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {

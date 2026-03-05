@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\Task;
 use App\Models\User;
+use MultiempresaApp\Tasks\Models\Task;
 use Illuminate\Http\Request;
 
 class DashboardController extends Controller
