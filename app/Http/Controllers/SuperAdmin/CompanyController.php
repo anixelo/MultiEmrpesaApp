@@ -4,6 +4,8 @@ namespace App\Http\Controllers\SuperAdmin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Company;
+use App\Models\Plan;
+use App\Models\Subscription;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
@@ -47,7 +49,18 @@ class CompanyController extends Controller
             $validated['slug'] = $slug . '-' . $count++;
         }
 
-        Company::create($validated);
+        $company = Company::create($validated);
+
+        // Auto-assign free plan to new company
+        $freePlan = Plan::where('price_monthly', 0)->where('active', true)->first();
+        if ($freePlan) {
+            Subscription::create([
+                'empresa_id' => $company->id,
+                'plan_id'    => $freePlan->id,
+                'status'     => 'active',
+                'started_at' => now(),
+            ]);
+        }
 
         return redirect()->route('superadmin.companies.index')
             ->with('success', 'Empresa creada correctamente.');

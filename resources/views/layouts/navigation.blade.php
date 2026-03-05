@@ -19,8 +19,13 @@
                         @if(auth()->user()->isWorker())
                         <a href="{{ route('worker.dashboard') }}"
                            class="px-3 py-2 rounded-lg text-sm font-medium transition
-                                  {{ request()->routeIs('worker.*') ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50' }}">
+                                  {{ request()->routeIs('worker.dashboard') ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50' }}">
                             Mis Tareas
+                        </a>
+                        <a href="{{ route('worker.incidents.index') }}"
+                           class="px-3 py-2 rounded-lg text-sm font-medium transition
+                                  {{ request()->routeIs('worker.incidents.*') ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50' }}">
+                            Incidencias
                         </a>
                         @endif
 
@@ -28,13 +33,23 @@
                         @if(auth()->user()->isAdmin())
                         <a href="{{ route('admin.dashboard') }}"
                            class="px-3 py-2 rounded-lg text-sm font-medium transition
-                                  {{ request()->routeIs('admin.*') ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50' }}">
+                                  {{ request()->routeIs('admin.dashboard') ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50' }}">
                             Panel Admin
                         </a>
                         <a href="{{ route('worker.dashboard') }}"
                            class="px-3 py-2 rounded-lg text-sm font-medium transition
-                                  {{ request()->routeIs('worker.*') ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50' }}">
+                                  {{ request()->routeIs('worker.dashboard') ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50' }}">
                             Tareas
+                        </a>
+                        <a href="{{ route('admin.incidents.index') }}"
+                           class="px-3 py-2 rounded-lg text-sm font-medium transition
+                                  {{ request()->routeIs('admin.incidents.*') ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50' }}">
+                            Incidencias
+                        </a>
+                        <a href="{{ route('admin.subscription') }}"
+                           class="px-3 py-2 rounded-lg text-sm font-medium transition
+                                  {{ request()->routeIs('admin.subscription*') ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50' }}">
+                            Suscripción
                         </a>
                         @endif
 
@@ -55,6 +70,16 @@
                                   {{ request()->routeIs('superadmin.users.*') ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50' }}">
                             Usuarios
                         </a>
+                        <a href="{{ route('superadmin.plans.index') }}"
+                           class="px-3 py-2 rounded-lg text-sm font-medium transition
+                                  {{ request()->routeIs('superadmin.plans.*') ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50' }}">
+                            Planes
+                        </a>
+                        <a href="{{ route('superadmin.incidents.index') }}"
+                           class="px-3 py-2 rounded-lg text-sm font-medium transition
+                                  {{ request()->routeIs('superadmin.incidents.*') ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50' }}">
+                            Incidencias
+                        </a>
                         @endif
                     @endauth
                 </div>
@@ -63,6 +88,20 @@
             {{-- Right side --}}
             <div class="flex items-center gap-3">
                 @auth
+                    {{-- Notification bell --}}
+                    @php $unreadCount = auth()->user()->unreadNotifications->count(); @endphp
+                    <a href="{{ route('notifications.index') }}"
+                       class="relative p-2 rounded-lg text-gray-500 hover:text-gray-700 hover:bg-gray-100 transition">
+                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
+                        </svg>
+                        @if($unreadCount > 0)
+                        <span class="absolute top-1 right-1 inline-flex items-center justify-center w-4 h-4 text-xs font-bold text-white bg-red-500 rounded-full">
+                            {{ $unreadCount > 9 ? '9+' : $unreadCount }}
+                        </span>
+                        @endif
+                    </a>
+
                     {{-- Role badge --}}
                     <span class="hidden sm:inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
                         @if(auth()->user()->isSuperAdmin()) bg-purple-100 text-purple-800
@@ -133,20 +172,32 @@
         @auth
             @if(auth()->user()->isWorker())
             <a href="{{ route('worker.dashboard') }}" class="block px-3 py-2 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50">Mis Tareas</a>
+            <a href="{{ route('worker.incidents.index') }}" class="block px-3 py-2 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50">Incidencias</a>
             @endif
 
             @if(auth()->user()->isAdmin())
             <a href="{{ route('admin.dashboard') }}" class="block px-3 py-2 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50">Panel Admin</a>
             <a href="{{ route('worker.dashboard') }}" class="block px-3 py-2 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50">Tareas</a>
+            <a href="{{ route('admin.incidents.index') }}" class="block px-3 py-2 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50">Incidencias</a>
+            <a href="{{ route('admin.subscription') }}" class="block px-3 py-2 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50">Suscripción</a>
             @endif
 
             @if(auth()->user()->isSuperAdmin())
             <a href="{{ route('superadmin.dashboard') }}" class="block px-3 py-2 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50">Panel General</a>
             <a href="{{ route('superadmin.companies.index') }}" class="block px-3 py-2 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50">Empresas</a>
             <a href="{{ route('superadmin.users.index') }}" class="block px-3 py-2 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50">Usuarios</a>
+            <a href="{{ route('superadmin.plans.index') }}" class="block px-3 py-2 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50">Planes</a>
+            <a href="{{ route('superadmin.incidents.index') }}" class="block px-3 py-2 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50">Incidencias</a>
             @endif
 
             <div class="border-t border-gray-200 pt-2 mt-2">
+                <a href="{{ route('notifications.index') }}" class="block px-3 py-2 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50">
+                    Notificaciones
+                    @php $unreadMobile = auth()->user()->unreadNotifications->count(); @endphp
+                    @if($unreadMobile > 0)
+                    <span class="ml-1 inline-flex items-center justify-center px-1.5 py-0.5 text-xs font-bold text-white bg-red-500 rounded-full">{{ $unreadMobile }}</span>
+                    @endif
+                </a>
                 <a href="{{ route('profile.edit') }}" class="block px-3 py-2 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50">Mi Perfil</a>
                 <a href="{{ route('two-factor.setup') }}" class="block px-3 py-2 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50">Seguridad (2FA)</a>
                 <form method="POST" action="{{ route('logout') }}">

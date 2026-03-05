@@ -3,12 +3,18 @@
 use App\Http\Controllers\Auth\GoogleController;
 use App\Http\Controllers\Auth\TwoFactorController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SuperAdmin\CompanyController;
 use App\Http\Controllers\SuperAdmin\UserController as SuperAdminUserController;
 use App\Http\Controllers\SuperAdmin\DashboardController as SuperAdminDashboardController;
+use App\Http\Controllers\SuperAdmin\PlanController as SuperAdminPlanController;
+use App\Http\Controllers\SuperAdmin\IncidentController as SuperAdminIncidentController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
+use App\Http\Controllers\Admin\SubscriptionController as AdminSubscriptionController;
+use App\Http\Controllers\Admin\IncidentController as AdminIncidentController;
 use App\Http\Controllers\Worker\DashboardController as WorkerDashboardController;
+use App\Http\Controllers\Worker\IncidentController as WorkerIncidentController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -41,15 +47,37 @@ Route::middleware(['auth', 'two_factor'])->group(function () {
     Route::post('/two-factor/enable', [TwoFactorController::class, 'enable'])->name('two-factor.enable');
     Route::post('/two-factor/disable',[TwoFactorController::class, 'disable'])->name('two-factor.disable');
 
-    // Worker dashboard
+    // Notifications (all authenticated users)
+    Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
+    Route::post('/notifications/read-all', [NotificationController::class, 'markAllAsRead'])->name('notifications.read-all');
+    Route::post('/notifications/{id}/read', [NotificationController::class, 'markAsRead'])->name('notifications.read');
+
+    // Shared incident detail (accessible by all roles)
+    Route::get('/incidents/{incident}', [WorkerIncidentController::class, 'show'])->name('incidents.show');
+    Route::post('/incidents/{incident}/comment', [WorkerIncidentController::class, 'comment'])->name('incidents.comment');
+
+    // Worker routes
     Route::middleware(['role:trabajador|administrador|superadministrador'])->group(function () {
         Route::get('/worker/dashboard', [WorkerDashboardController::class, 'index'])->name('worker.dashboard');
         Route::patch('/worker/tasks/{task}/status', [WorkerDashboardController::class, 'updateTaskStatus'])->name('worker.tasks.update-status');
+
+        // Worker incidents
+        Route::get('/worker/incidents', [WorkerIncidentController::class, 'index'])->name('worker.incidents.index');
+        Route::get('/worker/incidents/create', [WorkerIncidentController::class, 'create'])->name('worker.incidents.create');
+        Route::post('/worker/incidents', [WorkerIncidentController::class, 'store'])->name('worker.incidents.store');
     });
 
-    // Admin dashboard
+    // Admin routes
     Route::middleware(['role:administrador|superadministrador'])->group(function () {
         Route::get('/admin/dashboard', [AdminDashboardController::class, 'index'])->name('admin.dashboard');
+
+        // Admin subscription
+        Route::get('/admin/subscription', [AdminSubscriptionController::class, 'index'])->name('admin.subscription');
+        Route::post('/admin/subscription/change-plan', [AdminSubscriptionController::class, 'changePlan'])->name('admin.subscription.change-plan');
+
+        // Admin incidents
+        Route::get('/admin/incidents', [AdminIncidentController::class, 'index'])->name('admin.incidents.index');
+        Route::get('/admin/incidents/{incident}', [AdminIncidentController::class, 'show'])->name('admin.incidents.show');
     });
 
     // Superadmin routes
@@ -57,7 +85,15 @@ Route::middleware(['auth', 'two_factor'])->group(function () {
         Route::get('/dashboard', [SuperAdminDashboardController::class, 'index'])->name('dashboard');
 
         Route::resource('companies', CompanyController::class)->except(['show']);
-        Route::resource('users',     SuperAdminUserController::class)->except(['show']);
+        Route::resource('users', SuperAdminUserController::class)->except(['show']);
+        Route::resource('plans', SuperAdminPlanController::class)->except(['show']);
+        Route::post('/companies/{company}/assign-plan', [SuperAdminPlanController::class, 'assignPlan'])->name('companies.assign-plan');
+
+        // Superadmin incidents
+        Route::get('/incidents', [SuperAdminIncidentController::class, 'index'])->name('incidents.index');
+        Route::get('/incidents/{incident}', [SuperAdminIncidentController::class, 'show'])->name('incidents.show');
+        Route::post('/incidents/{incident}/status', [SuperAdminIncidentController::class, 'updateStatus'])->name('incidents.update-status');
+        Route::post('/incidents/{incident}/comment', [SuperAdminIncidentController::class, 'comment'])->name('incidents.comment');
     });
 });
 
