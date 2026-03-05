@@ -10,13 +10,14 @@ class Plan extends Model
 
     protected $fillable = [
         'name', 'description', 'price_monthly', 'price_yearly',
-        'max_users', 'max_incidents', 'features', 'active',
+        'max_users', 'max_incidents', 'features', 'has_tasks', 'active',
     ];
 
     protected function casts(): array
     {
         return [
             'active' => 'boolean',
+            'has_tasks' => 'boolean',
             'features' => 'array',
             'price_monthly' => 'decimal:2',
             'price_yearly' => 'decimal:2',

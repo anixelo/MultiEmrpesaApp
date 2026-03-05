@@ -70,6 +70,14 @@
 
                 <div class="flex items-center gap-3">
                     <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" name="has_tasks" value="1" {{ old('has_tasks') ? 'checked' : '' }} class="sr-only peer">
+                        <div class="w-10 h-6 bg-gray-200 peer-focus:ring-2 peer-focus:ring-indigo-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-600"></div>
+                    </label>
+                    <span class="text-sm font-medium text-gray-700">Permite gestión de tareas</span>
+                </div>
+
+                <div class="flex items-center gap-3">
+                    <label class="relative inline-flex items-center cursor-pointer">
                         <input type="checkbox" name="active" value="1" {{ old('active', true) ? 'checked' : '' }} class="sr-only peer">
                         <div class="w-10 h-6 bg-gray-200 peer-focus:ring-2 peer-focus:ring-indigo-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-600"></div>
                     </label>

@@ -81,4 +81,11 @@ class Company extends Model
         if (!$plan) return true;
         return $this->incidents()->whereIn('status', ['open', 'in_review', 'in_progress'])->count() < $plan->max_incidents;
     }
+
+    public function canUseTasks(): bool
+    {
+        $plan = $this->subscription?->plan;
+        if (!$plan) return false;
+        return (bool) $plan->has_tasks;
+    }
 }
