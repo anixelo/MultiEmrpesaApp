@@ -1,0 +1,19 @@
+{
+    "name": "multiempresaapp/tasks",
+    "description": "Tasks functionality package for MultiEmpresaApp",
+    "type": "library",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "MultiempresaApp\\Tasks\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "MultiempresaApp\\Tasks\\TasksServiceProvider"
+            ]
+        }
+    },
+    "minimum-stability": "stable"
+}

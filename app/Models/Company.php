@@ -5,6 +5,9 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
+use MultiempresaApp\Incidents\Models\Incident;
+use MultiempresaApp\Plans\Models\Subscription;
+use MultiempresaApp\Tasks\Models\Task;
 
 class Company extends Model
 {

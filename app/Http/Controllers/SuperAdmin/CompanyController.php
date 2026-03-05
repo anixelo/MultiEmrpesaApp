@@ -4,8 +4,8 @@ namespace App\Http\Controllers\SuperAdmin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Company;
-use App\Models\Plan;
-use App\Models\Subscription;
+use MultiempresaApp\Plans\Models\Plan;
+use MultiempresaApp\Plans\Models\Subscription;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;

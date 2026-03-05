@@ -4,8 +4,8 @@ namespace App\Http\Controllers\SuperAdmin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Company;
-use App\Models\Task;
 use App\Models\User;
+use MultiempresaApp\Tasks\Models\Task;
 use Spatie\Permission\Models\Role;
 
 class DashboardController extends Controller

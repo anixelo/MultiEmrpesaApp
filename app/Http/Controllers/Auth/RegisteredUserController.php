@@ -4,8 +4,8 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\Company;
-use App\Models\Plan;
-use App\Models\Subscription;
+use MultiempresaApp\Plans\Models\Plan;
+use MultiempresaApp\Plans\Models\Subscription;
 use App\Models\User;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
