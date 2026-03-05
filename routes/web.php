@@ -100,7 +100,6 @@ Route::middleware(['auth', 'two_factor'])->group(function () {
         Route::resource('plans', SuperAdminPlanController::class)->except(['show']);
         Route::post('/companies/{company}/assign-plan', [SuperAdminPlanController::class, 'assignPlan'])->name('companies.assign-plan');
         Route::post('/users/{user}/impersonate', [SuperAdminUserController::class, 'impersonate'])->name('users.impersonate');
-        Route::post('/users/stop-impersonating', [SuperAdminUserController::class, 'stopImpersonating'])->name('users.stop-impersonating');
 
         // Superadmin incidents
         Route::get('/incidents', [SuperAdminIncidentController::class, 'index'])->name('incidents.index');
