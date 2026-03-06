@@ -5,8 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
+use MultiempresaApp\Clientes\Models\Cliente;
 use MultiempresaApp\Incidents\Models\Incident;
 use MultiempresaApp\Plans\Models\Subscription;
+use MultiempresaApp\Presupuestos\Models\Presupuesto;
+use MultiempresaApp\Servicios\Models\Servicio;
 use MultiempresaApp\Tasks\Models\Task;
 
 class Company extends Model
@@ -64,6 +67,21 @@ class Company extends Model
     public function incidents()
     {
         return $this->hasMany(Incident::class, 'empresa_id');
+    }
+
+    public function clientes()
+    {
+        return $this->hasMany(Cliente::class, 'empresa_id');
+    }
+
+    public function servicios()
+    {
+        return $this->hasMany(Servicio::class, 'empresa_id');
+    }
+
+    public function presupuestos()
+    {
+        return $this->hasMany(Presupuesto::class, 'empresa_id');
     }
 
     public function activePlan()
