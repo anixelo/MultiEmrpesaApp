@@ -1,0 +1,19 @@
+{
+    "name": "multiempresaapp/presupuestos",
+    "description": "Presupuestos package for MultiEmpresaApp",
+    "type": "library",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "MultiempresaApp\\Presupuestos\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "MultiempresaApp\\Presupuestos\\Providers\\PresupuestosServiceProvider"
+            ]
+        }
+    },
+    "minimum-stability": "stable"
+}

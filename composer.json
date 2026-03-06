@@ -33,7 +33,10 @@
             "MultiempresaApp\\Tasks\\": "packages/multiempresaapp/tasks/src/",
             "MultiempresaApp\\Incidents\\": "packages/multiempresaapp/incidents/src/",
             "MultiempresaApp\\Notifications\\": "packages/multiempresaapp/notifications/src/",
-            "MultiempresaApp\\Plans\\": "packages/multiempresaapp/plans/src/"
+            "MultiempresaApp\\Plans\\": "packages/multiempresaapp/plans/src/",
+            "MultiempresaApp\\Clientes\\": "packages/multiempresaapp/clientes/src/",
+            "MultiempresaApp\\Servicios\\": "packages/multiempresaapp/servicios/src/",
+            "MultiempresaApp\\Presupuestos\\": "packages/multiempresaapp/presupuestos/src/"
         },
         "files": [
             "app/Helpers/QrHelper.php"
