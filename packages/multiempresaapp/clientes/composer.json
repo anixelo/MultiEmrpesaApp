@@ -1,0 +1,19 @@
+{
+    "name": "multiempresaapp/clientes",
+    "description": "Clientes package for MultiEmpresaApp",
+    "type": "library",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "MultiempresaApp\\Clientes\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "MultiempresaApp\\Clientes\\Providers\\ClientesServiceProvider"
+            ]
+        }
+    },
+    "minimum-stability": "stable"
+}

@@ -17,6 +17,8 @@ use MultiempresaApp\Incidents\Http\Controllers\SuperAdmin\IncidentController as 
 use MultiempresaApp\Incidents\Http\Controllers\Worker\IncidentController as WorkerIncidentController;
 use MultiempresaApp\Plans\Http\Controllers\SuperAdmin\PlanController as SuperAdminPlanController;
 use MultiempresaApp\Plans\Http\Controllers\Admin\SubscriptionController as AdminSubscriptionController;
+use MultiempresaApp\Clientes\Http\Controllers\ClienteController;
+use MultiempresaApp\Servicios\Http\Controllers\ServicioController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -89,6 +91,13 @@ Route::middleware(['auth', 'two_factor'])->group(function () {
 
         // Admin users
         Route::resource('admin/users', AdminUserController::class)->names('admin.users')->except(['show']);
+
+        // Clientes
+        Route::resource('admin/clientes', ClienteController::class)->names('admin.clientes');
+        Route::post('admin/clientes/quick-store', [ClienteController::class, 'quickStore'])->name('admin.clientes.quick-store');
+
+        // Servicios
+        Route::resource('admin/servicios', ServicioController::class)->names('admin.servicios');
     });
 
     // Superadmin routes

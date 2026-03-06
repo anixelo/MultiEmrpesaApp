@@ -1,0 +1,19 @@
+{
+    "name": "multiempresaapp/servicios",
+    "description": "Servicios package for MultiEmpresaApp",
+    "type": "library",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "MultiempresaApp\\Servicios\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "MultiempresaApp\\Servicios\\Providers\\ServiciosServiceProvider"
+            ]
+        }
+    },
+    "minimum-stability": "stable"
+}
