@@ -108,8 +108,7 @@ class Company extends Model
         $max = $plan->max_presupuestos ?? 0;
         if ($max === 0) return true;
         $count = $this->presupuestos()
-            ->whereMonth('created_at', now()->month)
-            ->whereYear('created_at', now()->year)
+            ->whereBetween('created_at', [now()->startOfMonth(), now()->endOfMonth()])
             ->count();
         return $count < $max;
     }
