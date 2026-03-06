@@ -11,7 +11,7 @@
     "extra": {
         "laravel": {
             "providers": [
-                "MultiempresaApp\\Tasks\\TasksServiceProvider"
+                "MultiempresaApp\\Tasks\\Providers\\TasksServiceProvider"
             ]
         }
     },

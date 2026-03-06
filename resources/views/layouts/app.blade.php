@@ -14,7 +14,9 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="{{ config('app.name') }}">
     <link rel="apple-touch-icon" href="/icons/icon-192x192.png">
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @if (file_exists(public_path('build/manifest.json')) || file_exists(public_path('hot')))
+        @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @endif
     @livewireStyles
 </head>
 <body class="font-sans antialiased bg-gray-50 text-gray-900">

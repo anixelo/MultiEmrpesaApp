@@ -11,7 +11,7 @@
     "extra": {
         "laravel": {
             "providers": [
-                "MultiempresaApp\\Plans\\PlansServiceProvider"
+                "MultiempresaApp\\Plans\\Providers\\PlansServiceProvider"
             ]
         }
     },

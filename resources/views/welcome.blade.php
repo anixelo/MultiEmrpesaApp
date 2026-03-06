@@ -127,7 +127,7 @@
         </div>
 
         @php
-        $plans = \App\Models\Plan::active()->orderBy('price_monthly')->get();
+        $plans = \MultiempresaApp\Plans\Models\Plan::active()->orderBy('price_monthly')->get();
         @endphp
 
         @if($plans->isNotEmpty())
