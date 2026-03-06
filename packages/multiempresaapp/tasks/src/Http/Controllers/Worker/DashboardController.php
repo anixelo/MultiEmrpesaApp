@@ -4,6 +4,7 @@ namespace MultiempresaApp\Tasks\Http\Controllers\Worker;
 
 use App\Http\Controllers\Controller;
 use MultiempresaApp\Tasks\Models\Task;
+use MultiempresaApp\Presupuestos\Models\Presupuesto;
 use Illuminate\Http\Request;
 
 class DashboardController extends Controller
@@ -20,6 +21,8 @@ class DashboardController extends Controller
                 'stats'        => ['total' => 0, 'pendiente' => 0, 'en_progreso' => 0, 'completada' => 0],
                 'user'         => $user,
                 'tasksDisabled' => true,
+                'presupuestoStats' => ['total' => 0, 'aceptados' => 0, 'rechazados' => 0],
+                'presupuestosByStatus' => collect(),
             ]);
         }
 
@@ -35,7 +38,19 @@ class DashboardController extends Controller
             'completada'  => Task::where('assigned_to', $user->id)->where('status', 'completada')->count(),
         ];
 
-        return view('worker.dashboard', compact('tasks', 'stats', 'user') + ['tasksDisabled' => false]);
+        $presupuestoStats = [
+            'total'     => Presupuesto::where('empresa_id', $company ? $company->id : 0)->count(),
+            'aceptados' => Presupuesto::where('empresa_id', $company ? $company->id : 0)->where('estado', 'aceptado')->count(),
+            'rechazados'=> Presupuesto::where('empresa_id', $company ? $company->id : 0)->where('estado', 'rechazado')->count(),
+        ];
+
+        $presupuestosByStatus = Presupuesto::where('empresa_id', $company ? $company->id : 0)
+            ->selectRaw('estado, count(*) as count')
+            ->groupBy('estado')
+            ->get()
+            ->pluck('count', 'estado');
+
+        return view('worker.dashboard', compact('tasks', 'stats', 'user', 'presupuestoStats', 'presupuestosByStatus') + ['tasksDisabled' => false]);
     }
 
     public function updateTaskStatus(Request $request, Task $task)

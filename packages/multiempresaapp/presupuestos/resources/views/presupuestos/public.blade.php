@@ -78,7 +78,7 @@
             </div>
 
             {{-- Líneas --}}
-            <div class="px-8 py-5">
+            <div class="px-8 py-5 overflow-x-auto">
                 <table class="min-w-full divide-y divide-gray-200">
                     <thead>
                         <tr class="text-xs font-medium uppercase tracking-wider text-gray-500">

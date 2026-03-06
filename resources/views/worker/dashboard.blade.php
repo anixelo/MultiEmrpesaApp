@@ -103,6 +103,47 @@
         @if($tasks->hasPages())
         <div>{{ $tasks->links() }}</div>
         @endif
+
+        {{-- Presupuesto stats --}}
+        <div class="grid grid-cols-2 sm:grid-cols-3 gap-4">
+            @php
+            $presupuestoCards = [
+                ['label'=>'Presupuestos totales','value'=>$presupuestoStats['total'] ?? 0,'color'=>'violet'],
+                ['label'=>'Aceptados','value'=>$presupuestoStats['aceptados'] ?? 0,'color'=>'green'],
+                ['label'=>'Rechazados','value'=>$presupuestoStats['rechazados'] ?? 0,'color'=>'red'],
+            ];
+            @endphp
+            @foreach($presupuestoCards as $pc)
+            <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 text-center">
+                <p class="text-2xl font-bold text-gray-900">{{ $pc['value'] }}</p>
+                <p class="text-xs text-gray-500 mt-0.5">{{ $pc['label'] }}</p>
+            </div>
+            @endforeach
+        </div>
+
+        {{-- Presupuestos by status --}}
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+            <h2 class="font-semibold text-gray-900 mb-4">Presupuestos por estado</h2>
+            @php
+            $presupuestoColors = ['borrador'=>'gray','enviado'=>'blue','visto'=>'purple','aceptado'=>'green','rechazado'=>'red'];
+            $presupuestoLabels = ['borrador'=>'Borrador','enviado'=>'Enviado','visto'=>'Visto','aceptado'=>'Aceptado','rechazado'=>'Rechazado'];
+            $totalPres = ($presupuestosByStatus ?? collect())->sum() ?: 1;
+            @endphp
+            <div class="space-y-3">
+                @foreach($presupuestoColors as $estado => $color)
+                @php $count = ($presupuestosByStatus[$estado] ?? 0); $pct = round(($count/$totalPres)*100); @endphp
+                <div>
+                    <div class="flex justify-between text-xs mb-1">
+                        <span class="text-gray-600">{{ $presupuestoLabels[$estado] }}</span>
+                        <span class="font-medium text-gray-800">{{ $count }}</span>
+                    </div>
+                    <div class="w-full bg-gray-100 rounded-full h-2">
+                        <div class="bg-{{ $color }}-500 h-2 rounded-full transition-all" style="width: {{ $pct }}%"></div>
+                    </div>
+                </div>
+                @endforeach
+            </div>
+        </div>
         @endif
     </div>
 </x-app-layout>

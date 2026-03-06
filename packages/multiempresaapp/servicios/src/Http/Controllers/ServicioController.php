@@ -44,6 +44,7 @@ class ServicioController extends Controller
         Servicio::create(array_merge($request->only('nombre', 'descripcion', 'precio', 'iva_tipo', 'orden'), [
             'empresa_id' => auth()->user()->company_id,
             'activo'     => $request->boolean('activo', true),
+            'created_by' => auth()->id(),
         ]));
 
         return redirect()->route('admin.servicios.index')
@@ -103,6 +104,11 @@ class ServicioController extends Controller
 
         if ($servicio->empresa_id !== auth()->user()->company_id) {
             abort(403);
+        }
+
+        if (auth()->user()->hasRole('trabajador') && $servicio->created_by !== auth()->id()) {
+            return redirect()->route('admin.servicios.index')
+                ->with('error', 'No puedes eliminar servicios que no hayas creado tú.');
         }
 
         $servicio->delete();

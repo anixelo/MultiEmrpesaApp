@@ -26,6 +26,15 @@ class PresupuestoForm extends Component
     public float $total = 0;
     public float $ivaDefecto = 21;
 
+    public array $lineaSearch = [];
+    public array $lineaDropdownVisible = [];
+    public array $lineaSearchResults = [];
+    public bool $showServicioModal = false;
+    public int $servicioModalLineaIndex = -1;
+    public string $quickServicioNombre = '';
+    public string $quickServicioPrecio = '0';
+    public string $quickServicioIva = '';
+
     public function mount(?int $presupuestoId = null): void
     {
         $empresaId = auth()->user()->company_id;
@@ -53,7 +62,7 @@ class PresupuestoForm extends Component
             $this->observaciones = $presupuesto->observaciones ?? '';
             $this->notas        = $presupuesto->notas ?? '';
 
-            foreach ($presupuesto->lineas as $linea) {
+            foreach ($presupuesto->lineas as $idx => $linea) {
                 $this->lineas[] = [
                     'concepto'        => $linea->concepto,
                     'cantidad'        => (float) $linea->cantidad,
@@ -66,6 +75,9 @@ class PresupuestoForm extends Component
                     'iva_cuota'       => (float) $linea->iva_cuota,
                     'total'           => (float) $linea->total,
                 ];
+                $this->lineaSearch[$idx] = $linea->servicio_id ? '' : $linea->concepto;
+                $this->lineaDropdownVisible[$idx] = false;
+                $this->lineaSearchResults[$idx] = [];
             }
 
             $this->recalcularTotales();
@@ -90,12 +102,98 @@ class PresupuestoForm extends Component
             'iva_cuota'       => 0,
             'total'           => 0,
         ];
+        $newIndex = count($this->lineas) - 1;
+        $this->lineaSearch[$newIndex] = '';
+        $this->lineaDropdownVisible[$newIndex] = false;
+        $this->lineaSearchResults[$newIndex] = [];
     }
 
     public function removeLinea(int $index): void
     {
         array_splice($this->lineas, $index, 1);
         $this->recalcularTotales();
+    }
+
+    public function searchServicioForLinea(int $index, string $query): void
+    {
+        $this->lineaSearch[$index] = $query;
+        if (strlen($query) >= 2) {
+            $empresaId = auth()->user()->company_id;
+            $results = \MultiempresaApp\Servicios\Models\Servicio::deEmpresa($empresaId)
+                ->activos()
+                ->where('nombre', 'like', "%{$query}%")
+                ->limit(8)
+                ->get()
+                ->toArray();
+            $this->lineaSearchResults[$index] = $results;
+            $this->lineaDropdownVisible[$index] = true;
+        } else {
+            $this->lineaSearchResults[$index] = [];
+            $this->lineaDropdownVisible[$index] = false;
+        }
+    }
+
+    public function selectServicioForLinea(int $index, int $servicioId, string $nombre, float $precio, ?float $ivaTipo): void
+    {
+        $this->lineas[$index]['concepto']        = $nombre;
+        $this->lineas[$index]['precio_unitario'] = $precio;
+        $this->lineas[$index]['iva_tipo']        = $ivaTipo ?? $this->ivaDefecto;
+        $this->lineas[$index]['servicio_id']     = $servicioId;
+        $this->lineaSearch[$index]           = '';
+        $this->lineaDropdownVisible[$index]  = false;
+        $this->lineaSearchResults[$index]    = [];
+        $this->recalcularTotales();
+    }
+
+    public function copySearchToConcepto(int $index): void
+    {
+        if (empty($this->lineas[$index]['servicio_id'])) {
+            $this->lineas[$index]['concepto'] = $this->lineaSearch[$index] ?? '';
+            $this->lineaDropdownVisible[$index] = false;
+        }
+    }
+
+    public function openServicioModal(int $index): void
+    {
+        $this->servicioModalLineaIndex = $index;
+        $this->showServicioModal = true;
+        $this->quickServicioNombre = $this->lineaSearch[$index] ?? '';
+        $this->quickServicioPrecio = '0';
+        $this->quickServicioIva = (string) $this->ivaDefecto;
+    }
+
+    public function closeServicioModal(): void
+    {
+        $this->showServicioModal = false;
+        $this->servicioModalLineaIndex = -1;
+        $this->quickServicioNombre = '';
+        $this->quickServicioPrecio = '0';
+        $this->quickServicioIva = '';
+    }
+
+    public function quickCreateServicio(): void
+    {
+        $this->validate([
+            'quickServicioNombre' => 'required|string|max:255',
+            'quickServicioPrecio' => 'required|numeric|min:0',
+            'quickServicioIva'    => 'nullable|numeric|in:0,4,10,21',
+        ]);
+
+        $servicio = \MultiempresaApp\Servicios\Models\Servicio::create([
+            'empresa_id' => auth()->user()->company_id,
+            'nombre'     => $this->quickServicioNombre,
+            'precio'     => (float) $this->quickServicioPrecio,
+            'iva_tipo'   => $this->quickServicioIva !== '' ? (float) $this->quickServicioIva : null,
+            'activo'     => true,
+            'created_by' => auth()->id(),
+        ]);
+
+        $index = $this->servicioModalLineaIndex;
+        $this->closeServicioModal();
+
+        if ($index >= 0) {
+            $this->selectServicioForLinea($index, $servicio->id, $servicio->nombre, (float) $servicio->precio, $servicio->iva_tipo !== null ? (float) $servicio->iva_tipo : null);
+        }
     }
 
     public function updatedLineas(): void

@@ -48,10 +48,13 @@
         <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
             @php
             $cards = [
-                ['label'=>'Trabajadores','value'=>$stats['total_workers'],'color'=>'blue','icon'=>'M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z'],
-                ['label'=>'Tareas totales','value'=>$stats['total_tasks'],'color'=>'indigo','icon'=>'M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2'],
-                ['label'=>'Pendientes','value'=>$stats['pending_tasks'],'color'=>'amber','icon'=>'M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z'],
-                ['label'=>'Completadas','value'=>$stats['completed_tasks'],'color'=>'emerald','icon'=>'M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z'],
+                ['label'=>'Trabajadores','value'=>$stats['total_workers'] ?? 0,'color'=>'blue','icon'=>'M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z'],
+                ['label'=>'Tareas totales','value'=>$stats['total_tasks'] ?? 0,'color'=>'indigo','icon'=>'M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2'],
+                ['label'=>'Pendientes','value'=>$stats['pending_tasks'] ?? 0,'color'=>'amber','icon'=>'M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z'],
+                ['label'=>'Completadas','value'=>$stats['completed_tasks'] ?? 0,'color'=>'emerald','icon'=>'M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z'],
+                ['label'=>'Presupuestos totales','value'=>$stats['total_presupuestos'] ?? 0,'color'=>'violet','icon'=>'M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z'],
+                ['label'=>'Presupuestos aceptados','value'=>$stats['presupuestos_aceptados'] ?? 0,'color'=>'emerald','icon'=>'M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z'],
+                ['label'=>'Presupuestos rechazados','value'=>$stats['presupuestos_rechazados'] ?? 0,'color'=>'red','icon'=>'M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z'],
             ];
             @endphp
             @foreach($cards as $card)
@@ -70,7 +73,7 @@
         </div>
 
         {{-- Tasks by status --}}
-        <div class="grid grid-cols-1 xl:grid-cols-2 gap-6">
+        <div class="grid grid-cols-1 xl:grid-cols-3 gap-6">
             <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
                 <h2 class="font-semibold text-gray-900 mb-4">Tareas por estado</h2>
                 @php
@@ -84,6 +87,29 @@
                     <div>
                         <div class="flex justify-between text-xs mb-1">
                             <span class="text-gray-600">{{ $statusLabels[$status] }}</span>
+                            <span class="font-medium text-gray-800">{{ $count }}</span>
+                        </div>
+                        <div class="w-full bg-gray-100 rounded-full h-2">
+                            <div class="bg-{{ $color }}-500 h-2 rounded-full transition-all" style="width: {{ $pct }}%"></div>
+                        </div>
+                    </div>
+                    @endforeach
+                </div>
+            </div>
+
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+                <h2 class="font-semibold text-gray-900 mb-4">Presupuestos por estado</h2>
+                @php
+                $presupuestoColors = ['borrador'=>'gray','enviado'=>'blue','visto'=>'purple','aceptado'=>'green','rechazado'=>'red'];
+                $presupuestoLabels = ['borrador'=>'Borrador','enviado'=>'Enviado','visto'=>'Visto','aceptado'=>'Aceptado','rechazado'=>'Rechazado'];
+                $totalPresupuestos = ($presupuestosByStatus ?? collect())->sum() ?: 1;
+                @endphp
+                <div class="space-y-3">
+                    @foreach($presupuestoColors as $estado => $color)
+                    @php $count = ($presupuestosByStatus[$estado] ?? 0); $pct = round(($count/$totalPresupuestos)*100); @endphp
+                    <div>
+                        <div class="flex justify-between text-xs mb-1">
+                            <span class="text-gray-600">{{ $presupuestoLabels[$estado] }}</span>
                             <span class="font-medium text-gray-800">{{ $count }}</span>
                         </div>
                         <div class="w-full bg-gray-100 rounded-full h-2">
