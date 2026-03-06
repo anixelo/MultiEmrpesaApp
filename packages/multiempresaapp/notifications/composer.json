@@ -11,7 +11,7 @@
     "extra": {
         "laravel": {
             "providers": [
-                "MultiempresaApp\\Notifications\\NotificationsServiceProvider"
+                "MultiempresaApp\\Notifications\\Providers\\NotificationsServiceProvider"
             ]
         }
     },
