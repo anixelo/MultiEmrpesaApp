@@ -23,15 +23,16 @@
         @endif
 
         <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-            <table class="min-w-full divide-y divide-gray-100">
+            {{-- Desktop table --}}
+            <table class="hidden md:table min-w-full divide-y divide-gray-100">
                 <thead class="bg-gray-50">
                     <tr>
                         <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Plan</th>
-                        <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider hidden sm:table-cell">Precio/mes</th>
-                        <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider hidden md:table-cell">Usuarios</th>
-                        <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider hidden md:table-cell">Incidencias</th>
-                        <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider hidden lg:table-cell">Suscripciones</th>
-                        <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider hidden sm:table-cell">Estado</th>
+                        <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Precio/mes</th>
+                        <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Usuarios</th>
+                        <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Presup./mes</th>
+                        <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Suscripciones</th>
+                        <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Estado</th>
                         <th class="px-6 py-3 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider">Acciones</th>
                     </tr>
                 </thead>
@@ -41,35 +42,24 @@
                         <td class="px-6 py-4">
                             <div class="font-medium text-gray-900">{{ $plan->name }}</div>
                             <div class="text-xs text-gray-400 mt-0.5 max-w-xs truncate">{{ $plan->description }}</div>
-                            {{-- Mobile card details --}}
-                            <div class="mt-1.5 flex flex-wrap gap-1.5 sm:hidden">
-                                <span class="inline-flex px-2 py-0.5 rounded-full text-xs font-medium {{ $plan->active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
-                                    {{ $plan->active ? 'Activo' : 'Inactivo' }}
-                                </span>
-                                <span class="text-xs font-semibold text-gray-700">
-                                    {{ $plan->isFree() ? 'Gratis' : '€'.number_format($plan->price_monthly,2).'/mes' }}
-                                </span>
-                                <span class="text-xs text-gray-500">{{ $plan->max_users }} usuarios</span>
-                                <span class="text-xs text-gray-500">{{ $plan->max_incidents }} incidencias</span>
-                            </div>
                         </td>
-                        <td class="px-6 py-4 hidden sm:table-cell">
+                        <td class="px-6 py-4">
                             <span class="text-sm font-semibold text-gray-900">
                                 {{ $plan->isFree() ? 'Gratis' : '€' . number_format($plan->price_monthly, 2) }}
                             </span>
                         </td>
-                        <td class="px-6 py-4 hidden md:table-cell">
+                        <td class="px-6 py-4">
                             <span class="text-sm text-gray-700">{{ $plan->max_users }}</span>
                         </td>
-                        <td class="px-6 py-4 hidden md:table-cell">
-                            <span class="text-sm text-gray-700">{{ $plan->max_incidents }}</span>
+                        <td class="px-6 py-4">
+                            <span class="text-sm text-gray-700">{{ $plan->max_presupuestos == 0 ? 'Ilimitado' : $plan->max_presupuestos }}</span>
                         </td>
-                        <td class="px-6 py-4 hidden lg:table-cell">
+                        <td class="px-6 py-4">
                             <span class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-indigo-50 text-indigo-700 text-sm font-semibold">
                                 {{ $plan->subscriptions_count }}
                             </span>
                         </td>
-                        <td class="px-6 py-4 hidden sm:table-cell">
+                        <td class="px-6 py-4">
                             <span class="inline-flex px-2.5 py-0.5 rounded-full text-xs font-medium {{ $plan->active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
                                 {{ $plan->active ? 'Activo' : 'Inactivo' }}
                             </span>
@@ -102,6 +92,43 @@
                     @endforelse
                 </tbody>
             </table>
+
+            {{-- Mobile cards (bocadillos) --}}
+            <div class="md:hidden divide-y divide-gray-100">
+                @forelse($plans as $plan)
+                <div class="p-4 space-y-2">
+                    <div>
+                        <p class="font-semibold text-gray-900">{{ $plan->name }}</p>
+                        @if($plan->description)
+                        <p class="text-xs text-gray-400 mt-0.5 truncate">{{ $plan->description }}</p>
+                        @endif
+                        <div class="flex flex-wrap gap-1.5 mt-1.5">
+                            <span class="inline-flex px-2 py-0.5 rounded-full text-xs font-medium {{ $plan->active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
+                                {{ $plan->active ? 'Activo' : 'Inactivo' }}
+                            </span>
+                            <span class="text-xs font-semibold text-gray-700">
+                                {{ $plan->isFree() ? 'Gratis' : '€'.number_format($plan->price_monthly,2).'/mes' }}
+                            </span>
+                            <span class="text-xs text-gray-500">{{ $plan->max_users }} usuarios</span>
+                            <span class="text-xs text-gray-500">{{ $plan->max_presupuestos == 0 ? '∞' : $plan->max_presupuestos }} presup./mes</span>
+                        </div>
+                    </div>
+                    <div class="pt-2 border-t border-gray-100 flex flex-wrap gap-2">
+                        <a href="{{ route('superadmin.plans.edit', $plan) }}"
+                           class="inline-flex items-center px-3 py-1.5 text-xs font-medium text-indigo-700 bg-indigo-50 rounded-lg hover:bg-indigo-100 transition">Editar</a>
+                        <form method="POST" action="{{ route('superadmin.plans.destroy', $plan) }}"
+                              onsubmit="return confirm('¿Eliminar plan {{ addslashes($plan->name) }}?')">
+                            @csrf @method('DELETE')
+                            <button type="submit" class="inline-flex items-center px-3 py-1.5 text-xs font-medium text-red-700 bg-red-50 rounded-lg hover:bg-red-100 transition">Eliminar</button>
+                        </form>
+                    </div>
+                </div>
+                @empty
+                <div class="px-6 py-12 text-center text-gray-400 text-sm">
+                    No hay planes creados. <a href="{{ route('superadmin.plans.create') }}" class="text-indigo-600 hover:underline">Crea el primero.</a>
+                </div>
+                @endforelse
+            </div>
 
             @if($plans->hasPages())
             <div class="px-6 py-4 border-t border-gray-100">

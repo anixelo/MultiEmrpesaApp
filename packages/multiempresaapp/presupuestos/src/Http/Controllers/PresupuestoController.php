@@ -56,6 +56,11 @@ class PresupuestoController extends Controller
         $empresaId = auth()->user()->company_id;
         $config    = PresupuestoConfiguracion::getOrCreateForEmpresa($empresaId);
 
+        $company = auth()->user()->company;
+        if ($company && !$company->canCreatePresupuesto()) {
+            return redirect()->back()->with('error', 'Has alcanzado el límite de presupuestos de tu plan para este mes.');
+        }
+
         $validated = $request->validate([
             'cliente_id'                  => 'required|exists:clientes,id',
             'fecha'                       => 'required|date',
@@ -241,6 +246,11 @@ class PresupuestoController extends Controller
 
         if ($original->empresa_id !== auth()->user()->company_id) {
             abort(403);
+        }
+
+        $company = auth()->user()->company;
+        if ($company && !$company->canCreatePresupuesto()) {
+            return redirect()->back()->with('error', 'Has alcanzado el límite de presupuestos de tu plan para este mes.');
         }
 
         $config = PresupuestoConfiguracion::getOrCreateForEmpresa(auth()->user()->company_id);

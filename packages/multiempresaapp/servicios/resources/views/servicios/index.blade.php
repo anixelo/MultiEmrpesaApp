@@ -48,7 +48,8 @@
             </div>
 
             <div class="overflow-x-auto bg-white shadow sm:rounded-lg">
-                <table class="min-w-full divide-y divide-gray-200">
+                {{-- Desktop table --}}
+                <table class="hidden md:table min-w-full divide-y divide-gray-200">
                     <thead class="bg-gray-50">
                         <tr>
                             <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">Nombre</th>
@@ -105,6 +106,39 @@
                         @endforelse
                     </tbody>
                 </table>
+
+                {{-- Mobile cards (bocadillos) --}}
+                <div class="md:hidden divide-y divide-gray-100">
+                    @forelse ($servicios as $servicio)
+                    <div class="p-4 space-y-2">
+                        <div>
+                            <p class="font-semibold text-gray-900">{{ $servicio->nombre }}</p>
+                            <div class="flex flex-wrap gap-2 mt-1">
+                                <span class="text-xs text-gray-600">{{ number_format($servicio->precio, 2, ',', '.') }} €</span>
+                                <span class="text-xs text-gray-500">IVA: {{ $servicio->iva_tipo_label }}</span>
+                                @if ($servicio->activo)
+                                <span class="inline-flex px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">Activo</span>
+                                @else
+                                <span class="inline-flex px-2 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-600">Inactivo</span>
+                                @endif
+                            </div>
+                        </div>
+                        <div class="pt-2 border-t border-gray-100 flex flex-wrap gap-2">
+                            <a href="{{ route('admin.servicios.show', $servicio) }}"
+                               class="inline-flex items-center px-3 py-1.5 text-xs font-medium text-indigo-700 bg-indigo-50 rounded-lg hover:bg-indigo-100 transition">Ver</a>
+                            <a href="{{ route('admin.servicios.edit', $servicio) }}"
+                               class="inline-flex items-center px-3 py-1.5 text-xs font-medium text-yellow-700 bg-yellow-50 rounded-lg hover:bg-yellow-100 transition">Editar</a>
+                            <form method="POST" action="{{ route('admin.servicios.destroy', $servicio) }}"
+                                  onsubmit="return confirm('¿Seguro que deseas eliminar este servicio?')">
+                                @csrf @method('DELETE')
+                                <button type="submit" class="inline-flex items-center px-3 py-1.5 text-xs font-medium text-red-700 bg-red-50 rounded-lg hover:bg-red-100 transition">Eliminar</button>
+                            </form>
+                        </div>
+                    </div>
+                    @empty
+                    <div class="px-6 py-10 text-center text-sm text-gray-500">No se encontraron servicios.</div>
+                    @endforelse
+                </div>
             </div>
 
             <div class="mt-4">

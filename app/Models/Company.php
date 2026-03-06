@@ -98,9 +98,20 @@ class Company extends Model
 
     public function canCreateIncident(): bool
     {
+        return true;
+    }
+
+    public function canCreatePresupuesto(): bool
+    {
         $plan = $this->subscription?->plan;
         if (!$plan) return true;
-        return $this->incidents()->whereIn('status', ['open', 'in_review', 'in_progress'])->count() < $plan->max_incidents;
+        $max = $plan->max_presupuestos ?? 0;
+        if ($max === 0) return true;
+        $count = $this->presupuestos()
+            ->whereMonth('created_at', now()->month)
+            ->whereYear('created_at', now()->year)
+            ->count();
+        return $count < $max;
     }
 
     public function canUseTasks(): bool

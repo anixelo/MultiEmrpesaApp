@@ -35,7 +35,11 @@
 
                 {{-- Cliente selector --}}
                 <div class="sm:col-span-2">
-                    <livewire:clientes.cliente-selector :key="'selector-' . ($presupuestoId ?? 'new')" />
+                    <livewire:clientes.cliente-selector
+                        :key="'selector-' . ($presupuestoId ?? 'new')"
+                        :cliente-id="$clienteId"
+                        :cliente-nombre="$clienteNombre"
+                    />
                     @if ($clienteNombre)
                         <p class="mt-1 text-xs text-gray-500">Cliente seleccionado: <strong>{{ $clienteNombre }}</strong></p>
                     @endif

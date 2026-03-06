@@ -25,15 +25,15 @@ class PlanController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'name'          => 'required|string|max:255',
-            'description'   => 'nullable|string',
-            'price_monthly' => 'required|numeric|min:0',
-            'price_yearly'  => 'required|numeric|min:0',
-            'max_users'     => 'required|integer|min:1',
-            'max_incidents' => 'required|integer|min:1',
-            'features'      => 'nullable|string',
-            'has_tasks'     => 'boolean',
-            'active'        => 'boolean',
+            'name'             => 'required|string|max:255',
+            'description'      => 'nullable|string',
+            'price_monthly'    => 'required|numeric|min:0',
+            'price_yearly'     => 'required|numeric|min:0',
+            'max_users'        => 'required|integer|min:1',
+            'max_presupuestos' => 'required|integer|min:0',
+            'features'         => 'nullable|string',
+            'has_tasks'        => 'boolean',
+            'active'           => 'boolean',
         ]);
 
         $validated['active'] = $request->boolean('active', true);
@@ -56,15 +56,15 @@ class PlanController extends Controller
     public function update(Request $request, Plan $plan)
     {
         $validated = $request->validate([
-            'name'          => 'required|string|max:255',
-            'description'   => 'nullable|string',
-            'price_monthly' => 'required|numeric|min:0',
-            'price_yearly'  => 'required|numeric|min:0',
-            'max_users'     => 'required|integer|min:1',
-            'max_incidents' => 'required|integer|min:1',
-            'features'      => 'nullable|string',
-            'has_tasks'     => 'boolean',
-            'active'        => 'boolean',
+            'name'             => 'required|string|max:255',
+            'description'      => 'nullable|string',
+            'price_monthly'    => 'required|numeric|min:0',
+            'price_yearly'     => 'required|numeric|min:0',
+            'max_users'        => 'required|integer|min:1',
+            'max_presupuestos' => 'required|integer|min:0',
+            'features'         => 'nullable|string',
+            'has_tasks'        => 'boolean',
+            'active'           => 'boolean',
         ]);
 
         $validated['active'] = $request->boolean('active');

@@ -3,10 +3,10 @@
 namespace Database\Seeders;
 
 use App\Models\Company;
-use App\Models\Plan;
-use App\Models\Subscription;
-use App\Models\Task;
 use App\Models\User;
+use MultiempresaApp\Plans\Models\Plan;
+use MultiempresaApp\Plans\Models\Subscription;
+use MultiempresaApp\Tasks\Models\Task;
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Role;
 
@@ -27,9 +27,9 @@ class DatabaseSeeder extends Seeder
                 'price_monthly' => 0,
                 'price_yearly' => 0,
                 'max_users' => 3,
-                'max_incidents' => 5,
+                'max_presupuestos' => 5,
                 'has_tasks' => false,
-                'features' => ['3 usuarios', '5 incidencias activas', 'Soporte por email'],
+                'features' => ['3 usuarios', '5 presupuestos al mes', 'Soporte por email'],
                 'active' => true,
             ]
         );
@@ -41,9 +41,9 @@ class DatabaseSeeder extends Seeder
                 'price_monthly' => 29.99,
                 'price_yearly' => 299.99,
                 'max_users' => 20,
-                'max_incidents' => 50,
+                'max_presupuestos' => 50,
                 'has_tasks' => true,
-                'features' => ['20 usuarios', '50 incidencias activas', 'Soporte prioritario', 'Informes avanzados', 'Gestión de tareas'],
+                'features' => ['20 usuarios', '50 presupuestos al mes', 'Soporte prioritario', 'Informes avanzados', 'Gestión de tareas'],
                 'active' => true,
             ]
         );
@@ -55,9 +55,9 @@ class DatabaseSeeder extends Seeder
                 'price_monthly' => 99.99,
                 'price_yearly' => 999.99,
                 'max_users' => 999,
-                'max_incidents' => 999,
+                'max_presupuestos' => 0,
                 'has_tasks' => true,
-                'features' => ['Usuarios ilimitados', 'Incidencias ilimitadas', 'Soporte 24/7', 'API access', 'SSO', 'Gestión de tareas'],
+                'features' => ['Usuarios ilimitados', 'Presupuestos ilimitados', 'Soporte 24/7', 'API access', 'SSO', 'Gestión de tareas'],
                 'active' => true,
             ]
         );

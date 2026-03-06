@@ -41,8 +41,8 @@
                             <div class="text-xs text-gray-500">Usuarios</div>
                         </div>
                         <div class="bg-gray-50 rounded-lg p-3 text-center">
-                            <div class="text-xl font-bold text-gray-900">{{ $subscription->plan->max_incidents }}</div>
-                            <div class="text-xs text-gray-500">Incidencias</div>
+                            <div class="text-xl font-bold text-gray-900">{{ $subscription->plan->max_presupuestos == 0 ? '∞' : $subscription->plan->max_presupuestos }}</div>
+                            <div class="text-xs text-gray-500">Presup./mes</div>
                         </div>
                         <div class="bg-gray-50 rounded-lg p-3 text-center">
                             <div class="text-xl font-bold text-gray-900">
