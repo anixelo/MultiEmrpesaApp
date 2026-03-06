@@ -19,6 +19,8 @@ use MultiempresaApp\Plans\Http\Controllers\SuperAdmin\PlanController as SuperAdm
 use MultiempresaApp\Plans\Http\Controllers\Admin\SubscriptionController as AdminSubscriptionController;
 use MultiempresaApp\Clientes\Http\Controllers\ClienteController;
 use MultiempresaApp\Servicios\Http\Controllers\ServicioController;
+use MultiempresaApp\Presupuestos\Http\Controllers\PresupuestoController;
+use MultiempresaApp\Presupuestos\Http\Controllers\PresupuestoConfiguracionController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -34,6 +36,11 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/two-factor/challenge',  [TwoFactorController::class, 'challenge'])->name('two-factor.challenge');
     Route::post('/two-factor/verify',    [TwoFactorController::class, 'verify'])->name('two-factor.verify');
 });
+
+// Public presupuesto routes (no auth required)
+Route::get('/presupuestos/p/{token}', [PresupuestoController::class, 'public'])->name('presupuestos.public');
+Route::post('/presupuestos/p/{token}/aceptar', [PresupuestoController::class, 'aceptar'])->name('presupuestos.aceptar');
+Route::post('/presupuestos/p/{token}/rechazar', [PresupuestoController::class, 'rechazar'])->name('presupuestos.rechazar');
 
 // Authenticated & 2FA verified routes
 Route::middleware(['auth', 'two_factor'])->group(function () {
@@ -98,6 +105,14 @@ Route::middleware(['auth', 'two_factor'])->group(function () {
 
         // Servicios
         Route::resource('admin/servicios', ServicioController::class)->names('admin.servicios');
+
+        // Presupuestos
+        Route::resource('admin/presupuestos', PresupuestoController::class)->names('admin.presupuestos')->except(['show']);
+        Route::get('admin/presupuestos/{id}', [PresupuestoController::class, 'show'])->name('admin.presupuestos.show');
+        Route::post('admin/presupuestos/{id}/enviar', [PresupuestoController::class, 'enviar'])->name('admin.presupuestos.enviar');
+        Route::post('admin/presupuestos/{id}/duplicar', [PresupuestoController::class, 'duplicar'])->name('admin.presupuestos.duplicar');
+        Route::get('admin/presupuestos-configuracion', [PresupuestoConfiguracionController::class, 'index'])->name('admin.presupuestos.configuracion');
+        Route::post('admin/presupuestos-configuracion', [PresupuestoConfiguracionController::class, 'update'])->name('admin.presupuestos.configuracion.update');
     });
 
     // Superadmin routes
