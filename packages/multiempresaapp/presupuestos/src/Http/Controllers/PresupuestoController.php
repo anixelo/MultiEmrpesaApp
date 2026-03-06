@@ -4,7 +4,9 @@ namespace MultiempresaApp\Presupuestos\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
+use Barryvdh\DomPDF\Facade\Pdf;
 use MultiempresaApp\Presupuestos\Models\Presupuesto;
 use MultiempresaApp\Presupuestos\Models\PresupuestoConfiguracion;
 use MultiempresaApp\Presupuestos\Models\PresupuestoLinea;
@@ -105,7 +107,7 @@ class PresupuestoController extends Controller
 
         $this->calculator->calcularTotales($presupuesto);
 
-        return redirect()->route('admin.presupuestos.index')
+        return redirect()->route('admin.presupuestos.show', $presupuesto->id)
             ->with('success', 'Presupuesto creado correctamente.');
     }
 
@@ -128,6 +130,10 @@ class PresupuestoController extends Controller
             abort(403);
         }
 
+        if (auth()->user()->hasRole('trabajador') && $presupuesto->created_by !== auth()->id()) {
+            abort(403);
+        }
+
         $config = PresupuestoConfiguracion::getOrCreateForEmpresa(auth()->user()->company_id);
 
         return view('presupuestos::presupuestos.edit', compact('presupuesto', 'config'));
@@ -138,6 +144,10 @@ class PresupuestoController extends Controller
         $presupuesto = Presupuesto::findOrFail($id);
 
         if ($presupuesto->empresa_id !== auth()->user()->company_id) {
+            abort(403);
+        }
+
+        if (auth()->user()->hasRole('trabajador') && $presupuesto->created_by !== auth()->id()) {
             abort(403);
         }
 
@@ -199,6 +209,10 @@ class PresupuestoController extends Controller
         $presupuesto = Presupuesto::findOrFail($id);
 
         if ($presupuesto->empresa_id !== auth()->user()->company_id) {
+            abort(403);
+        }
+
+        if (auth()->user()->hasRole('trabajador') && $presupuesto->created_by !== auth()->id()) {
             abort(403);
         }
 
@@ -285,5 +299,45 @@ class PresupuestoController extends Controller
 
         return redirect()->route('presupuestos.public', $token)
             ->with('info', 'Has rechazado el presupuesto.');
+    }
+
+    public function downloadPdf($id)
+    {
+        $presupuesto = Presupuesto::with(['cliente', 'lineas.servicio', 'empresa'])->findOrFail($id);
+
+        if ($presupuesto->empresa_id !== auth()->user()->company_id) {
+            abort(403);
+        }
+
+        $pdf = Pdf::loadView('presupuestos::presupuestos.pdf', compact('presupuesto'));
+
+        return $pdf->download('presupuesto-' . $presupuesto->numero . '.pdf');
+    }
+
+    public function sendEmail(Request $request, $id)
+    {
+        $presupuesto = Presupuesto::with(['cliente', 'lineas', 'empresa'])->findOrFail($id);
+
+        if ($presupuesto->empresa_id !== auth()->user()->company_id) {
+            abort(403);
+        }
+
+        if (!$presupuesto->cliente?->email) {
+            return redirect()->back()->with('error', 'El cliente no tiene email registrado.');
+        }
+
+        $publicUrl    = route('presupuestos.public', $presupuesto->token_publico);
+        $clienteNombre = $presupuesto->cliente->nombre;
+        $empresaNombre = $presupuesto->empresa?->name ?? config('app.name');
+
+        Mail::raw(
+            "Hola {$clienteNombre},\n\nTe enviamos el presupuesto {$presupuesto->numero}.\n\nPuedes verlo aquí:\n{$publicUrl}\n\nGracias,\n{$empresaNombre}",
+            function ($message) use ($presupuesto, $empresaNombre) {
+                $message->to($presupuesto->cliente->email)
+                        ->subject("Presupuesto {$presupuesto->numero} - {$empresaNombre}");
+            }
+        );
+
+        return redirect()->back()->with('success', 'Email enviado a ' . $presupuesto->cliente->email);
     }
 }

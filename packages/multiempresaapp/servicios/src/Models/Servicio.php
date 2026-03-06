@@ -12,7 +12,7 @@ class Servicio extends Model
 
     protected $table = 'servicios';
 
-    protected $fillable = ['empresa_id', 'nombre', 'descripcion', 'precio', 'iva_tipo', 'activo', 'orden'];
+    protected $fillable = ['empresa_id', 'created_by', 'nombre', 'descripcion', 'precio', 'iva_tipo', 'activo', 'orden'];
 
     protected $dates = ['deleted_at'];
 

@@ -12,7 +12,7 @@ class Cliente extends Model
 
     protected $table = 'clientes';
 
-    protected $fillable = ['empresa_id', 'nombre', 'email', 'telefono', 'notas'];
+    protected $fillable = ['empresa_id', 'created_by', 'nombre', 'email', 'telefono', 'notas'];
 
     protected $dates = ['deleted_at'];
 

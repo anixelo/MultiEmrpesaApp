@@ -44,6 +44,7 @@ class ClienteController extends Controller
 
         Cliente::create(array_merge($request->only('nombre', 'email', 'telefono', 'notas'), [
             'empresa_id' => auth()->user()->company_id,
+            'created_by' => auth()->id(),
         ]));
 
         return redirect()->route('admin.clientes.index')
@@ -101,6 +102,11 @@ class ClienteController extends Controller
             abort(403);
         }
 
+        if (auth()->user()->hasRole('trabajador') && $cliente->created_by !== auth()->id()) {
+            return redirect()->route('admin.clientes.index')
+                ->with('error', 'No puedes eliminar clientes que no hayas creado tú.');
+        }
+
         $cliente->delete();
 
         return redirect()->route('admin.clientes.index')
@@ -120,6 +126,7 @@ class ClienteController extends Controller
             'nombre'     => $request->nombre,
             'email'      => $request->email,
             'telefono'   => $request->telefono,
+            'created_by' => auth()->id(),
         ]);
 
         return response()->json([

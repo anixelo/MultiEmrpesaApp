@@ -79,6 +79,24 @@ Route::middleware(['auth', 'two_factor'])->group(function () {
         Route::get('/worker/incidents', [WorkerIncidentController::class, 'index'])->name('worker.incidents.index');
         Route::get('/worker/incidents/create', [WorkerIncidentController::class, 'create'])->name('worker.incidents.create');
         Route::post('/worker/incidents', [WorkerIncidentController::class, 'store'])->name('worker.incidents.store');
+
+        // Clientes, Servicios, Presupuestos - accessible by workers and admins
+        // Clientes
+        Route::resource('admin/clientes', ClienteController::class)->names('admin.clientes');
+        Route::post('admin/clientes/quick-store', [ClienteController::class, 'quickStore'])->name('admin.clientes.quick-store');
+
+        // Servicios
+        Route::resource('admin/servicios', ServicioController::class)->names('admin.servicios');
+
+        // Presupuestos
+        Route::resource('admin/presupuestos', PresupuestoController::class)->names('admin.presupuestos')->except(['show']);
+        Route::get('admin/presupuestos/{id}', [PresupuestoController::class, 'show'])->name('admin.presupuestos.show');
+        Route::post('admin/presupuestos/{id}/enviar', [PresupuestoController::class, 'enviar'])->name('admin.presupuestos.enviar');
+        Route::post('admin/presupuestos/{id}/duplicar', [PresupuestoController::class, 'duplicar'])->name('admin.presupuestos.duplicar');
+        Route::get('admin/presupuestos/{id}/pdf', [PresupuestoController::class, 'downloadPdf'])->name('admin.presupuestos.pdf');
+        Route::post('admin/presupuestos/{id}/send-email', [PresupuestoController::class, 'sendEmail'])->name('admin.presupuestos.send-email');
+        Route::get('admin/presupuestos-configuracion', [PresupuestoConfiguracionController::class, 'index'])->name('admin.presupuestos.configuracion');
+        Route::post('admin/presupuestos-configuracion', [PresupuestoConfiguracionController::class, 'update'])->name('admin.presupuestos.configuracion.update');
     });
 
     // Admin routes
@@ -98,21 +116,6 @@ Route::middleware(['auth', 'two_factor'])->group(function () {
 
         // Admin users
         Route::resource('admin/users', AdminUserController::class)->names('admin.users')->except(['show']);
-
-        // Clientes
-        Route::resource('admin/clientes', ClienteController::class)->names('admin.clientes');
-        Route::post('admin/clientes/quick-store', [ClienteController::class, 'quickStore'])->name('admin.clientes.quick-store');
-
-        // Servicios
-        Route::resource('admin/servicios', ServicioController::class)->names('admin.servicios');
-
-        // Presupuestos
-        Route::resource('admin/presupuestos', PresupuestoController::class)->names('admin.presupuestos')->except(['show']);
-        Route::get('admin/presupuestos/{id}', [PresupuestoController::class, 'show'])->name('admin.presupuestos.show');
-        Route::post('admin/presupuestos/{id}/enviar', [PresupuestoController::class, 'enviar'])->name('admin.presupuestos.enviar');
-        Route::post('admin/presupuestos/{id}/duplicar', [PresupuestoController::class, 'duplicar'])->name('admin.presupuestos.duplicar');
-        Route::get('admin/presupuestos-configuracion', [PresupuestoConfiguracionController::class, 'index'])->name('admin.presupuestos.configuracion');
-        Route::post('admin/presupuestos-configuracion', [PresupuestoConfiguracionController::class, 'update'])->name('admin.presupuestos.configuracion.update');
     });
 
     // Superadmin routes

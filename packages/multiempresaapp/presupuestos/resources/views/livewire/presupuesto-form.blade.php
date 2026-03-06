@@ -72,11 +72,15 @@
                 {{-- Forma de pago --}}
                 <div>
                     <label class="block text-sm font-medium text-gray-700">Forma de pago</label>
-                    <input type="text"
-                           wire:model="formaPago"
-                           name="forma_pago"
-                           value="{{ $formaPago }}"
-                           class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                    <select wire:model="formaPago"
+                            name="forma_pago"
+                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                        <option value="">— Seleccionar —</option>
+                        <option value="Transferencia bancaria">Transferencia bancaria</option>
+                        <option value="Bizum">Bizum</option>
+                        <option value="Tarjeta de crédito o débito">Tarjeta de crédito o débito</option>
+                        <option value="PayPal">PayPal</option>
+                    </select>
                 </div>
 
                 {{-- Observaciones para el cliente --}}
@@ -134,15 +138,54 @@
                     <tbody class="divide-y divide-gray-100 bg-white">
                         @foreach ($lineas as $i => $linea)
                             <tr wire:key="linea-{{ $i }}">
-                                {{-- Concepto --}}
-                                <td class="px-4 py-2">
-                                    <input type="text"
-                                           wire:model.live="lineas.{{ $i }}.concepto"
-                                           placeholder="Concepto o descripción..."
-                                           class="block w-full rounded border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm @error('lineas.'.$i.'.concepto') border-red-300 @enderror">
-                                    @error('lineas.'.$i.'.concepto')
-                                        <p class="text-xs text-red-600 mt-0.5">{{ $message }}</p>
-                                    @enderror
+                                {{-- Concepto con búsqueda de servicios --}}
+                                <td class="px-4 py-2" x-data="{ open{{ $i }}: @entangle('lineaDropdownVisible.'.$i) }">
+                                    <div class="relative">
+                                        @if(!empty($linea['concepto']) && !empty($linea['servicio_id']))
+                                            <div class="flex items-center gap-1 rounded border border-gray-300 bg-gray-50 px-2 py-1.5 text-sm">
+                                                <span class="flex-1 truncate">{{ $linea['concepto'] }}</span>
+                                                <button type="button"
+                                                        wire:click="$set('lineas.{{ $i }}.servicio_id', null); $set('lineas.{{ $i }}.concepto', '')"
+                                                        class="text-gray-400 hover:text-gray-600 text-xs leading-none">&times;</button>
+                                            </div>
+                                        @else
+                                            <input type="text"
+                                                   wire:model.live="lineaSearch.{{ $i }}"
+                                                   wire:keyup="searchServicioForLinea({{ $i }}, $event.target.value)"
+                                                   wire:blur="copySearchToConcepto({{ $i }})"
+                                                   placeholder="Buscar servicio o escribir..."
+                                                   autocomplete="off"
+                                                   class="block w-full rounded border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm @error('lineas.'.$i.'.concepto') border-red-300 @enderror">
+                                            @error('lineas.'.$i.'.concepto')
+                                                <p class="text-xs text-red-600 mt-0.5">{{ $message }}</p>
+                                            @enderror
+                                            @if(!empty($lineaDropdownVisible[$i]))
+                                                <div class="absolute z-20 mt-1 w-full rounded-md border border-gray-200 bg-white shadow-lg min-w-48">
+                                                    @if(!empty($lineaSearchResults[$i]))
+                                                        <ul class="max-h-48 overflow-auto py-1">
+                                                            @foreach($lineaSearchResults[$i] as $srv)
+                                                                <li>
+                                                                    <button type="button"
+                                                                            wire:click="selectServicioForLinea({{ $i }}, {{ $srv['id'] }}, {{ json_encode($srv['nombre']) }}, {{ $srv['precio'] }}, {{ $srv['iva_tipo'] ?? 'null' }})"
+                                                                            class="w-full px-3 py-2 text-left text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-700">
+                                                                        <span class="font-medium">{{ $srv['nombre'] }}</span>
+                                                                        <span class="ml-2 text-xs text-gray-400">{{ number_format($srv['precio'], 2, ',', '.') }} €</span>
+                                                                    </button>
+                                                                </li>
+                                                            @endforeach
+                                                        </ul>
+                                                    @endif
+                                                    <div class="border-t border-gray-100">
+                                                        <button type="button"
+                                                                wire:click="openServicioModal({{ $i }})"
+                                                                class="w-full px-3 py-2 text-left text-sm text-indigo-600 hover:bg-indigo-50">
+                                                            + Crear nuevo servicio
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            @endif
+                                        @endif
+                                    </div>
                                 </td>
                                 {{-- Cantidad --}}
                                 <td class="px-4 py-2">
@@ -256,4 +299,41 @@
 
     </div>
     </form>
+
+    {{-- Modal crear servicio rápido --}}
+    @if ($showServicioModal)
+        <div class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+            <div class="w-full max-w-md rounded-lg bg-white p-6 shadow-xl">
+                <h3 class="mb-4 text-lg font-medium text-gray-900">Nuevo Servicio</h3>
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700">Nombre <span class="text-red-500">*</span></label>
+                    <input type="text" wire:model="quickServicioNombre"
+                           class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm @error('quickServicioNombre') border-red-300 @enderror">
+                    @error('quickServicioNombre') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
+                </div>
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700">Precio <span class="text-red-500">*</span></label>
+                    <input type="number" step="0.01" min="0" wire:model="quickServicioPrecio"
+                           class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm @error('quickServicioPrecio') border-red-300 @enderror">
+                    @error('quickServicioPrecio') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
+                </div>
+                <div class="mb-6">
+                    <label class="block text-sm font-medium text-gray-700">IVA %</label>
+                    <select wire:model="quickServicioIva" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                        <option value="">Sin IVA específico</option>
+                        <option value="0">0%</option>
+                        <option value="4">4%</option>
+                        <option value="10">10%</option>
+                        <option value="21">21%</option>
+                    </select>
+                </div>
+                <div class="flex justify-end gap-3">
+                    <button type="button" wire:click="closeServicioModal"
+                            class="inline-flex items-center rounded-md bg-gray-100 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-200">Cancelar</button>
+                    <button type="button" wire:click="quickCreateServicio"
+                            class="inline-flex items-center rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700">Crear</button>
+                </div>
+            </div>
+        </div>
+    @endif
 </div>

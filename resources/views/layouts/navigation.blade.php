@@ -27,6 +27,21 @@
                                   {{ request()->routeIs('worker.incidents.*') ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50' }}">
                             Incidencias
                         </a>
+                        <a href="{{ route('admin.clientes.index') }}"
+                           class="px-3 py-2 rounded-lg text-sm font-medium transition
+                                  {{ request()->routeIs('admin.clientes.*') ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50' }}">
+                            Clientes
+                        </a>
+                        <a href="{{ route('admin.servicios.index') }}"
+                           class="px-3 py-2 rounded-lg text-sm font-medium transition
+                                  {{ request()->routeIs('admin.servicios.*') ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50' }}">
+                            Servicios
+                        </a>
+                        <a href="{{ route('admin.presupuestos.index') }}"
+                           class="px-3 py-2 rounded-lg text-sm font-medium transition
+                                  {{ request()->routeIs('admin.presupuestos.*') ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50' }}">
+                            Presupuestos
+                        </a>
                         @endif
 
                         {{-- Admin --}}
@@ -195,6 +210,9 @@
             @if(auth()->user()->isWorker())
             <a href="{{ route('worker.dashboard') }}" class="block px-3 py-2 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50">Mis Tareas</a>
             <a href="{{ route('worker.incidents.index') }}" class="block px-3 py-2 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50">Incidencias</a>
+            <a href="{{ route('admin.clientes.index') }}" class="block px-3 py-2 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50">Clientes</a>
+            <a href="{{ route('admin.servicios.index') }}" class="block px-3 py-2 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50">Servicios</a>
+            <a href="{{ route('admin.presupuestos.index') }}" class="block px-3 py-2 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50">Presupuestos</a>
             @endif
 
             @if(auth()->user()->isAdmin())
