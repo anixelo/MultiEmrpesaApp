@@ -48,7 +48,8 @@
             </div>
 
             <div class="overflow-x-auto bg-white shadow sm:rounded-lg">
-                <table class="min-w-full divide-y divide-gray-200">
+                {{-- Desktop table --}}
+                <table class="hidden md:table min-w-full divide-y divide-gray-200">
                     <thead class="bg-gray-50">
                         <tr>
                             <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">Nombre</th>
@@ -93,6 +94,36 @@
                         @endforelse
                     </tbody>
                 </table>
+
+                {{-- Mobile cards (bocadillos) --}}
+                <div class="md:hidden divide-y divide-gray-100">
+                    @forelse ($clientes as $cliente)
+                    <div class="p-4 space-y-2">
+                        <div>
+                            <p class="font-semibold text-gray-900">{{ $cliente->nombre }}</p>
+                            @if($cliente->email)
+                            <p class="text-xs text-gray-500 mt-0.5">{{ $cliente->email }}</p>
+                            @endif
+                            @if($cliente->telefono)
+                            <p class="text-xs text-gray-500">{{ $cliente->telefono }}</p>
+                            @endif
+                        </div>
+                        <div class="pt-2 border-t border-gray-100 flex flex-wrap gap-2">
+                            <a href="{{ route('admin.clientes.show', $cliente) }}"
+                               class="inline-flex items-center px-3 py-1.5 text-xs font-medium text-indigo-700 bg-indigo-50 rounded-lg hover:bg-indigo-100 transition">Ver</a>
+                            <a href="{{ route('admin.clientes.edit', $cliente) }}"
+                               class="inline-flex items-center px-3 py-1.5 text-xs font-medium text-yellow-700 bg-yellow-50 rounded-lg hover:bg-yellow-100 transition">Editar</a>
+                            <form method="POST" action="{{ route('admin.clientes.destroy', $cliente) }}"
+                                  onsubmit="return confirm('¿Seguro que deseas eliminar este cliente?')">
+                                @csrf @method('DELETE')
+                                <button type="submit" class="inline-flex items-center px-3 py-1.5 text-xs font-medium text-red-700 bg-red-50 rounded-lg hover:bg-red-100 transition">Eliminar</button>
+                            </form>
+                        </div>
+                    </div>
+                    @empty
+                    <div class="px-6 py-10 text-center text-sm text-gray-500">No se encontraron clientes.</div>
+                    @endforelse
+                </div>
             </div>
 
             <div class="mt-4">

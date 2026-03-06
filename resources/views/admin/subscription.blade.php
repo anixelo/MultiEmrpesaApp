@@ -41,8 +41,8 @@
                             <div class="text-xs text-gray-500">Usuarios</div>
                         </div>
                         <div class="bg-gray-50 rounded-lg p-3 text-center">
-                            <div class="text-xl font-bold text-gray-900">{{ $subscription->plan->max_incidents }}</div>
-                            <div class="text-xs text-gray-500">Incidencias</div>
+                            <div class="text-xl font-bold text-gray-900">{{ $subscription->plan->max_presupuestos == 0 ? '∞' : $subscription->plan->max_presupuestos }}</div>
+                            <div class="text-xs text-gray-500">Presup./mes</div>
                         </div>
                         <div class="bg-gray-50 rounded-lg p-3 text-center">
                             <div class="text-xl font-bold text-gray-900">
@@ -98,7 +98,7 @@
                         {{ $plan->isFree() ? 'Gratis' : '€' . number_format($plan->price_monthly, 2) }}
                         @if(!$plan->isFree())<span class="text-sm font-normal text-gray-400">/mes</span>@endif
                     </p>
-                    <p class="text-xs text-gray-500 mb-3">{{ $plan->max_users }} usuarios · {{ $plan->max_incidents }} incidencias</p>
+                    <p class="text-xs text-gray-500 mb-3">{{ $plan->max_users }} usuarios · {{ ($plan->max_presupuestos ?? 0) == 0 ? '∞' : $plan->max_presupuestos }} presup./mes</p>
                     @if($plan->isFree() && $subscription?->plan_id !== $plan->id)
                     <form method="POST" action="{{ route('admin.subscription.change-plan') }}">
                         @csrf

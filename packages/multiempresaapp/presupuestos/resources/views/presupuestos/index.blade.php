@@ -57,7 +57,8 @@
             </div>
 
             <div class="overflow-x-auto bg-white shadow sm:rounded-lg">
-                <table class="min-w-full divide-y divide-gray-200">
+                {{-- Desktop table --}}
+                <table class="hidden md:table min-w-full divide-y divide-gray-200">
                     <thead class="bg-gray-50">
                         <tr>
                             <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">Número</th>
@@ -126,6 +127,53 @@
                         @endforelse
                     </tbody>
                 </table>
+
+                {{-- Mobile cards (bocadillos) --}}
+                <div class="md:hidden divide-y divide-gray-100">
+                    @forelse ($presupuestos as $presupuesto)
+                    @php
+                        $colorMap = [
+                            'gray'   => 'bg-gray-100 text-gray-700',
+                            'blue'   => 'bg-blue-100 text-blue-700',
+                            'purple' => 'bg-purple-100 text-purple-700',
+                            'green'  => 'bg-green-100 text-green-700',
+                            'red'    => 'bg-red-100 text-red-700',
+                        ];
+                        $badgeClass = $colorMap[$presupuesto->estado_color] ?? 'bg-gray-100 text-gray-700';
+                    @endphp
+                    <div class="p-4 space-y-2">
+                        <div class="flex items-start justify-between gap-2">
+                            <div>
+                                <p class="font-semibold text-gray-900">{{ $presupuesto->numero }}</p>
+                                <p class="text-xs text-gray-600 mt-0.5">{{ $presupuesto->cliente?->nombre ?? '—' }}</p>
+                            </div>
+                            <span class="inline-flex rounded-full px-2 py-1 text-xs font-semibold {{ $badgeClass }} shrink-0">
+                                {{ $presupuesto->estado_label }}
+                            </span>
+                        </div>
+                        <div class="flex flex-wrap gap-2 text-xs text-gray-500">
+                            <span>{{ $presupuesto->fecha->format('d/m/Y') }}</span>
+                            @if($presupuesto->validez_hasta)
+                            <span>Válido: {{ $presupuesto->validez_hasta->format('d/m/Y') }}</span>
+                            @endif
+                            <span class="font-semibold text-gray-900">{{ number_format($presupuesto->total, 2, ',', '.') }} €</span>
+                        </div>
+                        <div class="pt-2 border-t border-gray-100 flex flex-wrap gap-2">
+                            <a href="{{ route('admin.presupuestos.show', $presupuesto->id) }}"
+                               class="inline-flex items-center px-3 py-1.5 text-xs font-medium text-indigo-700 bg-indigo-50 rounded-lg hover:bg-indigo-100 transition">Ver</a>
+                            <a href="{{ route('admin.presupuestos.edit', $presupuesto->id) }}"
+                               class="inline-flex items-center px-3 py-1.5 text-xs font-medium text-yellow-700 bg-yellow-50 rounded-lg hover:bg-yellow-100 transition">Editar</a>
+                            <form method="POST" action="{{ route('admin.presupuestos.destroy', $presupuesto->id) }}"
+                                  onsubmit="return confirm('¿Seguro que deseas eliminar este presupuesto?')">
+                                @csrf @method('DELETE')
+                                <button type="submit" class="inline-flex items-center px-3 py-1.5 text-xs font-medium text-red-700 bg-red-50 rounded-lg hover:bg-red-100 transition">Eliminar</button>
+                            </form>
+                        </div>
+                    </div>
+                    @empty
+                    <div class="px-6 py-10 text-center text-sm text-gray-500">No se encontraron presupuestos.</div>
+                    @endforelse
+                </div>
             </div>
 
             <div class="mt-4">

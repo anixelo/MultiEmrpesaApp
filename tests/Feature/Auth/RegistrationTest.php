@@ -18,7 +18,7 @@ class RegistrationTest extends TestCase
         Role::firstOrCreate(['name' => 'administrador', 'guard_name' => 'web']);
         Plan::firstOrCreate(
             ['name' => 'Gratuito'],
-            ['price_monthly' => 0, 'price_yearly' => 0, 'max_users' => 3, 'max_incidents' => 5, 'has_tasks' => false, 'active' => true]
+            ['price_monthly' => 0, 'price_yearly' => 0, 'max_users' => 3, 'max_presupuestos' => 5, 'has_tasks' => false, 'active' => true]
         );
     }
 

@@ -42,13 +42,14 @@
 
         {{-- Table --}}
         <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-            <table class="min-w-full divide-y divide-gray-100">
+            {{-- Desktop table --}}
+            <table class="hidden md:table min-w-full divide-y divide-gray-100">
                 <thead class="bg-gray-50">
                     <tr>
                         <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Usuario</th>
-                        <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider hidden sm:table-cell">Rol</th>
-                        <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider hidden md:table-cell">Empresa</th>
-                        <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider hidden lg:table-cell">2FA</th>
+                        <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Rol</th>
+                        <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Empresa</th>
+                        <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">2FA</th>
                         <th class="px-6 py-3 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider">Acciones</th>
                     </tr>
                 </thead>
@@ -67,30 +68,10 @@
                                 <div>
                                     <p class="text-sm font-medium text-gray-900">{{ $user->name }}</p>
                                     <p class="text-xs text-gray-400">{{ $user->email }}</p>
-                                    {{-- Mobile card details --}}
-                                    <div class="mt-1.5 flex flex-wrap gap-1.5 sm:hidden">
-                                        @if($user->roles->first())
-                                        <span class="inline-flex px-2 py-0.5 rounded-full text-xs font-medium
-                                            @if($user->roles->first()->name === 'superadministrador') bg-purple-100 text-purple-800
-                                            @elseif($user->roles->first()->name === 'administrador') bg-blue-100 text-blue-800
-                                            @else bg-green-100 text-green-800 @endif">
-                                            {{ $user->roles->first()->name }}
-                                        </span>
-                                        @endif
-                                        @if($user->company)
-                                        <span class="inline-flex items-center gap-1 text-xs text-gray-500">
-                                            <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
-                                            {{ $user->company->name }}
-                                        </span>
-                                        @endif
-                                        <span class="inline-flex px-2 py-0.5 rounded-full text-xs font-medium {{ $user->two_factor_enabled ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500' }}">
-                                            2FA: {{ $user->two_factor_enabled ? 'Activo' : 'Inactivo' }}
-                                        </span>
-                                    </div>
                                 </div>
                             </div>
                         </td>
-                        <td class="px-6 py-4 hidden sm:table-cell">
+                        <td class="px-6 py-4">
                             @if($user->roles->first())
                             <span class="inline-flex px-2.5 py-0.5 rounded-full text-xs font-medium
                                 @if($user->roles->first()->name === 'superadministrador') bg-purple-100 text-purple-800
@@ -102,10 +83,10 @@
                             <span class="text-xs text-gray-400">Sin rol</span>
                             @endif
                         </td>
-                        <td class="px-6 py-4 hidden md:table-cell text-sm text-gray-600">
+                        <td class="px-6 py-4 text-sm text-gray-600">
                             {{ $user->company?->name ?? '—' }}
                         </td>
-                        <td class="px-6 py-4 hidden lg:table-cell">
+                        <td class="px-6 py-4">
                             <span class="inline-flex px-2 py-0.5 rounded-full text-xs font-medium {{ $user->two_factor_enabled ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500' }}">
                                 {{ $user->two_factor_enabled ? 'Activo' : 'Inactivo' }}
                             </span>
@@ -149,6 +130,62 @@
                     @endforelse
                 </tbody>
             </table>
+
+            {{-- Mobile cards (bocadillos) --}}
+            <div class="md:hidden divide-y divide-gray-100">
+                @forelse($users as $user)
+                <div class="p-4 space-y-2">
+                    <div class="flex items-center gap-3">
+                        @if($user->avatar)
+                        <img src="{{ $user->avatar }}" class="w-9 h-9 rounded-full object-cover shrink-0" alt="">
+                        @else
+                        <div class="w-9 h-9 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-700 text-sm font-bold shrink-0">
+                            {{ strtoupper(substr($user->name, 0, 1)) }}
+                        </div>
+                        @endif
+                        <div>
+                            <p class="font-semibold text-gray-900">{{ $user->name }}</p>
+                            <p class="text-xs text-gray-400">{{ $user->email }}</p>
+                        </div>
+                    </div>
+                    <div class="flex flex-wrap gap-1.5">
+                        @if($user->roles->first())
+                        <span class="inline-flex px-2 py-0.5 rounded-full text-xs font-medium
+                            @if($user->roles->first()->name === 'superadministrador') bg-purple-100 text-purple-800
+                            @elseif($user->roles->first()->name === 'administrador') bg-blue-100 text-blue-800
+                            @else bg-green-100 text-green-800 @endif">
+                            {{ $user->roles->first()->name }}
+                        </span>
+                        @endif
+                        @if($user->company)
+                        <span class="text-xs text-gray-500">{{ $user->company->name }}</span>
+                        @endif
+                        <span class="inline-flex px-2 py-0.5 rounded-full text-xs font-medium {{ $user->two_factor_enabled ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500' }}">
+                            2FA: {{ $user->two_factor_enabled ? 'Activo' : 'Inactivo' }}
+                        </span>
+                    </div>
+                    <div class="pt-2 border-t border-gray-100 flex flex-wrap gap-2">
+                        @if($user->id !== auth()->id())
+                        <form method="POST" action="{{ route('superadmin.users.impersonate', $user) }}">
+                            @csrf
+                            <button type="submit" class="inline-flex items-center px-3 py-1.5 text-xs font-medium text-amber-700 bg-amber-50 rounded-lg hover:bg-amber-100 transition">Suplantar</button>
+                        </form>
+                        @endif
+                        <a href="{{ route('superadmin.users.edit', $user) }}"
+                           class="inline-flex items-center px-3 py-1.5 text-xs font-medium text-indigo-700 bg-indigo-50 rounded-lg hover:bg-indigo-100 transition">Editar</a>
+                        @if($user->id !== auth()->id())
+                        <form method="POST" action="{{ route('superadmin.users.destroy', $user) }}"
+                              onsubmit="return confirm('¿Eliminar usuario {{ addslashes($user->name) }}?')">
+                            @csrf @method('DELETE')
+                            <button type="submit" class="inline-flex items-center px-3 py-1.5 text-xs font-medium text-red-700 bg-red-50 rounded-lg hover:bg-red-100 transition">Eliminar</button>
+                        </form>
+                        @endif
+                    </div>
+                </div>
+                @empty
+                <div class="px-6 py-12 text-center text-gray-400 text-sm">No se encontraron usuarios.</div>
+                @endforelse
+            </div>
 
             @if($users->hasPages())
             <div class="px-6 py-4 border-t border-gray-100">{{ $users->links() }}</div>

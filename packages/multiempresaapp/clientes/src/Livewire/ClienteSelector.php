@@ -18,6 +18,14 @@ class ClienteSelector extends Component
 
     public array $clientes = [];
 
+    public function mount(?int $clienteId = null, string $clienteNombre = ''): void
+    {
+        if ($clienteId) {
+            $this->selectedClienteId    = $clienteId;
+            $this->selectedClienteNombre = $clienteNombre;
+        }
+    }
+
     public function updatedSearch(): void
     {
         if (strlen($this->search) >= 2) {
