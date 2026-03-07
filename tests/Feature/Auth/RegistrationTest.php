@@ -18,7 +18,7 @@ class RegistrationTest extends TestCase
         Role::firstOrCreate(['name' => 'administrador', 'guard_name' => 'web']);
         Plan::firstOrCreate(
             ['name' => 'Gratuito'],
-            ['price_monthly' => 0, 'price_yearly' => 0, 'max_users' => 3, 'max_presupuestos' => 5, 'has_tasks' => false, 'active' => true]
+            ['price_monthly' => 0, 'price_yearly' => 0, 'max_users' => 3, 'max_presupuestos' => 5, 'max_empresas' => 1, 'has_tasks' => false, 'active' => true]
         );
     }
 
@@ -41,5 +41,20 @@ class RegistrationTest extends TestCase
 
         $this->assertAuthenticated();
         $response->assertRedirect(route('dashboard', absolute: false));
+    }
+
+    public function test_honeypot_blocks_registration(): void
+    {
+        $response = $this->post('/register', [
+            'company_name' => 'Test Company',
+            'name'         => 'Bot User',
+            'email'        => 'bot@example.com',
+            'password'     => 'password',
+            'password_confirmation' => 'password',
+            'website'      => 'http://spam.example.com',
+        ]);
+
+        $this->assertGuest();
+        $response->assertRedirect(route('register'));
     }
 }

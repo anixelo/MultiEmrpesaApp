@@ -3,6 +3,7 @@
 namespace MultiempresaApp\Presupuestos\Models;
 
 use App\Models\Company;
+use App\Models\Empresa;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -16,7 +17,7 @@ class Presupuesto extends Model
     protected $table = 'presupuestos';
 
     protected $fillable = [
-        'empresa_id', 'cliente_id', 'numero', 'fecha', 'estado',
+        'empresa_id', 'negocio_id', 'cliente_id', 'numero', 'fecha', 'estado',
         'subtotal_bruto', 'subtotal_descuentos', 'total_base_imponible', 'total_iva', 'total',
         'notas', 'validez_hasta', 'forma_pago', 'observaciones', 'token_publico',
         'enviado_en', 'visto_en', 'aceptado_en', 'rechazado_en', 'created_by',
@@ -52,6 +53,11 @@ class Presupuesto extends Model
     public function empresa()
     {
         return $this->belongsTo(Company::class, 'empresa_id');
+    }
+
+    public function negocio()
+    {
+        return $this->belongsTo(Empresa::class, 'negocio_id');
     }
 
     public function cliente()

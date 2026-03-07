@@ -5,7 +5,7 @@
                 <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
             </a>
             <div>
-                <h1 class="text-2xl font-bold text-gray-900">Editar Empresa</h1>
+                <h1 class="text-2xl font-bold text-gray-900">Editar Cuenta</h1>
                 <p class="text-sm text-gray-500 mt-0.5">{{ $company->name }}</p>
             </div>
         </div>
@@ -58,7 +58,7 @@
                 <div class="flex items-center gap-3">
                     <input type="checkbox" name="active" id="active" value="1" {{ old('active', $company->active) ? 'checked' : '' }}
                            class="w-4 h-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500">
-                    <label for="active" class="text-sm font-medium text-gray-700">Empresa activa</label>
+                    <label for="active" class="text-sm font-medium text-gray-700">Cuenta activa</label>
                 </div>
 
                 <div class="flex items-center justify-end gap-3 pt-4 border-t border-gray-100">

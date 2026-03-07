@@ -4,6 +4,7 @@ namespace MultiempresaApp\Presupuestos\Livewire;
 
 use Livewire\Component;
 use Livewire\Attributes\On;
+use App\Models\Empresa;
 use MultiempresaApp\Presupuestos\Models\Presupuesto;
 use MultiempresaApp\Presupuestos\Models\PresupuestoConfiguracion;
 use MultiempresaApp\Presupuestos\Services\PresupuestoCalculator;
@@ -13,6 +14,8 @@ class PresupuestoForm extends Component
     public ?int $presupuestoId = null;
     public ?int $clienteId = null;
     public string $clienteNombre = '';
+    public ?int $negocioId = null;
+    public array $empresasDisponibles = [];
     public string $fecha = '';
     public string $validezHasta = '';
     public string $formaPago = '';
@@ -50,12 +53,22 @@ class PresupuestoForm extends Component
         $this->formaPago    = $config->forma_pago_defecto ?? '';
         $this->observaciones = $config->observaciones_defecto ?? '';
 
+        // Load available empresas for this company
+        $empresas = Empresa::where('company_id', $empresaId)->where('active', true)->orderBy('name')->get();
+        $this->empresasDisponibles = $empresas->map(fn ($e) => ['id' => $e->id, 'name' => $e->name])->toArray();
+
+        // Auto-select if only one empresa
+        if (count($this->empresasDisponibles) === 1) {
+            $this->negocioId = $this->empresasDisponibles[0]['id'];
+        }
+
         if ($presupuestoId) {
             $this->presupuestoId = $presupuestoId;
             $presupuesto = Presupuesto::with('lineas')->findOrFail($presupuestoId);
 
             $this->clienteId    = $presupuesto->cliente_id;
             $this->clienteNombre = $presupuesto->cliente?->nombre ?? '';
+            $this->negocioId    = $presupuesto->negocio_id;
             $this->fecha        = $presupuesto->fecha->format('Y-m-d');
             $this->validezHasta = $presupuesto->validez_hasta?->format('Y-m-d') ?? '';
             $this->formaPago    = $presupuesto->forma_pago ?? '';

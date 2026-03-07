@@ -2,13 +2,13 @@
     <x-slot name="header">
         <div class="flex items-center justify-between">
             <div>
-                <h1 class="text-2xl font-bold text-gray-900">Empresas</h1>
-                <p class="text-sm text-gray-500 mt-0.5">Gestión de todas las empresas del sistema</p>
+                <h1 class="text-2xl font-bold text-gray-900">Cuentas</h1>
+                <p class="text-sm text-gray-500 mt-0.5">Gestión de todas las cuentas del sistema</p>
             </div>
             <a href="{{ route('superadmin.companies.create') }}"
                class="inline-flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-xl text-sm font-medium hover:bg-indigo-700 transition shadow-sm">
                 <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
-                Nueva Empresa
+                Nueva Cuenta
             </a>
         </div>
     </x-slot>
@@ -19,7 +19,7 @@
         <form method="GET" class="flex gap-3">
             <div class="relative flex-1 max-w-md">
                 <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
-                <input name="search" value="{{ request('search') }}" type="text" placeholder="Buscar empresa..."
+                <input name="search" value="{{ request('search') }}" type="text" placeholder="Buscar cuenta..."
                        class="w-full pl-9 pr-4 py-2 border border-gray-300 rounded-xl text-sm focus:ring-indigo-500 focus:border-indigo-500">
             </div>
             <button type="submit" class="px-4 py-2 bg-white border border-gray-300 rounded-xl text-sm text-gray-700 hover:bg-gray-50 transition">Buscar</button>
@@ -34,7 +34,7 @@
             <table class="hidden md:table min-w-full divide-y divide-gray-100">
                 <thead class="bg-gray-50">
                     <tr>
-                        <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Empresa</th>
+                        <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Cuenta</th>
                         <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Contacto</th>
                         <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Usuarios</th>
                         <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Plan</th>
@@ -79,7 +79,7 @@
                                     Editar
                                 </a>
                                 <form method="POST" action="{{ route('superadmin.companies.destroy', $company) }}"
-                                      onsubmit="return confirm('¿Eliminar empresa {{ addslashes($company->name) }}?')">
+                                      onsubmit="return confirm('¿Eliminar cuenta {{ addslashes($company->name) }}?')">
                                     @csrf @method('DELETE')
                                     <button type="submit"
                                             class="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-medium text-red-700 bg-red-50 rounded-lg hover:bg-red-100 transition">
@@ -93,7 +93,7 @@
                     @empty
                     <tr>
                         <td colspan="6" class="px-6 py-12 text-center text-gray-400 text-sm">
-                            No se encontraron empresas.
+                            No se encontraron cuentas.
                         </td>
                     </tr>
                     @endforelse
@@ -127,14 +127,14 @@
                         <a href="{{ route('superadmin.companies.edit', $company) }}"
                            class="inline-flex items-center px-3 py-1.5 text-xs font-medium text-indigo-700 bg-indigo-50 rounded-lg hover:bg-indigo-100 transition">Editar</a>
                         <form method="POST" action="{{ route('superadmin.companies.destroy', $company) }}"
-                              onsubmit="return confirm('¿Eliminar empresa {{ addslashes($company->name) }}?')">
+                              onsubmit="return confirm('¿Eliminar cuenta {{ addslashes($company->name) }}?')">
                             @csrf @method('DELETE')
                             <button type="submit" class="inline-flex items-center px-3 py-1.5 text-xs font-medium text-red-700 bg-red-50 rounded-lg hover:bg-red-100 transition">Eliminar</button>
                         </form>
                     </div>
                 </div>
                 @empty
-                <div class="px-6 py-12 text-center text-gray-400 text-sm">No se encontraron empresas.</div>
+                <div class="px-6 py-12 text-center text-gray-400 text-sm">No se encontraron cuentas.</div>
                 @endforelse
             </div>
 
