@@ -2,11 +2,11 @@
     <x-slot name="header">
         <div class="flex items-center justify-between">
             <h2 class="text-xl font-semibold leading-tight text-gray-800">
-                Servicios
+                Conceptos
             </h2>
             <a href="{{ route('admin.servicios.create') }}"
                class="inline-flex items-center rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
-                Nuevo Servicio
+                Nuevo Concepto
             </a>
         </div>
     </x-slot>
@@ -90,7 +90,7 @@
                                     <form method="POST"
                                           action="{{ route('admin.servicios.destroy', $servicio) }}"
                                           class="inline-block"
-                                          onsubmit="return confirm('¿Seguro que deseas eliminar este servicio?')">
+                                          onsubmit="return confirm('¿Seguro que deseas eliminar este concepto?')">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit" class="text-red-600 hover:text-red-900">Eliminar</button>
@@ -100,7 +100,7 @@
                         @empty
                             <tr>
                                 <td colspan="5" class="px-6 py-10 text-center text-sm text-gray-500">
-                                    No se encontraron servicios.
+                                    No se encontraron conceptos.
                                 </td>
                             </tr>
                         @endforelse
@@ -129,14 +129,14 @@
                             <a href="{{ route('admin.servicios.edit', $servicio) }}"
                                class="inline-flex items-center px-3 py-1.5 text-xs font-medium text-yellow-700 bg-yellow-50 rounded-lg hover:bg-yellow-100 transition">Editar</a>
                             <form method="POST" action="{{ route('admin.servicios.destroy', $servicio) }}"
-                                  onsubmit="return confirm('¿Seguro que deseas eliminar este servicio?')">
+                                  onsubmit="return confirm('¿Seguro que deseas eliminar este concepto?')">
                                 @csrf @method('DELETE')
                                 <button type="submit" class="inline-flex items-center px-3 py-1.5 text-xs font-medium text-red-700 bg-red-50 rounded-lg hover:bg-red-100 transition">Eliminar</button>
                             </form>
                         </div>
                     </div>
                     @empty
-                    <div class="px-6 py-10 text-center text-sm text-gray-500">No se encontraron servicios.</div>
+                    <div class="px-6 py-10 text-center text-sm text-gray-500">No se encontraron conceptos.</div>
                     @endforelse
                 </div>
             </div>

@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="text-xl font-semibold leading-tight text-gray-800">
-            Editar Servicio: {{ $servicio->nombre }}
+            Editar Concepto: {{ $servicio->nombre }}
         </h2>
     </x-slot>
 

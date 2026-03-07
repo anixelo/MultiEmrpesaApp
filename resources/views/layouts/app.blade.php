@@ -60,6 +60,19 @@
     {{-- Footer --}}
     <footer class="bg-white border-t border-gray-200 py-4 mt-auto">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-xs text-gray-400">
+            @auth
+            <div class="mb-2 flex flex-wrap justify-center gap-4">
+                @if(auth()->user()->isWorker())
+                <a href="{{ route('worker.incidents.index') }}" class="text-gray-500 hover:text-indigo-600 transition">Incidencias</a>
+                @endif
+                @if(auth()->user()->isAdmin())
+                <a href="{{ route('admin.incidents.index') }}" class="text-gray-500 hover:text-indigo-600 transition">Incidencias</a>
+                @endif
+                @if(auth()->user()->isSuperAdmin())
+                <a href="{{ route('superadmin.incidents.index') }}" class="text-gray-500 hover:text-indigo-600 transition">Incidencias</a>
+                @endif
+            </div>
+            @endauth
             © {{ date('Y') }} {{ config('app.name') }} — Sistema Multi-Empresa
         </div>
     </footer>
