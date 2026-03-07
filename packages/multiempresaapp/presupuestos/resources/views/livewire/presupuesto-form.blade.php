@@ -11,6 +11,9 @@
     {{-- Hidden field for cliente_id --}}
     <input type="hidden" name="cliente_id" value="{{ $clienteId }}">
 
+    {{-- Hidden field for negocio_id --}}
+    <input type="hidden" name="negocio_id" value="{{ $negocioId }}">
+
     {{-- Hidden fields for lines (sent with form) --}}
     @foreach ($lineas as $i => $linea)
         <input type="hidden" name="lineas[{{ $i }}][concepto]"        value="{{ $linea['concepto'] }}">
@@ -47,6 +50,28 @@
                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                     @enderror
                 </div>
+
+                {{-- Empresa (negocio) selector --}}
+                @if(count($empresasDisponibles) > 1)
+                <div class="sm:col-span-2">
+                    <label class="block text-sm font-medium text-gray-700">Empresa</label>
+                    <select wire:model.live="negocioId"
+                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                        <option value="">— Sin empresa —</option>
+                        @foreach($empresasDisponibles as $emp)
+                            <option value="{{ $emp['id'] }}" {{ $negocioId == $emp['id'] ? 'selected' : '' }}>{{ $emp['name'] }}</option>
+                        @endforeach
+                    </select>
+                    @error('negocio_id')
+                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                    @enderror
+                </div>
+                @elseif(count($empresasDisponibles) === 1)
+                <div class="sm:col-span-2">
+                    <label class="block text-sm font-medium text-gray-700">Empresa</label>
+                    <p class="mt-1 text-sm text-gray-600">{{ $empresasDisponibles[0]['name'] }}</p>
+                </div>
+                @endif
 
                 {{-- Fecha --}}
                 <div>

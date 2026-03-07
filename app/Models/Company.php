@@ -84,6 +84,11 @@ class Company extends Model
         return $this->hasMany(Presupuesto::class, 'empresa_id');
     }
 
+    public function empresas()
+    {
+        return $this->hasMany(Empresa::class, 'company_id');
+    }
+
     public function activePlan()
     {
         return $this->subscription?->plan;
@@ -118,5 +123,15 @@ class Company extends Model
         $plan = $this->subscription?->plan;
         if (!$plan) return false;
         return (bool) $plan->has_tasks;
+    }
+
+    public function canCreateEmpresa(): bool
+    {
+        $plan = $this->subscription?->plan;
+        if (!$plan) return true;
+        $max = $plan->max_empresas ?? 0;
+        if ($max === 0) return true;
+        $count = $this->empresas()->where('active', true)->count();
+        return $count < $max;
     }
 }

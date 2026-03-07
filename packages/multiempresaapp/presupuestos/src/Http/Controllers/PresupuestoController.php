@@ -63,6 +63,7 @@ class PresupuestoController extends Controller
 
         $validated = $request->validate([
             'cliente_id'                  => 'required|exists:clientes,id',
+            'negocio_id'                  => 'nullable|exists:empresas,id',
             'fecha'                       => 'required|date',
             'validez_hasta'               => 'nullable|date',
             'forma_pago'                  => 'nullable|string|max:255',
@@ -81,6 +82,7 @@ class PresupuestoController extends Controller
 
         $presupuesto = Presupuesto::create([
             'empresa_id'   => $empresaId,
+            'negocio_id'   => $validated['negocio_id'] ?? null,
             'cliente_id'   => $validated['cliente_id'],
             'numero'       => $numero,
             'fecha'        => $validated['fecha'],
@@ -160,6 +162,7 @@ class PresupuestoController extends Controller
 
         $validated = $request->validate([
             'cliente_id'                  => 'required|exists:clientes,id',
+            'negocio_id'                  => 'nullable|exists:empresas,id',
             'fecha'                       => 'required|date',
             'validez_hasta'               => 'nullable|date',
             'forma_pago'                  => 'nullable|string|max:255',
@@ -175,12 +178,13 @@ class PresupuestoController extends Controller
         ]);
 
         $presupuesto->update([
-            'cliente_id'   => $validated['cliente_id'],
-            'fecha'        => $validated['fecha'],
+            'cliente_id'    => $validated['cliente_id'],
+            'negocio_id'    => $validated['negocio_id'] ?? null,
+            'fecha'         => $validated['fecha'],
             'validez_hasta' => $validated['validez_hasta'] ?? null,
-            'forma_pago'   => $validated['forma_pago'] ?? null,
+            'forma_pago'    => $validated['forma_pago'] ?? null,
             'observaciones' => $validated['observaciones'] ?? null,
-            'notas'        => $validated['notas'] ?? null,
+            'notas'         => $validated['notas'] ?? null,
         ]);
 
         $presupuesto->lineas()->delete();

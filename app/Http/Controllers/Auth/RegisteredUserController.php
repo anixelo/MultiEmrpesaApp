@@ -33,6 +33,11 @@ class RegisteredUserController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
+        // Honeypot: if the hidden field is filled, it's a bot
+        if ($request->filled('website')) {
+            return redirect()->route('register');
+        }
+
         $request->validate([
             'company_name' => ['required', 'string', 'max:255'],
             'name'         => ['required', 'string', 'max:255'],

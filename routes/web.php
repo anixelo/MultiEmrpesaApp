@@ -7,6 +7,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SuperAdmin\CompanyController;
 use App\Http\Controllers\SuperAdmin\UserController as SuperAdminUserController;
 use App\Http\Controllers\SuperAdmin\DashboardController as SuperAdminDashboardController;
+use App\Http\Controllers\Admin\EmpresaController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\UserController as AdminUserController;
 use MultiempresaApp\Notifications\Http\Controllers\NotificationController;
@@ -80,7 +81,10 @@ Route::middleware(['auth', 'two_factor'])->group(function () {
         Route::get('/worker/incidents/create', [WorkerIncidentController::class, 'create'])->name('worker.incidents.create');
         Route::post('/worker/incidents', [WorkerIncidentController::class, 'store'])->name('worker.incidents.store');
 
-        // Clientes, Servicios, Presupuestos - accessible by workers and admins
+        // Clientes, Servicios, Presupuestos, Empresas - accessible by workers and admins
+        // Empresas
+        Route::resource('admin/empresas', EmpresaController::class)->names('admin.empresas')->except(['show']);
+
         // Clientes
         Route::resource('admin/clientes', ClienteController::class)->names('admin.clientes');
         Route::post('admin/clientes/quick-store', [ClienteController::class, 'quickStore'])->name('admin.clientes.quick-store');

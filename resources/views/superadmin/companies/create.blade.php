@@ -5,8 +5,8 @@
                 <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
             </a>
             <div>
-                <h1 class="text-2xl font-bold text-gray-900">Nueva Empresa</h1>
-                <p class="text-sm text-gray-500 mt-0.5">Registrar una nueva empresa en el sistema</p>
+                <h1 class="text-2xl font-bold text-gray-900">Nueva Cuenta</h1>
+                <p class="text-sm text-gray-500 mt-0.5">Registrar una nueva cuenta en el sistema</p>
             </div>
         </div>
     </x-slot>
@@ -46,14 +46,14 @@
                 <div class="flex items-center gap-3">
                     <input type="checkbox" name="active" id="active" value="1" {{ old('active', '1') ? 'checked' : '' }}
                            class="w-4 h-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500">
-                    <label for="active" class="text-sm font-medium text-gray-700">Empresa activa</label>
+                    <label for="active" class="text-sm font-medium text-gray-700">Cuenta activa</label>
                 </div>
 
                 <div class="flex items-center justify-end gap-3 pt-4 border-t border-gray-100">
                     <a href="{{ route('superadmin.companies.index') }}"
                        class="px-4 py-2 text-sm text-gray-700 bg-white border border-gray-300 rounded-xl hover:bg-gray-50 transition">Cancelar</a>
                     <button type="submit"
-                            class="px-4 py-2 text-sm text-white bg-indigo-600 rounded-xl hover:bg-indigo-700 transition shadow-sm">Crear empresa</button>
+                            class="px-4 py-2 text-sm text-white bg-indigo-600 rounded-xl hover:bg-indigo-700 transition shadow-sm">Crear cuenta</button>
                 </div>
             </form>
         </div>

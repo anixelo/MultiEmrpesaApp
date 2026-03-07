@@ -22,6 +22,11 @@
                                   {{ request()->routeIs('worker.dashboard') ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50' }}">
                             Mis Tareas
                         </a>
+                        <a href="{{ route('admin.empresas.index') }}"
+                           class="px-3 py-2 rounded-lg text-sm font-medium transition
+                                  {{ request()->routeIs('admin.empresas.*') ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50' }}">
+                            Empresas
+                        </a>
                         <a href="{{ route('admin.clientes.index') }}"
                            class="px-3 py-2 rounded-lg text-sm font-medium transition
                                   {{ request()->routeIs('admin.clientes.*') ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50' }}">
@@ -78,6 +83,11 @@
                                   {{ request()->routeIs('admin.subscription*') ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50' }}">
                             Suscripción
                         </a>
+                        <a href="{{ route('admin.empresas.index') }}"
+                           class="px-3 py-2 rounded-lg text-sm font-medium transition
+                                  {{ request()->routeIs('admin.empresas.*') ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50' }}">
+                            Empresas
+                        </a>
                         @endif
 
                         {{-- Superadmin --}}
@@ -90,7 +100,7 @@
                         <a href="{{ route('superadmin.companies.index') }}"
                            class="px-3 py-2 rounded-lg text-sm font-medium transition
                                   {{ request()->routeIs('superadmin.companies.*') ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50' }}">
-                            Empresas
+                            Cuentas
                         </a>
                         <a href="{{ route('superadmin.users.index') }}"
                            class="px-3 py-2 rounded-lg text-sm font-medium transition
@@ -194,6 +204,7 @@
         @auth
             @if(auth()->user()->isWorker())
             <a href="{{ route('worker.dashboard') }}" class="block px-3 py-2 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50">Mis Tareas</a>
+            <a href="{{ route('admin.empresas.index') }}" class="block px-3 py-2 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50">Empresas</a>
             <a href="{{ route('admin.clientes.index') }}" class="block px-3 py-2 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50">Clientes</a>
             <a href="{{ route('admin.servicios.index') }}" class="block px-3 py-2 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50">Conceptos</a>
             <a href="{{ route('admin.presupuestos.index') }}" class="block px-3 py-2 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50">Presupuestos</a>
@@ -209,11 +220,12 @@
             <a href="{{ route('admin.servicios.index') }}" class="block px-3 py-2 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50">Conceptos</a>
             <a href="{{ route('admin.presupuestos.index') }}" class="block px-3 py-2 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50">Presupuestos</a>
             <a href="{{ route('admin.subscription') }}" class="block px-3 py-2 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50">Suscripción</a>
+            <a href="{{ route('admin.empresas.index') }}" class="block px-3 py-2 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50">Empresas</a>
             @endif
 
             @if(auth()->user()->isSuperAdmin())
             <a href="{{ route('superadmin.dashboard') }}" class="block px-3 py-2 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50">Panel General</a>
-            <a href="{{ route('superadmin.companies.index') }}" class="block px-3 py-2 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50">Empresas</a>
+            <a href="{{ route('superadmin.companies.index') }}" class="block px-3 py-2 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50">Cuentas</a>
             <a href="{{ route('superadmin.users.index') }}" class="block px-3 py-2 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50">Usuarios</a>
             <a href="{{ route('superadmin.plans.index') }}" class="block px-3 py-2 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50">Planes</a>
             @endif
