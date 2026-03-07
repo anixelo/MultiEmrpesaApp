@@ -22,11 +22,6 @@
                                   {{ request()->routeIs('worker.dashboard') ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50' }}">
                             Mis Tareas
                         </a>
-                        <a href="{{ route('worker.incidents.index') }}"
-                           class="px-3 py-2 rounded-lg text-sm font-medium transition
-                                  {{ request()->routeIs('worker.incidents.*') ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50' }}">
-                            Incidencias
-                        </a>
                         <a href="{{ route('admin.clientes.index') }}"
                            class="px-3 py-2 rounded-lg text-sm font-medium transition
                                   {{ request()->routeIs('admin.clientes.*') ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50' }}">
@@ -35,7 +30,7 @@
                         <a href="{{ route('admin.servicios.index') }}"
                            class="px-3 py-2 rounded-lg text-sm font-medium transition
                                   {{ request()->routeIs('admin.servicios.*') ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50' }}">
-                            Servicios
+                            Conceptos
                         </a>
                         <a href="{{ route('admin.presupuestos.index') }}"
                            class="px-3 py-2 rounded-lg text-sm font-medium transition
@@ -63,11 +58,6 @@
                                   {{ request()->routeIs('admin.users.*') ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50' }}">
                             Usuarios
                         </a>
-                        <a href="{{ route('admin.incidents.index') }}"
-                           class="px-3 py-2 rounded-lg text-sm font-medium transition
-                                  {{ request()->routeIs('admin.incidents.*') ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50' }}">
-                            Incidencias
-                        </a>
                         <a href="{{ route('admin.clientes.index') }}"
                            class="px-3 py-2 rounded-lg text-sm font-medium transition
                                   {{ request()->routeIs('admin.clientes.*') ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50' }}">
@@ -76,7 +66,7 @@
                         <a href="{{ route('admin.servicios.index') }}"
                            class="px-3 py-2 rounded-lg text-sm font-medium transition
                                   {{ request()->routeIs('admin.servicios.*') ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50' }}">
-                            Servicios
+                            Conceptos
                         </a>
                         <a href="{{ route('admin.presupuestos.index') }}"
                            class="px-3 py-2 rounded-lg text-sm font-medium transition
@@ -111,11 +101,6 @@
                            class="px-3 py-2 rounded-lg text-sm font-medium transition
                                   {{ request()->routeIs('superadmin.plans.*') ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50' }}">
                             Planes
-                        </a>
-                        <a href="{{ route('superadmin.incidents.index') }}"
-                           class="px-3 py-2 rounded-lg text-sm font-medium transition
-                                  {{ request()->routeIs('superadmin.incidents.*') ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50' }}">
-                            Incidencias
                         </a>
                         @endif
                     @endauth
@@ -209,9 +194,8 @@
         @auth
             @if(auth()->user()->isWorker())
             <a href="{{ route('worker.dashboard') }}" class="block px-3 py-2 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50">Mis Tareas</a>
-            <a href="{{ route('worker.incidents.index') }}" class="block px-3 py-2 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50">Incidencias</a>
             <a href="{{ route('admin.clientes.index') }}" class="block px-3 py-2 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50">Clientes</a>
-            <a href="{{ route('admin.servicios.index') }}" class="block px-3 py-2 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50">Servicios</a>
+            <a href="{{ route('admin.servicios.index') }}" class="block px-3 py-2 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50">Conceptos</a>
             <a href="{{ route('admin.presupuestos.index') }}" class="block px-3 py-2 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50">Presupuestos</a>
             @endif
 
@@ -221,9 +205,8 @@
             <a href="{{ route('admin.tasks.index') }}" class="block px-3 py-2 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50">Tareas</a>
             @endif
             <a href="{{ route('admin.users.index') }}" class="block px-3 py-2 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50">Usuarios</a>
-            <a href="{{ route('admin.incidents.index') }}" class="block px-3 py-2 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50">Incidencias</a>
             <a href="{{ route('admin.clientes.index') }}" class="block px-3 py-2 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50">Clientes</a>
-            <a href="{{ route('admin.servicios.index') }}" class="block px-3 py-2 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50">Servicios</a>
+            <a href="{{ route('admin.servicios.index') }}" class="block px-3 py-2 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50">Conceptos</a>
             <a href="{{ route('admin.presupuestos.index') }}" class="block px-3 py-2 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50">Presupuestos</a>
             <a href="{{ route('admin.subscription') }}" class="block px-3 py-2 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50">Suscripción</a>
             @endif
@@ -233,7 +216,6 @@
             <a href="{{ route('superadmin.companies.index') }}" class="block px-3 py-2 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50">Empresas</a>
             <a href="{{ route('superadmin.users.index') }}" class="block px-3 py-2 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50">Usuarios</a>
             <a href="{{ route('superadmin.plans.index') }}" class="block px-3 py-2 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50">Planes</a>
-            <a href="{{ route('superadmin.incidents.index') }}" class="block px-3 py-2 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50">Incidencias</a>
             @endif
 
             <div class="border-t border-gray-200 pt-2 mt-2">

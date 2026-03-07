@@ -86,7 +86,9 @@
                 <div class="px-6 py-4 border-b border-gray-200">
                     <h3 class="text-sm font-medium text-gray-900">Líneas del presupuesto</h3>
                 </div>
-                <div class="overflow-x-auto">
+
+                {{-- Desktop table --}}
+                <div class="hidden md:block overflow-x-auto">
                 <table class="min-w-full divide-y divide-gray-200">
                     <thead class="bg-gray-50">
                         <tr>
@@ -137,6 +139,35 @@
                         @endforeach
                     </tbody>
                 </table>
+                </div>
+
+                {{-- Mobile cards (bocadillos) --}}
+                <div class="md:hidden divide-y divide-gray-100">
+                    @foreach ($presupuesto->lineas as $linea)
+                    <div class="p-4 space-y-2">
+                        <p class="font-medium text-gray-900">{{ $linea->concepto }}</p>
+                        <div class="grid grid-cols-2 gap-x-4 gap-y-1 text-sm">
+                            <div class="text-gray-500">Cantidad</div>
+                            <div class="text-right text-gray-700">{{ number_format($linea->cantidad, 2, ',', '.') }}</div>
+                            <div class="text-gray-500">P. Unit.</div>
+                            <div class="text-right text-gray-700">{{ number_format($linea->precio_unitario, 2, ',', '.') }} €</div>
+                            @if ($linea->descuento_tipo && $linea->descuento_valor)
+                            <div class="text-gray-500">Descuento</div>
+                            <div class="text-right text-gray-700">
+                                @if ($linea->descuento_tipo === 'porcentaje'){{ number_format($linea->descuento_valor, 2, ',', '.') }}%
+                                @else{{ number_format($linea->descuento_valor, 2, ',', '.') }} €@endif
+                            </div>
+                            @endif
+                            <div class="text-gray-500">Base Imp.</div>
+                            <div class="text-right text-gray-700">{{ number_format($linea->base_imponible, 2, ',', '.') }} €</div>
+                            <div class="text-gray-500">IVA</div>
+                            <div class="text-right text-gray-700">{{ number_format($linea->iva_tipo, 0) }}% ({{ number_format($linea->iva_cuota, 2, ',', '.') }} €)</div>
+                        </div>
+                        <div class="flex justify-end border-t border-gray-100 pt-2">
+                            <span class="text-sm font-semibold text-gray-900">Total: {{ number_format($linea->total, 2, ',', '.') }} €</span>
+                        </div>
+                    </div>
+                    @endforeach
                 </div>
 
                 {{-- Totales --}}

@@ -40,6 +40,13 @@
                 @else
                     <p class="px-4 py-2 text-sm text-gray-500">No se encontraron clientes.</p>
                 @endif
+                <div class="border-t border-gray-100">
+                    <button type="button"
+                            wire:click="openModal"
+                            class="w-full px-4 py-2 text-left text-sm text-indigo-600 hover:bg-indigo-50">
+                        + Crear nuevo cliente
+                    </button>
+                </div>
             </div>
         @endif
     @endif
