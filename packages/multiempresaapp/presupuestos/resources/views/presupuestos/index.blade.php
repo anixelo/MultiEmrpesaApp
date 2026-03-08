@@ -26,6 +26,24 @@
                 </div>
             @endif
 
+            @if(!($hasEmpresa ?? true))
+            <div class="mb-6 bg-blue-50 border border-blue-200 rounded-2xl p-6 flex flex-col sm:flex-row items-center gap-4">
+                <div class="w-12 h-12 rounded-xl bg-blue-100 flex items-center justify-center shrink-0">
+                    <svg class="w-6 h-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+                    </svg>
+                </div>
+                <div class="flex-1 text-center sm:text-left">
+                    <h3 class="font-semibold text-gray-900">Registra tu empresa para poder comenzar a crear presupuestos</h3>
+                    <p class="text-sm text-gray-500 mt-1">Necesitas tener al menos una empresa registrada antes de crear presupuestos.</p>
+                </div>
+                <a href="{{ route('admin.empresas.create') }}"
+                   class="shrink-0 bg-blue-600 text-white text-sm font-semibold px-5 py-2.5 rounded-xl hover:bg-blue-700 transition shadow-sm">
+                    Crear empresa
+                </a>
+            </div>
+            @endif
+
             {{-- Búsqueda y filtros --}}
             <div class="mb-4">
                 <form method="GET" action="{{ route('admin.presupuestos.index') }}" class="flex flex-wrap gap-2">
