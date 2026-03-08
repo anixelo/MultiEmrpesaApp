@@ -7,6 +7,8 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SuperAdmin\CompanyController;
 use App\Http\Controllers\SuperAdmin\UserController as SuperAdminUserController;
 use App\Http\Controllers\SuperAdmin\DashboardController as SuperAdminDashboardController;
+use App\Http\Controllers\SuperAdmin\NoticiaController as SuperAdminNoticiaController;
+use App\Http\Controllers\SuperAdmin\SettingsController as SuperAdminSettingsController;
 use App\Http\Controllers\Admin\EmpresaController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\UserController as AdminUserController;
@@ -22,11 +24,15 @@ use MultiempresaApp\Clientes\Http\Controllers\ClienteController;
 use MultiempresaApp\Servicios\Http\Controllers\ServicioController;
 use MultiempresaApp\Presupuestos\Http\Controllers\PresupuestoController;
 use MultiempresaApp\Presupuestos\Http\Controllers\PresupuestoConfiguracionController;
+use MultiempresaApp\Noticias\Http\Controllers\NoticiaController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return auth()->check() ? redirect()->route('dashboard') : view('welcome');
 });
+
+// Public news detail
+Route::get('/noticias/{slug}', [NoticiaController::class, 'show'])->name('noticias.show');
 
 // Google OAuth
 Route::get('/auth/google',          [GoogleController::class, 'redirect'])->name('auth.google');
@@ -129,8 +135,13 @@ Route::middleware(['auth', 'two_factor'])->group(function () {
         Route::resource('companies', CompanyController::class)->except(['show']);
         Route::resource('users', SuperAdminUserController::class)->except(['show']);
         Route::resource('plans', SuperAdminPlanController::class)->except(['show']);
+        Route::resource('noticias', SuperAdminNoticiaController::class)->except(['show']);
         Route::post('/companies/{company}/assign-plan', [SuperAdminPlanController::class, 'assignPlan'])->name('companies.assign-plan');
         Route::post('/users/{user}/impersonate', [SuperAdminUserController::class, 'impersonate'])->name('users.impersonate');
+
+        // Superadmin settings
+        Route::get('/settings', [SuperAdminSettingsController::class, 'index'])->name('settings');
+        Route::put('/settings', [SuperAdminSettingsController::class, 'update'])->name('settings.update');
 
         // Superadmin incidents
         Route::get('/incidents', [SuperAdminIncidentController::class, 'index'])->name('incidents.index');

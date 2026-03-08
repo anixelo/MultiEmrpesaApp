@@ -15,6 +15,47 @@
         <div class="rounded-xl bg-red-50 border border-red-200 p-4 text-red-800 text-sm">{{ session('error') }}</div>
         @endif
 
+        {{-- Promo info --}}
+        @php $company = auth()->user()->company; @endphp
+        @if($company && $company->isInPromo() && $company->promoPlan())
+        @php $promoPlan = $company->promoPlan(); @endphp
+        <div class="relative overflow-hidden bg-gradient-to-r from-indigo-600 to-purple-600 rounded-2xl p-6 text-white shadow-lg">
+            <div class="absolute inset-0 pointer-events-none">
+                <div class="absolute -top-10 -right-10 w-40 h-40 bg-white/10 rounded-full blur-2xl"></div>
+            </div>
+            <div class="relative flex items-start gap-4">
+                <div class="w-12 h-12 rounded-xl bg-white/20 flex items-center justify-center shrink-0">
+                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.381z" clip-rule="evenodd"/></svg>
+                </div>
+                <div>
+                    <h3 class="font-bold text-lg">🎉 Promoción activa</h3>
+                    <p class="text-indigo-100 mt-1">
+                        Estás disfrutando del plan <strong class="text-white">{{ $promoPlan->name }}</strong> de forma gratuita
+                        hasta el <strong class="text-yellow-300">{{ $company->promo_ends_at->format('d \d\e F \d\e Y') }}</strong>.
+                    </p>
+                    <div class="mt-3 grid grid-cols-2 sm:grid-cols-4 gap-2">
+                        <div class="bg-white/10 rounded-lg p-2.5 text-center">
+                            <div class="text-xl font-bold">{{ $promoPlan->max_users }}</div>
+                            <div class="text-xs text-indigo-200">Usuarios</div>
+                        </div>
+                        <div class="bg-white/10 rounded-lg p-2.5 text-center">
+                            <div class="text-xl font-bold">{{ ($promoPlan->max_presupuestos ?? 0) == 0 ? '∞' : $promoPlan->max_presupuestos }}</div>
+                            <div class="text-xs text-indigo-200">Presup./mes</div>
+                        </div>
+                        <div class="bg-white/10 rounded-lg p-2.5 text-center">
+                            <div class="text-xl font-bold text-yellow-300">Gratis</div>
+                            <div class="text-xs text-indigo-200">Precio actual</div>
+                        </div>
+                        <div class="bg-white/10 rounded-lg p-2.5 text-center">
+                            <div class="text-sm font-bold">{{ $company->promo_ends_at->format('d/m/Y') }}</div>
+                            <div class="text-xs text-indigo-200">Fin promoción</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        @endif
+
         {{-- Current plan --}}
         <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
             <h2 class="text-lg font-semibold text-gray-900 mb-4">Plan Actual</h2>

@@ -9,4 +9,5 @@ return [
     MultiempresaApp\Clientes\Providers\ClientesServiceProvider::class,
     MultiempresaApp\Servicios\Providers\ServiciosServiceProvider::class,
     MultiempresaApp\Presupuestos\Providers\PresupuestosServiceProvider::class,
+    MultiempresaApp\Noticias\Providers\NoticiasServiceProvider::class,
 ];

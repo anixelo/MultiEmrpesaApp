@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\AppSetting;
 use App\Models\Company;
 use MultiempresaApp\Plans\Models\Plan;
 use MultiempresaApp\Plans\Models\Subscription;
@@ -53,18 +54,39 @@ class RegisteredUserController extends Controller
             $slug = $base . '-' . $count++;
         }
 
-        $company = Company::create([
+        // Assign plan to the new company (promo or free)
+        $promoPlanId  = AppSetting::get('promo_plan_id');
+        $promoMonths  = (int) AppSetting::get('promo_months', 0);
+        $planToAssign = null;
+        $promoEndsAt  = null;
+
+        if ($promoPlanId && $promoMonths > 0) {
+            $planToAssign = Plan::where('id', $promoPlanId)->where('active', true)->first();
+        }
+
+        if (!$planToAssign) {
+            $planToAssign = Plan::where('price_monthly', 0)->where('active', true)->first();
+        } else {
+            $promoEndsAt = now()->addMonths($promoMonths);
+        }
+
+        $companyData = [
             'name'   => $request->company_name,
             'slug'   => $slug,
             'active' => true,
-        ]);
+        ];
 
-        // Assign free plan to the new company
-        $freePlan = Plan::where('price_monthly', 0)->where('active', true)->first();
-        if ($freePlan) {
+        if ($promoEndsAt) {
+            $companyData['promo_plan_id'] = $planToAssign->id;
+            $companyData['promo_ends_at'] = $promoEndsAt;
+        }
+
+        $company = Company::create($companyData);
+
+        if ($planToAssign) {
             Subscription::create([
                 'empresa_id' => $company->id,
-                'plan_id'    => $freePlan->id,
+                'plan_id'    => $planToAssign->id,
                 'status'     => 'active',
                 'started_at' => now(),
             ]);

@@ -112,6 +112,16 @@
                                   {{ request()->routeIs('superadmin.plans.*') ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50' }}">
                             Planes
                         </a>
+                        <a href="{{ route('superadmin.noticias.index') }}"
+                           class="px-3 py-2 rounded-lg text-sm font-medium transition
+                                  {{ request()->routeIs('superadmin.noticias.*') ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50' }}">
+                            Noticias
+                        </a>
+                        <a href="{{ route('superadmin.settings') }}"
+                           class="px-3 py-2 rounded-lg text-sm font-medium transition
+                                  {{ request()->routeIs('superadmin.settings*') ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50' }}">
+                            Configuración
+                        </a>
                         @endif
                     @endauth
                 </div>
@@ -228,6 +238,8 @@
             <a href="{{ route('superadmin.companies.index') }}" class="block px-3 py-2 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50">Cuentas</a>
             <a href="{{ route('superadmin.users.index') }}" class="block px-3 py-2 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50">Usuarios</a>
             <a href="{{ route('superadmin.plans.index') }}" class="block px-3 py-2 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50">Planes</a>
+            <a href="{{ route('superadmin.noticias.index') }}" class="block px-3 py-2 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50">Noticias</a>
+            <a href="{{ route('superadmin.settings') }}" class="block px-3 py-2 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50">Configuración</a>
             @endif
 
             <div class="border-t border-gray-200 pt-2 mt-2">

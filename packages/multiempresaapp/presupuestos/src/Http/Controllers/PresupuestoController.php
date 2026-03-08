@@ -3,6 +3,7 @@
 namespace MultiempresaApp\Presupuestos\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Models\Empresa;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
@@ -40,7 +41,9 @@ class PresupuestoController extends Controller
 
         $presupuestos = $query->latest()->paginate(15)->withQueryString();
 
-        return view('presupuestos::presupuestos.index', compact('presupuestos'));
+        $hasEmpresa = Empresa::where('company_id', $empresaId)->exists();
+
+        return view('presupuestos::presupuestos.index', compact('presupuestos', 'hasEmpresa'));
     }
 
     public function create()

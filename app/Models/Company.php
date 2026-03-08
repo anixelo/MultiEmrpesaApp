@@ -24,12 +24,15 @@ class Company extends Model
         'address',
         'logo',
         'active',
+        'promo_plan_id',
+        'promo_ends_at',
     ];
 
     protected function casts(): array
     {
         return [
-            'active' => 'boolean',
+            'active'        => 'boolean',
+            'promo_ends_at' => 'datetime',
         ];
     }
 
@@ -133,5 +136,19 @@ class Company extends Model
         if ($max === 0) return true;
         $count = $this->empresas()->where('active', true)->count();
         return $count < $max;
+    }
+
+    public function isInPromo(): bool
+    {
+        if (!$this->promo_plan_id || !$this->promo_ends_at) {
+            return false;
+        }
+        return $this->promo_ends_at->isFuture();
+    }
+
+    public function promoPlan(): ?\MultiempresaApp\Plans\Models\Plan
+    {
+        if (!$this->promo_plan_id) return null;
+        return \MultiempresaApp\Plans\Models\Plan::find($this->promo_plan_id);
     }
 }

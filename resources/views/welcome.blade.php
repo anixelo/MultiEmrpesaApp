@@ -121,6 +121,45 @@
 {{-- Pricing --}}
 <section id="pricing" class="py-24 bg-gray-50">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+        @php
+        $promoSettings = [
+            'plan_id' => \App\Models\AppSetting::get('promo_plan_id'),
+            'months'  => (int) \App\Models\AppSetting::get('promo_months', 0),
+        ];
+        $promoPlan = $promoSettings['plan_id'] ? \MultiempresaApp\Plans\Models\Plan::find($promoSettings['plan_id']) : null;
+        @endphp
+
+        {{-- Promo block --}}
+        @if($promoPlan && $promoSettings['months'] > 0)
+        <div class="mb-12 relative overflow-hidden bg-gradient-to-r from-indigo-600 to-purple-600 rounded-2xl p-8 shadow-xl text-white">
+            <div class="absolute inset-0 pointer-events-none">
+                <div class="absolute -top-20 -right-20 w-64 h-64 bg-white/10 rounded-full blur-3xl"></div>
+                <div class="absolute -bottom-20 -left-20 w-64 h-64 bg-white/10 rounded-full blur-3xl"></div>
+            </div>
+            <div class="relative flex flex-col sm:flex-row items-center gap-6">
+                <div class="flex-1 text-center sm:text-left">
+                    <div class="inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-semibold mb-3">
+                        <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.381z" clip-rule="evenodd"/></svg>
+                        Oferta de lanzamiento
+                    </div>
+                    <h2 class="text-2xl sm:text-3xl font-bold mb-2">
+                        {{ $promoSettings['months'] }} {{ $promoSettings['months'] == 1 ? 'mes' : 'meses' }} gratis con el plan <span class="text-yellow-300">{{ $promoPlan->name }}</span>
+                    </h2>
+                    <p class="text-indigo-100 max-w-lg">
+                        Regístrate ahora y disfruta de {{ $promoSettings['months'] }} {{ $promoSettings['months'] == 1 ? 'mes' : 'meses' }} del plan {{ $promoPlan->name }} completamente gratis. Sin tarjeta de crédito. Sin compromisos.
+                    </p>
+                </div>
+                <div class="shrink-0">
+                    <a href="{{ route('register') }}"
+                       class="inline-flex items-center gap-2 bg-white text-indigo-700 font-bold px-7 py-3.5 rounded-xl hover:bg-indigo-50 transition shadow-lg">
+                        Comienza gratis →
+                    </a>
+                </div>
+            </div>
+        </div>
+        @endif
+
         <div class="text-center mb-16">
             <h2 class="text-3xl font-bold text-gray-900 mb-4">Planes y Precios</h2>
             <p class="text-gray-600 max-w-xl mx-auto">Elige el plan que mejor se adapta a las necesidades de tu empresa</p>
@@ -214,6 +253,68 @@
         @endif
     </div>
 </section>
+
+{{-- Noticias --}}
+@php
+$noticias = \MultiempresaApp\Noticias\Models\Noticia::publicadas()
+    ->latest('publicado_en')
+    ->take(6)
+    ->get();
+@endphp
+
+@if($noticias->isNotEmpty())
+<section id="noticias" class="py-24 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-12">
+            <span class="inline-flex items-center gap-2 bg-indigo-100 text-indigo-700 text-xs font-semibold px-3 py-1.5 rounded-full mb-4">
+                <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"/></svg>
+                Últimas noticias
+            </span>
+            <h2 class="text-3xl font-bold text-gray-900 mb-4">Novedades y actualizaciones</h2>
+            <p class="text-gray-600 max-w-xl mx-auto">Mantente al día con las últimas noticias sobre la plataforma</p>
+        </div>
+
+        <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            @foreach($noticias as $noticia)
+            <a href="{{ route('noticias.show', $noticia->slug) }}"
+               class="group bg-white border border-gray-100 rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-all hover:-translate-y-0.5">
+                @if($noticia->imagen)
+                <div class="aspect-video overflow-hidden">
+                    <img src="{{ Storage::url($noticia->imagen) }}" alt="{{ $noticia->titulo }}"
+                         class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+                </div>
+                @else
+                <div class="aspect-video bg-gradient-to-br from-indigo-50 via-purple-50 to-blue-50 flex items-center justify-center">
+                    <svg class="w-12 h-12 text-indigo-200" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"/>
+                    </svg>
+                </div>
+                @endif
+                <div class="p-5">
+                    @if($noticia->publicado_en)
+                    <time class="text-xs text-indigo-500 font-medium mb-2 block">
+                        {{ $noticia->publicado_en->format('d \d\e F \d\e Y') }}
+                    </time>
+                    @endif
+                    <h3 class="font-semibold text-gray-900 text-base leading-snug line-clamp-2 group-hover:text-indigo-600 transition-colors mb-2">
+                        {{ $noticia->titulo }}
+                    </h3>
+                    @if($noticia->meta_description)
+                    <p class="text-sm text-gray-500 line-clamp-2">{{ $noticia->meta_description }}</p>
+                    @else
+                    <p class="text-sm text-gray-500 line-clamp-2">{{ \Illuminate\Support\Str::limit(strip_tags($noticia->contenido), 100) }}</p>
+                    @endif
+                    <span class="inline-flex items-center gap-1 text-xs text-indigo-600 font-medium mt-3">
+                        Leer más
+                        <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+                    </span>
+                </div>
+            </a>
+            @endforeach
+        </div>
+    </div>
+</section>
+@endif
 
 {{-- CTA --}}
 <section class="py-24 bg-indigo-600">

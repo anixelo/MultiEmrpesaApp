@@ -22,6 +22,53 @@
         </div>
         @else
 
+        {{-- Promo banner --}}
+        @if($company->isInPromo() && $company->promoPlan())
+        @php $promoPlan = $company->promoPlan(); @endphp
+        <div class="relative overflow-hidden bg-gradient-to-r from-indigo-600 to-purple-600 rounded-2xl p-5 text-white shadow-lg">
+            <div class="absolute inset-0 pointer-events-none">
+                <div class="absolute -top-10 -right-10 w-40 h-40 bg-white/10 rounded-full blur-2xl"></div>
+            </div>
+            <div class="relative flex flex-col sm:flex-row items-start sm:items-center gap-4">
+                <div class="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center shrink-0">
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.381z" clip-rule="evenodd"/></svg>
+                </div>
+                <div class="flex-1">
+                    <p class="font-bold text-base">
+                        🎉 Estás disfrutando del plan <span class="text-yellow-300">{{ $promoPlan->name }}</span> de forma gratuita
+                    </p>
+                    <p class="text-indigo-100 text-sm mt-0.5">
+                        Tu promoción es válida hasta el <strong>{{ $company->promo_ends_at->format('d \d\e F \d\e Y') }}</strong>.
+                        ¡Aprovéchalo al máximo!
+                    </p>
+                </div>
+                <a href="{{ route('admin.subscription') }}"
+                   class="shrink-0 bg-white/20 hover:bg-white/30 text-white text-xs font-semibold px-4 py-2 rounded-lg transition">
+                    Ver suscripción
+                </a>
+            </div>
+        </div>
+        @endif
+
+        {{-- Empresa CTA --}}
+        @if($company->empresas()->count() === 0)
+        <div class="bg-blue-50 border border-blue-200 rounded-2xl p-6 flex flex-col sm:flex-row items-center gap-4">
+            <div class="w-12 h-12 rounded-xl bg-blue-100 flex items-center justify-center shrink-0">
+                <svg class="w-6 h-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+                </svg>
+            </div>
+            <div class="flex-1 text-center sm:text-left">
+                <h3 class="font-semibold text-gray-900">Registra tu empresa para comenzar a crear presupuestos</h3>
+                <p class="text-sm text-gray-500 mt-1">Necesitas al menos una empresa registrada para poder gestionar presupuestos, clientes y servicios.</p>
+            </div>
+            <a href="{{ route('admin.empresas.create') }}"
+               class="shrink-0 bg-blue-600 text-white text-sm font-semibold px-5 py-2.5 rounded-xl hover:bg-blue-700 transition shadow-sm">
+                Crear empresa
+            </a>
+        </div>
+        @endif
+
         {{-- Quick actions --}}
         <div class="flex flex-wrap gap-3">
             <a href="{{ route('admin.users.index') }}"
