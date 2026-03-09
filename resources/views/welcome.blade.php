@@ -403,7 +403,7 @@ $noticias = \MultiempresaApp\Noticias\Models\Noticia::publicadas()
 {{-- Footer --}}
 <footer class="bg-white border-t border-gray-200 py-8">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-sm text-gray-500">
-        © {{ date('Y') }} {{ config('app.name') }} — Anixelo.com
+        © {{ date('Y') }} {{ config('app.name') }} — Un producto de anixelo.com
     </div>
 </footer>
 
