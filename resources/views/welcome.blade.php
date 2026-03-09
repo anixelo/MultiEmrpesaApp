@@ -58,14 +58,14 @@
     <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
         <span class="inline-flex items-center gap-2 bg-indigo-100 text-indigo-700 text-xs font-semibold px-3 py-1.5 rounded-full mb-6">
             <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.381z" clip-rule="evenodd"/></svg>
-            Sistema Multi-Empresa todo en uno
+            Para autónomos y pequeñas pymes
         </span>
         <h1 class="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 leading-tight mb-6">
-            Gestiona tu empresa<br>
-            <span class="text-indigo-600">de forma inteligente</span>
+            Crea y envía presupuestos<br>
+            <span class="text-indigo-600">en segundos</span>
         </h1>
         <p class="text-lg text-gray-600 max-w-2xl mx-auto mb-10">
-            Plataforma completa para gestionar empresas, incidencias, equipos y suscripciones con notificaciones en tiempo real y soporte PWA.
+            La forma más sencilla de preparar presupuestos profesionales para tus clientes. Sin hojas de cálculo, sin Word y sin complicaciones.
         </p>
         <div class="flex flex-col sm:flex-row gap-4 justify-center">
             @auth
@@ -88,20 +88,82 @@
 <section id="features" class="py-24 bg-white">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="text-center mb-16">
-            <h2 class="text-3xl font-bold text-gray-900 mb-4">Todo lo que necesitas</h2>
-            <p class="text-gray-600 max-w-xl mx-auto">Una plataforma completa para gestionar cada aspecto de tu empresa</p>
+            <h2 class="text-3xl font-bold text-gray-900 mb-4">Todo lo que necesitas para crear presupuestos</h2>
+            <p class="text-gray-600 max-w-xl mx-auto">
+                Una herramienta simple pensada para autónomos y pequeñas empresas que necesitan preparar presupuestos profesionales sin perder tiempo.
+            </p>
         </div>
+
         <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
-            @php
-            $features = [
-                ['icon' => 'M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z', 'title' => 'Gestión de Incidencias', 'desc' => 'Sistema de tickets con estados, prioridades, comentarios en tiempo real y notificaciones automáticas.', 'color' => 'blue'],
-                ['icon' => 'M13 10V3L4 14h7v7l9-11h-7z', 'title' => 'Planes y Suscripciones', 'desc' => 'Planes flexibles desde gratuito hasta empresarial. Gestiona suscripciones con Stripe integrado.', 'color' => 'indigo'],
-                ['icon' => 'M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9', 'title' => 'Notificaciones', 'desc' => 'Notificaciones internas y por email para incidencias, comentarios, cambios de plan y más.', 'color' => 'purple'],
-                ['icon' => 'M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z', 'title' => 'Multi-Empresa', 'desc' => 'Gestión centralizada de múltiples empresas, usuarios y roles desde un único panel de control.', 'color' => 'green'],
-                ['icon' => 'M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2', 'title' => 'Gestión de Tareas', 'desc' => 'Asignación y seguimiento de tareas con prioridades, fechas límite y estados actualizables.', 'color' => 'yellow'],
-                ['icon' => 'M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z', 'title' => 'App Instalable (PWA)', 'desc' => 'Instala la app en cualquier dispositivo. Funciona offline con caché inteligente de rutas y recursos.', 'color' => 'pink'],
-            ];
-            @endphp
+
+@php
+$features = [
+
+[
+    'icon' => 'M9 12h6m-6 4h6M9 8h6M7 3h10a2 2 0 012 2v14l-5-3-5 3V5a2 2 0 012-2z',
+    'title' => 'Presupuestos profesionales',
+    'desc' => 'Crea presupuestos claros y profesionales en segundos con cálculo automático de totales, descuentos e IVA.',
+    'color' => 'blue'
+],
+
+[
+    'icon' => 'M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2M7 20H2v-2a3 3 0 015.356-1.857M15 7a3 3 0 11-6 0 3 3 0 016 0z',
+    'title' => 'Gestión de clientes',
+    'desc' => 'Guarda tus clientes y reutilízalos al instante al crear nuevos presupuestos. Accede al historial completo de cada cliente.',
+    'color' => 'green'
+],
+
+[
+    'icon' => 'M3 7h18M3 12h18M3 17h18',
+    'title' => 'Conceptos reutilizables',
+    'desc' => 'Define tus servicios y productos habituales con precio e IVA para añadirlos a los presupuestos en pocos clics.',
+    'color' => 'indigo'
+],
+
+[
+    'icon' => 'M12 8c-3.866 0-7 2.239-7 5s3.134 5 7 5 7-2.239 7-5-3.134-5-7-5zm0 8a3 3 0 100-6 3 3 0 000 6z',
+    'title' => 'Seguimiento de presupuestos',
+    'desc' => 'Consulta fácilmente qué presupuestos están enviados, vistos, aceptados o rechazados por tus clientes.',
+    'color' => 'purple'
+],
+
+[
+    'icon' => 'M9 17v-2a4 4 0 014-4h4',
+    'title' => 'Enlace para clientes',
+    'desc' => 'Envía presupuestos mediante un enlace único para que el cliente pueda verlo desde cualquier dispositivo.',
+    'color' => 'yellow'
+],
+
+[
+    'icon' => 'M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2M7 20H2v-2a3 3 0 015.356-1.857M15 7a3 3 0 11-6 0 3 3 0 016 0z',
+    'title' => 'Trabajo en equipo',
+    'desc' => 'Permite que varios usuarios creen y gestionen presupuestos dentro de la misma empresa. Ideal para equipos pequeños.',
+    'color' => 'pink'
+],
+
+[
+    'icon' => 'M4 7h16M4 11h16M4 15h16M4 19h16',
+    'title' => 'Multiempresa',
+    'desc' => 'Gestiona presupuestos para varias empresas desde una única cuenta. Perfecto para autónomos que trabajan con diferentes negocios.',
+    'color' => 'teal'
+],
+
+[
+    'icon' => 'M12 8v8m0 0l3-3m-3 3l-3-3M4 4h16v16H4z',
+    'title' => 'Descarga en PDF',
+    'desc' => 'Descarga tus presupuestos en PDF con un diseño limpio y profesional listo para enviar o imprimir.',
+    'color' => 'red'
+],
+
+[
+    'icon' => 'M8 10h.01M12 10h.01M16 10h.01M9 16h6M21 12c0 4.418-4.03 8-9 8a9.77 9.77 0 01-4-.8L3 20l1.8-3.2A7.94 7.94 0 013 12c0-4.418 4.03-8 9-8s9 3.582 9 8z',
+    'title' => 'Zona de incidencias',
+    'desc' => 'Registra rápidamente incidencias, dudas y comentarios en la plataforma.',
+    'color' => 'orange'
+],
+
+];
+@endphp
 
             @foreach($features as $feature)
             <div class="bg-white border border-gray-100 rounded-2xl p-6 hover:shadow-lg transition-shadow group">
@@ -114,9 +176,16 @@
                 <p class="text-sm text-gray-600 leading-relaxed">{{ $feature['desc'] }}</p>
             </div>
             @endforeach
+
         </div>
     </div>
 </section>
+
+
+
+
+
+
 
 {{-- Pricing --}}
 <section id="pricing" class="py-24 bg-gray-50">
@@ -162,7 +231,7 @@
 
         <div class="text-center mb-16">
             <h2 class="text-3xl font-bold text-gray-900 mb-4">Planes y Precios</h2>
-            <p class="text-gray-600 max-w-xl mx-auto">Elige el plan que mejor se adapta a las necesidades de tu empresa</p>
+            <p class="text-gray-600 max-w-xl mx-auto">Elige el plan que mejor se adapta a tu forma de trabajar y empieza a crear presupuestos en minutos.</p>
         </div>
 
         @php
@@ -323,8 +392,8 @@ $noticias = \MultiempresaApp\Noticias\Models\Noticia::publicadas()
 {{-- CTA --}}
 <section class="py-24 bg-indigo-600">
     <div class="max-w-3xl mx-auto px-4 text-center">
-        <h2 class="text-3xl font-bold text-white mb-4">¿Listo para empezar?</h2>
-        <p class="text-indigo-200 mb-8 text-lg">Crea tu cuenta gratuita y empieza a gestionar tu empresa de forma inteligente hoy mismo.</p>
+        <h2 class="text-3xl font-bold text-white mb-4">Empieza a enviar presupuestos hoy mismo</h2>
+        <p class="text-indigo-200 mb-8 text-lg">Crea tu cuenta gratuita y empieza a enviar presupuestos profesionales a tus clientes en minutos.</p>
         <a href="{{ route('register') }}" class="bg-white text-indigo-700 px-8 py-3.5 rounded-xl font-bold hover:bg-indigo-50 transition shadow-lg">
             Crear cuenta gratis →
         </a>
@@ -334,7 +403,7 @@ $noticias = \MultiempresaApp\Noticias\Models\Noticia::publicadas()
 {{-- Footer --}}
 <footer class="bg-white border-t border-gray-200 py-8">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-sm text-gray-500">
-        © {{ date('Y') }} {{ config('app.name') }} — Sistema Multi-Empresa
+        © {{ date('Y') }} {{ config('app.name') }} — Anixelo.com
     </div>
 </footer>
 

@@ -51,6 +51,26 @@
                                   {{ request()->routeIs('admin.dashboard') ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50' }}">
                             Panel Admin
                         </a>
+                        <a href="{{ route('admin.presupuestos.index') }}"
+                           class="px-3 py-2 rounded-lg text-sm font-medium transition
+                                  {{ request()->routeIs('admin.presupuestos.*') ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50' }}">
+                            Presupuestos
+                        </a>
+                        <a href="{{ route('admin.clientes.index') }}"
+                           class="px-3 py-2 rounded-lg text-sm font-medium transition
+                                  {{ request()->routeIs('admin.clientes.*') ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50' }}">
+                            Clientes
+                        </a>
+                        <a href="{{ route('admin.servicios.index') }}"
+                           class="px-3 py-2 rounded-lg text-sm font-medium transition
+                                  {{ request()->routeIs('admin.servicios.*') ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50' }}">
+                            Conceptos
+                        </a>
+                        <a href="{{ route('admin.empresas.index') }}"
+                           class="px-3 py-2 rounded-lg text-sm font-medium transition
+                                  {{ request()->routeIs('admin.empresas.*') ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50' }}">
+                            Empresas
+                        </a>
                         @if(auth()->user()->company?->canUseTasks())
                         <a href="{{ route('admin.tasks.index') }}"
                            class="px-3 py-2 rounded-lg text-sm font-medium transition
@@ -63,30 +83,10 @@
                                   {{ request()->routeIs('admin.users.*') ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50' }}">
                             Usuarios
                         </a>
-                        <a href="{{ route('admin.clientes.index') }}"
-                           class="px-3 py-2 rounded-lg text-sm font-medium transition
-                                  {{ request()->routeIs('admin.clientes.*') ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50' }}">
-                            Clientes
-                        </a>
-                        <a href="{{ route('admin.servicios.index') }}"
-                           class="px-3 py-2 rounded-lg text-sm font-medium transition
-                                  {{ request()->routeIs('admin.servicios.*') ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50' }}">
-                            Conceptos
-                        </a>
-                        <a href="{{ route('admin.presupuestos.index') }}"
-                           class="px-3 py-2 rounded-lg text-sm font-medium transition
-                                  {{ request()->routeIs('admin.presupuestos.*') ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50' }}">
-                            Presupuestos
-                        </a>
                         <a href="{{ route('admin.subscription') }}"
                            class="px-3 py-2 rounded-lg text-sm font-medium transition
                                   {{ request()->routeIs('admin.subscription*') ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50' }}">
                             Suscripción
-                        </a>
-                        <a href="{{ route('admin.empresas.index') }}"
-                           class="px-3 py-2 rounded-lg text-sm font-medium transition
-                                  {{ request()->routeIs('admin.empresas.*') ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50' }}">
-                            Empresas
                         </a>
                         @endif
 

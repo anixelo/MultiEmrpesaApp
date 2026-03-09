@@ -2,7 +2,7 @@
     <x-slot name="header">
         <div class="flex items-center justify-between">
             <div>
-                <h1 class="text-2xl font-bold text-gray-900">Panel de Administración</h1>
+                <h1 class="text-2xl font-bold text-gray-900">Panel</h1>
                 <p class="text-sm text-gray-500 mt-0.5">
                     {{ $company ? $company->name : 'Sin empresa asignada' }}
                 </p>
