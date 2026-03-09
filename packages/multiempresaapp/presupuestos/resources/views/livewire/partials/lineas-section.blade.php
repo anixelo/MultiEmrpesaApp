@@ -44,13 +44,23 @@
                                                 class="text-gray-400 hover:text-gray-600 text-xs leading-none">&times;</button>
                                     </div>
                                 @else
-                                    <input type="text"
-                                           wire:model.live="lineaSearch.{{ $i }}"
-                                           wire:keyup="searchServicioForLinea({{ $i }}, $event.target.value)"
-                                           wire:blur="copySearchToConcepto({{ $i }})"
-                                           placeholder="Buscar concepto o escribir..."
-                                           autocomplete="off"
-                                           class="block w-full rounded border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm @error('lineas.'.$i.'.concepto') border-red-300 @enderror">
+                                    <div class="flex gap-1">
+                                        <input type="text"
+                                               wire:model.live="lineaSearch.{{ $i }}"
+                                               wire:keyup="searchServicioForLinea({{ $i }}, $event.target.value)"
+                                               wire:blur="copySearchToConcepto({{ $i }})"
+                                               placeholder="Buscar concepto o escribir..."
+                                               autocomplete="off"
+                                               class="block w-full rounded border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm @error('lineas.'.$i.'.concepto') border-red-300 @enderror">
+                                        <button type="button"
+                                                wire:click="openServicioSearchModal({{ $i }})"
+                                                class="inline-flex items-center rounded border border-gray-300 bg-white px-2 py-1 text-gray-500 hover:bg-gray-50 hover:text-indigo-600 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                                                title="Buscar en lista">
+                                            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 10h16M4 14h16M4 18h16"/>
+                                            </svg>
+                                        </button>
+                                    </div>
                                     @error('lineas.'.$i.'.concepto')
                                         <p class="text-xs text-red-600 mt-0.5">{{ $message }}</p>
                                     @enderror
@@ -178,13 +188,23 @@
                                     class="text-gray-400 hover:text-gray-600 text-xs leading-none">&times;</button>
                         </div>
                     @else
-                        <input type="text"
-                               wire:model.live="lineaSearch.{{ $i }}"
-                               wire:keyup="searchServicioForLinea({{ $i }}, $event.target.value)"
-                               wire:blur="copySearchToConcepto({{ $i }})"
-                               placeholder="Buscar concepto o escribir..."
-                               autocomplete="off"
-                               class="block w-full rounded border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm @error('lineas.'.$i.'.concepto') border-red-300 @enderror">
+                        <div class="flex gap-1">
+                            <input type="text"
+                                   wire:model.live="lineaSearch.{{ $i }}"
+                                   wire:keyup="searchServicioForLinea({{ $i }}, $event.target.value)"
+                                   wire:blur="copySearchToConcepto({{ $i }})"
+                                   placeholder="Buscar concepto o escribir..."
+                                   autocomplete="off"
+                                   class="block w-full rounded border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm @error('lineas.'.$i.'.concepto') border-red-300 @enderror">
+                            <button type="button"
+                                    wire:click="openServicioSearchModal({{ $i }})"
+                                    class="inline-flex items-center rounded border border-gray-300 bg-white px-2 py-1 text-gray-500 hover:bg-gray-50 hover:text-indigo-600 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                                    title="Buscar en lista">
+                                <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 10h16M4 14h16M4 18h16"/>
+                                </svg>
+                            </button>
+                        </div>
                         @error('lineas.'.$i.'.concepto')
                             <p class="text-xs text-red-600 mt-0.5">{{ $message }}</p>
                         @enderror

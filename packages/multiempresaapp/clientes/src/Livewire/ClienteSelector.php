@@ -12,6 +12,9 @@ class ClienteSelector extends Component
     public string $selectedClienteNombre = '';
     public bool $showDropdown = false;
     public bool $showModal = false;
+    public bool $showSearchModal = false;
+    public string $searchModalQuery = '';
+    public array $searchModalResults = [];
     public string $quickNombre = '';
     public string $quickEmail = '';
     public string $quickTelefono = '';
@@ -61,6 +64,7 @@ class ClienteSelector extends Component
     public function openModal(): void
     {
         $this->showModal = true;
+        $this->showSearchModal = false;
     }
 
     public function closeModal(): void
@@ -69,6 +73,51 @@ class ClienteSelector extends Component
         $this->quickNombre = '';
         $this->quickEmail = '';
         $this->quickTelefono = '';
+    }
+
+    public function openSearchModal(): void
+    {
+        $this->showSearchModal = true;
+        $this->searchModalQuery = '';
+        $this->searchModalResults = [];
+    }
+
+    public function closeSearchModal(): void
+    {
+        $this->showSearchModal = false;
+        $this->searchModalQuery = '';
+        $this->searchModalResults = [];
+    }
+
+    public function updatedSearchModalQuery(): void
+    {
+        if (strlen($this->searchModalQuery) >= 1) {
+            $empresaId = auth()->user()->company_id;
+
+            $this->searchModalResults = Cliente::deEmpresa($empresaId)
+                ->where(function ($q) {
+                    $q->where('nombre', 'like', "%{$this->searchModalQuery}%")
+                      ->orWhere('email', 'like', "%{$this->searchModalQuery}%")
+                      ->orWhere('telefono', 'like', "%{$this->searchModalQuery}%");
+                })
+                ->limit(20)
+                ->get()
+                ->toArray();
+        } else {
+            $this->searchModalResults = [];
+        }
+    }
+
+    public function selectFromModal(int $id, string $nombre): void
+    {
+        $this->closeSearchModal();
+        $this->selectCliente($id, $nombre);
+    }
+
+    public function openCreateFromSearch(): void
+    {
+        $this->closeSearchModal();
+        $this->openModal();
     }
 
     public function quickCreate(): void
