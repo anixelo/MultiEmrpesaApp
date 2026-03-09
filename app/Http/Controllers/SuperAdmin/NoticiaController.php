@@ -132,10 +132,7 @@ class NoticiaController extends Controller
             ->filter()
             ->map(function (string $nombre) {
                 $nombre = trim($nombre);
-                return Tag::firstOrCreate(
-                    ['slug' => Str::slug($nombre)],
-                    ['nombre' => $nombre]
-                )->id;
+                return Tag::firstOrCreate(['nombre' => $nombre])->id;
             })
             ->unique()
             ->values()

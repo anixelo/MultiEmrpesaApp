@@ -67,7 +67,7 @@
             Etiqueta
         </span>
         <h1 class="text-3xl font-bold text-gray-900">{{ $tag->nombre }}</h1>
-        <p class="text-gray-500 mt-2">{{ $noticias->total() }} {{ $noticias->total() === 1 ? 'noticia' : 'noticias' }}</p>
+        <p class="text-gray-500 mt-2">{{ trans_choice('{0} Sin noticias|{1} :count noticia|[2,*] :count noticias', $noticias->total()) }}</p>
     </div>
 </div>
 
