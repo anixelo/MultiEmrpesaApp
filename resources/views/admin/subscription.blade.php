@@ -57,6 +57,7 @@
         @endif
 
         {{-- Current plan --}}
+        @if(!$company || !$company->isInPromo())
         <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
             <h2 class="text-lg font-semibold text-gray-900 mb-4">Plan Actual</h2>
 
@@ -119,6 +120,7 @@
             </div>
             @endif
         </div>
+        @endif
 
         {{-- Available free plans --}}
         @php $freePlans = $plans->where('price_monthly', 0); @endphp
@@ -128,10 +130,11 @@
             <p class="text-sm text-gray-500 mb-4">Puedes cambiar al plan gratuito directamente. Para planes de pago, contacta con el administrador.</p>
             <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                 @foreach($plans as $plan)
-                <div class="border border-gray-200 rounded-xl p-4 {{ ($subscription?->plan_id === $plan->id) ? 'border-indigo-300 bg-indigo-50' : '' }}">
+                @php $isCurrentPlan = !$company->isInPromo() && ($subscription?->plan_id === $plan->id); @endphp
+                <div class="border border-gray-200 rounded-xl p-4 {{ $isCurrentPlan ? 'border-indigo-300 bg-indigo-50' : '' }}">
                     <div class="flex items-center justify-between mb-2">
                         <h3 class="font-semibold text-gray-900">{{ $plan->name }}</h3>
-                        @if($subscription?->plan_id === $plan->id)
+                        @if($isCurrentPlan)
                         <span class="text-xs bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded-full font-medium">Actual</span>
                         @endif
                     </div>

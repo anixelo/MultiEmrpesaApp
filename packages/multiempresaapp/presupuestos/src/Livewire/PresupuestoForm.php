@@ -37,6 +37,10 @@ class PresupuestoForm extends Component
     public string $quickServicioNombre = '';
     public string $quickServicioPrecio = '0';
     public string $quickServicioIva = '';
+    public bool $showServicioSearchModal = false;
+    public int $servicioSearchModalLineaIndex = -1;
+    public string $servicioSearchModalQuery = '';
+    public array $servicioSearchModalResults = [];
 
     // Wizard step (only used for create mode)
     public int $step = 1;
@@ -203,6 +207,7 @@ class PresupuestoForm extends Component
     {
         $this->servicioModalLineaIndex = $index;
         $this->showServicioModal = true;
+        $this->showServicioSearchModal = false;
         $this->quickServicioNombre = $this->lineaSearch[$index] ?? '';
         $this->quickServicioPrecio = '0';
         $this->quickServicioIva = (string) $this->ivaDefecto;
@@ -215,6 +220,50 @@ class PresupuestoForm extends Component
         $this->quickServicioNombre = '';
         $this->quickServicioPrecio = '0';
         $this->quickServicioIva = '';
+    }
+
+    public function openServicioSearchModal(int $index): void
+    {
+        $this->servicioSearchModalLineaIndex = $index;
+        $this->showServicioSearchModal = true;
+        $this->servicioSearchModalQuery = '';
+        $this->servicioSearchModalResults = [];
+    }
+
+    public function closeServicioSearchModal(): void
+    {
+        $this->showServicioSearchModal = false;
+        $this->servicioSearchModalLineaIndex = -1;
+        $this->servicioSearchModalQuery = '';
+        $this->servicioSearchModalResults = [];
+    }
+
+    public function updatedServicioSearchModalQuery(): void
+    {
+        if (strlen($this->servicioSearchModalQuery) >= 1) {
+            $empresaId = auth()->user()->company_id;
+            $this->servicioSearchModalResults = \MultiempresaApp\Servicios\Models\Servicio::deEmpresa($empresaId)
+                ->activos()
+                ->where('nombre', 'like', "%{$this->servicioSearchModalQuery}%")
+                ->limit(20)
+                ->get()
+                ->toArray();
+        } else {
+            $this->servicioSearchModalResults = [];
+        }
+    }
+
+    public function selectServicioFromModal(int $index, int $servicioId, string $nombre, float $precio, ?float $ivaTipo): void
+    {
+        $this->closeServicioSearchModal();
+        $this->selectServicioForLinea($index, $servicioId, $nombre, $precio, $ivaTipo);
+    }
+
+    public function openCreateFromServicioSearch(): void
+    {
+        $index = $this->servicioSearchModalLineaIndex;
+        $this->closeServicioSearchModal();
+        $this->openServicioModal($index);
     }
 
     public function quickCreateServicio(): void

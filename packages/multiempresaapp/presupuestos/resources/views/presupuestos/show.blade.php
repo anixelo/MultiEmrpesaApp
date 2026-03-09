@@ -41,8 +41,60 @@
                 </div>
             @endif
 
-            {{-- Header info --}}
+            {{-- Sección 1: Datos de la empresa --}}
             <div class="overflow-hidden bg-white shadow sm:rounded-lg">
+                <div class="px-6 py-4 border-b border-gray-200">
+                    <h3 class="text-sm font-medium text-gray-900">Datos de la empresa</h3>
+                </div>
+                <div class="px-6 py-5">
+                    @if ($presupuesto->negocio)
+                        <p class="text-sm font-semibold text-gray-900">{{ $presupuesto->negocio->name }}</p>
+                        @if ($presupuesto->negocio->nif)
+                            <p class="text-sm text-gray-500 mt-0.5">NIF: {{ $presupuesto->negocio->nif }}</p>
+                        @endif
+                        @if ($presupuesto->negocio->email)
+                            <p class="text-sm text-gray-500">{{ $presupuesto->negocio->email }}</p>
+                        @endif
+                        @if ($presupuesto->negocio->phone)
+                            <p class="text-sm text-gray-500">{{ $presupuesto->negocio->phone }}</p>
+                        @endif
+                        @if ($presupuesto->negocio->address)
+                            <p class="text-sm text-gray-500">{{ $presupuesto->negocio->address }}</p>
+                        @endif
+                    @else
+                        <p class="text-sm text-gray-400 italic">Sin empresa asignada.</p>
+                    @endif
+                </div>
+            </div>
+
+            {{-- Sección 2: Datos del cliente --}}
+            <div class="overflow-hidden bg-white shadow sm:rounded-lg">
+                <div class="px-6 py-4 border-b border-gray-200">
+                    <h3 class="text-sm font-medium text-gray-900">Datos del cliente</h3>
+                </div>
+                <div class="px-6 py-5">
+                    @if ($presupuesto->cliente)
+                        <p class="text-sm font-semibold text-gray-900">{{ $presupuesto->cliente->nombre }}</p>
+                        @if ($presupuesto->cliente->email)
+                            <p class="text-sm text-gray-500">{{ $presupuesto->cliente->email }}</p>
+                        @endif
+                        @if ($presupuesto->cliente->telefono)
+                            <p class="text-sm text-gray-500">{{ $presupuesto->cliente->telefono }}</p>
+                        @endif
+                        @if ($presupuesto->cliente->direccion)
+                            <p class="text-sm text-gray-500">{{ $presupuesto->cliente->direccion }}</p>
+                        @endif
+                    @else
+                        <p class="text-sm text-gray-400 italic">Sin cliente asignado.</p>
+                    @endif
+                </div>
+            </div>
+
+            {{-- Sección 3: Datos generales --}}
+            <div class="overflow-hidden bg-white shadow sm:rounded-lg">
+                <div class="px-6 py-4 border-b border-gray-200">
+                    <h3 class="text-sm font-medium text-gray-900">Datos generales</h3>
+                </div>
                 <div class="px-6 py-5 grid grid-cols-2 gap-6 sm:grid-cols-4">
                     <div>
                         <dt class="text-xs font-medium uppercase tracking-wider text-gray-500">Número</dt>
@@ -62,29 +114,25 @@
                         <dt class="text-xs font-medium uppercase tracking-wider text-gray-500">Forma de pago</dt>
                         <dd class="mt-1 text-sm text-gray-900">{{ $presupuesto->forma_pago ?? '—' }}</dd>
                     </div>
-                </div>
-            </div>
-
-            {{-- Cliente --}}
-            <div class="overflow-hidden bg-white shadow sm:rounded-lg">
-                <div class="px-6 py-4 border-b border-gray-200">
-                    <h3 class="text-sm font-medium text-gray-900">Cliente</h3>
-                </div>
-                <div class="px-6 py-4">
-                    <p class="text-sm font-semibold text-gray-900">{{ $presupuesto->cliente?->nombre ?? '—' }}</p>
-                    @if ($presupuesto->cliente?->email)
-                        <p class="text-sm text-gray-500">{{ $presupuesto->cliente->email }}</p>
+                    @if ($presupuesto->observaciones)
+                    <div class="col-span-2 sm:col-span-4">
+                        <dt class="text-xs font-medium uppercase tracking-wider text-gray-500">Observaciones</dt>
+                        <dd class="mt-1 text-sm text-gray-700 whitespace-pre-line">{{ $presupuesto->observaciones }}</dd>
+                    </div>
                     @endif
-                    @if ($presupuesto->cliente?->telefono)
-                        <p class="text-sm text-gray-500">{{ $presupuesto->cliente->telefono }}</p>
+                    @if ($presupuesto->notas)
+                    <div class="col-span-2 sm:col-span-4">
+                        <dt class="text-xs font-medium uppercase tracking-wider text-gray-500">Notas internas</dt>
+                        <dd class="mt-1 text-sm text-gray-700 whitespace-pre-line">{{ $presupuesto->notas }}</dd>
+                    </div>
                     @endif
                 </div>
             </div>
 
-            {{-- Líneas --}}
+            {{-- Sección 4: Líneas de presupuesto --}}
             <div class="overflow-hidden bg-white shadow sm:rounded-lg">
                 <div class="px-6 py-4 border-b border-gray-200">
-                    <h3 class="text-sm font-medium text-gray-900">Líneas del presupuesto</h3>
+                    <h3 class="text-sm font-medium text-gray-900">Líneas de presupuesto</h3>
                 </div>
 
                 {{-- Desktop table --}}
@@ -198,26 +246,6 @@
                     </div>
                 </div>
             </div>
-
-            {{-- Notas y observaciones --}}
-            @if ($presupuesto->notas || $presupuesto->observaciones)
-                <div class="overflow-hidden bg-white shadow sm:rounded-lg">
-                    <div class="px-6 py-4 space-y-4">
-                        @if ($presupuesto->notas)
-                            <div>
-                                <h4 class="text-xs font-medium uppercase tracking-wider text-gray-500 mb-1">Notas internas</h4>
-                                <p class="text-sm text-gray-700 whitespace-pre-line">{{ $presupuesto->notas }}</p>
-                            </div>
-                        @endif
-                        @if ($presupuesto->observaciones)
-                            <div>
-                                <h4 class="text-xs font-medium uppercase tracking-wider text-gray-500 mb-1">Observaciones para el cliente</h4>
-                                <p class="text-sm text-gray-700 whitespace-pre-line">{{ $presupuesto->observaciones }}</p>
-                            </div>
-                        @endif
-                    </div>
-                </div>
-            @endif
 
             {{-- Acciones --}}
             <div class="flex flex-wrap gap-3 justify-center">
