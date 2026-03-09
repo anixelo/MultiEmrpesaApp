@@ -26,10 +26,11 @@ class DatabaseSeeder extends Seeder
                 'description' => 'Plan básico gratuito para pequeñas empresas.',
                 'price_monthly' => 0,
                 'price_yearly' => 0,
-                'max_users' => 3,
-                'max_presupuestos' => 5,
+                'max_users' => 1,
+                'max_presupuestos' => 15,
+                'max_empresas' => 1,
                 'has_tasks' => false,
-                'features' => ['3 usuarios', '5 presupuestos al mes', 'Soporte por email'],
+                'features' => [],
                 'active' => true,
             ]
         );
@@ -38,12 +39,13 @@ class DatabaseSeeder extends Seeder
             ['name' => 'Profesional'],
             [
                 'description' => 'Plan profesional para empresas en crecimiento.',
-                'price_monthly' => 29.99,
-                'price_yearly' => 299.99,
-                'max_users' => 20,
-                'max_presupuestos' => 50,
+                'price_monthly' => 6,
+                'price_yearly' => 65,
+                'max_users' => 3,
+                'max_presupuestos' => 0,
+                'max_empresas' => 0,
                 'has_tasks' => true,
-                'features' => ['20 usuarios', '50 presupuestos al mes', 'Soporte prioritario', 'Informes avanzados', 'Gestión de tareas'],
+                'features' => [],
                 'active' => true,
             ]
         );
@@ -52,12 +54,13 @@ class DatabaseSeeder extends Seeder
             ['name' => 'Empresarial'],
             [
                 'description' => 'Plan empresarial para grandes organizaciones.',
-                'price_monthly' => 99.99,
-                'price_yearly' => 999.99,
-                'max_users' => 999,
+                'price_monthly' => 9,
+                'price_yearly' => 90,
+                'max_users' => 5,
                 'max_presupuestos' => 0,
+                'max_empresas' => 0,
                 'has_tasks' => true,
-                'features' => ['Usuarios ilimitados', 'Presupuestos ilimitados', 'Soporte 24/7', 'API access', 'SSO', 'Gestión de tareas'],
+                'features' => [],
                 'active' => true,
             ]
         );

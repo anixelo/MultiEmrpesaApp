@@ -2,7 +2,7 @@
     <x-slot name="header">
         <div class="flex items-center justify-between">
             <div>
-                <h1 class="text-2xl font-bold text-gray-900">Panel Superadministrador</h1>
+                <h1 class="text-2xl font-bold text-gray-900">Panel</h1>
                 <p class="text-sm text-gray-500 mt-0.5">Visión global del sistema</p>
             </div>
             <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-purple-100 text-purple-800 text-xs font-semibold">
@@ -14,33 +14,33 @@
 
     <div class="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8 space-y-8">
 
-        {{-- Stats cards --}}
-        <div class="grid grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6">
-            @php
-            $cards = [
-                ['label'=>'Usuarios totales','value'=>$stats['total_users'],'icon'=>'M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z','color'=>'indigo'],
-                ['label'=>'Cuentas activas','value'=>$stats['active_companies'],'icon'=>'M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4','color'=>'emerald'],
-                ['label'=>'Tareas totales','value'=>$stats['total_tasks'],'icon'=>'M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4','color'=>'amber'],
-                ['label'=>'Tareas pendientes','value'=>$stats['pending_tasks'],'icon'=>'M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z','color'=>'red'],
-                ['label'=>'Total cuentas','value'=>$stats['total_companies'],'icon'=>'M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6','color'=>'sky'],
-                ['label'=>'Roles definidos','value'=>$stats['total_roles'],'icon'=>'M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z','color'=>'violet'],
-            ];
-            @endphp
+{{-- Stats cards --}}
+<div class="grid grid-cols-3 gap-4">
+    @php
+    $cards = [
+        ['label'=>'Usuarios totales','value'=>$stats['total_users'],'icon'=>'M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z','color'=>'indigo'],
+        ['label'=>'Cuentas activas','value'=>$stats['active_companies'],'icon'=>'M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4','color'=>'emerald'],
+        ['label'=>'Total cuentas','value'=>$stats['total_companies'],'icon'=>'M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6','color'=>'sky'],
+    ];
+    @endphp
 
-            @foreach($cards as $card)
-            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 flex items-center gap-4">
-                <div class="p-3 rounded-xl bg-{{ $card['color'] }}-50">
-                    <svg class="w-6 h-6 text-{{ $card['color'] }}-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="{{ $card['icon'] }}"/>
-                    </svg>
-                </div>
-                <div>
-                    <p class="text-2xl font-bold text-gray-900">{{ $card['value'] }}</p>
-                    <p class="text-xs text-gray-500 mt-0.5">{{ $card['label'] }}</p>
-                </div>
-            </div>
-            @endforeach
+    @foreach($cards as $card)
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 sm:p-5 flex items-center sm:items-center justify-center sm:justify-start gap-4">
+        
+        <div class="p-3 hidden sm:block rounded-xl bg-{{ $card['color'] }}-50">
+            <svg class="w-6 h-6 text-{{ $card['color'] }}-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="{{ $card['icon'] }}"/>
+            </svg>
         </div>
+
+        <div class="text-center sm:text-left">
+            <p class="text-xl sm:text-2xl font-bold text-gray-900">{{ $card['value'] }}</p>
+            <p class="text-[9px] sm:text-xs text-gray-500 mt-0.5">{{ $card['label'] }}</p>
+        </div>
+
+    </div>
+    @endforeach
+</div>
 
         {{-- Quick actions --}}
         <div class="flex flex-wrap gap-3">

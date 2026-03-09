@@ -15,10 +15,7 @@ class DashboardController extends Controller
         $stats = [
             'total_users'     => User::count(),
             'total_companies' => Company::count(),
-            'total_tasks'     => Task::count(),
-            'total_roles'     => Role::count(),
             'active_companies' => Company::where('active', true)->count(),
-            'pending_tasks'   => Task::where('status', 'pendiente')->count(),
         ];
 
         $recentUsers = User::with(['company', 'roles'])->latest()->take(5)->get();
