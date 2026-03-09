@@ -140,7 +140,9 @@
                         @if(!$plan->isFree())<span class="text-sm font-normal text-gray-400">/mes</span>@endif
                     </p>
                     <p class="text-xs text-gray-500 mb-3">{{ $plan->max_users }} usuarios · {{ ($plan->max_presupuestos ?? 0) == 0 ? '∞' : $plan->max_presupuestos }} presup./mes</p>
-                    @if($plan->isFree() && $subscription?->plan_id !== $plan->id)
+                    @if($company->isInPromo() && $subscription?->plan_id !== $plan->id)
+                    <p class="text-xs text-center text-amber-600 italic">No disponible durante la promoción</p>
+                    @elseif($plan->isFree() && $subscription?->plan_id !== $plan->id)
                     <form method="POST" action="{{ route('admin.subscription.change-plan') }}">
                         @csrf
                         <input type="hidden" name="plan_id" value="{{ $plan->id }}">

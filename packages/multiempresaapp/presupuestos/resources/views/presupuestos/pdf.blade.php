@@ -31,7 +31,7 @@
 
 <div class="header">
     <div>
-        <div class="empresa-nombre">{{ $presupuesto->empresa?->name ?? config('app.name') }}</div>
+        <div class="empresa-nombre">{{ $presupuesto->negocio?->name ?? $presupuesto->empresa?->name ?? config('app.name') }}</div>
         <div style="margin-top:4px;font-size:11px;color:#555;">Presupuesto</div>
     </div>
     <div>

@@ -28,6 +28,21 @@
                             @enderror
                         </div>
 
+                        {{-- Tipo --}}
+                        <div class="mb-4">
+                            <label for="tipo" class="block text-sm font-medium text-gray-700">Tipo</label>
+                            <select id="tipo"
+                                    name="tipo"
+                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm @error('tipo') border-red-300 @enderror">
+                                <option value="servicio" {{ old('tipo', 'servicio') === 'servicio' ? 'selected' : '' }}>Servicio</option>
+                                <option value="producto" {{ old('tipo') === 'producto' ? 'selected' : '' }}>Producto</option>
+                                <option value="otro"     {{ old('tipo') === 'otro'     ? 'selected' : '' }}>Otro</option>
+                            </select>
+                            @error('tipo')
+                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                            @enderror
+                        </div>
+
                         {{-- Descripción --}}
                         <div class="mb-4">
                             <label for="descripcion" class="block text-sm font-medium text-gray-700">Descripción</label>

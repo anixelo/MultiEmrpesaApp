@@ -92,19 +92,16 @@
         </div>
 
         {{-- Stats --}}
-        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="grid grid-cols-2 lg:grid-cols-3 gap-4">
             @php
-            $cards = [
+            $baseCards = [
                 ['label'=>'Trabajadores','value'=>$stats['total_workers'] ?? 0,'color'=>'blue','icon'=>'M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z'],
-                ['label'=>'Tareas totales','value'=>$stats['total_tasks'] ?? 0,'color'=>'indigo','icon'=>'M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2'],
-                ['label'=>'Pendientes','value'=>$stats['pending_tasks'] ?? 0,'color'=>'amber','icon'=>'M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z'],
-                ['label'=>'Completadas','value'=>$stats['completed_tasks'] ?? 0,'color'=>'emerald','icon'=>'M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z'],
                 ['label'=>'Presupuestos totales','value'=>$stats['total_presupuestos'] ?? 0,'color'=>'violet','icon'=>'M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z'],
                 ['label'=>'Presupuestos aceptados','value'=>$stats['presupuestos_aceptados'] ?? 0,'color'=>'emerald','icon'=>'M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z'],
                 ['label'=>'Presupuestos rechazados','value'=>$stats['presupuestos_rechazados'] ?? 0,'color'=>'red','icon'=>'M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z'],
             ];
             @endphp
-            @foreach($cards as $card)
+            @foreach($baseCards as $card)
             <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 flex items-center gap-4">
                 <div class="p-3 rounded-xl bg-{{ $card['color'] }}-50">
                     <svg class="w-6 h-6 text-{{ $card['color'] }}-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
@@ -119,8 +116,35 @@
             @endforeach
         </div>
 
+        {{-- Task stats (only if plan has tasks enabled) --}}
+        @if($company->canUseTasks())
+        <div class="grid grid-cols-2 lg:grid-cols-3 gap-4">
+            @php
+            $taskCards = [
+                ['label'=>'Tareas totales','value'=>$stats['total_tasks'] ?? 0,'color'=>'indigo','icon'=>'M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2'],
+                ['label'=>'Pendientes','value'=>$stats['pending_tasks'] ?? 0,'color'=>'amber','icon'=>'M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z'],
+                ['label'=>'Completadas','value'=>$stats['completed_tasks'] ?? 0,'color'=>'emerald','icon'=>'M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z'],
+            ];
+            @endphp
+            @foreach($taskCards as $card)
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 flex items-center gap-4">
+                <div class="p-3 rounded-xl bg-{{ $card['color'] }}-50">
+                    <svg class="w-6 h-6 text-{{ $card['color'] }}-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="{{ $card['icon'] }}"/>
+                    </svg>
+                </div>
+                <div>
+                    <p class="text-2xl font-bold text-gray-900">{{ $card['value'] }}</p>
+                    <p class="text-xs text-gray-500 mt-0.5">{{ $card['label'] }}</p>
+                </div>
+            </div>
+            @endforeach
+        </div>
+        @endif
+
         {{-- Tasks by status --}}
         <div class="grid grid-cols-1 xl:grid-cols-3 gap-6">
+            @if($company->canUseTasks())
             <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
                 <h2 class="font-semibold text-gray-900 mb-4">Tareas por estado</h2>
                 @php
@@ -143,6 +167,7 @@
                     @endforeach
                 </div>
             </div>
+            @endif
 
             <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
                 <h2 class="font-semibold text-gray-900 mb-4">Presupuestos por estado</h2>

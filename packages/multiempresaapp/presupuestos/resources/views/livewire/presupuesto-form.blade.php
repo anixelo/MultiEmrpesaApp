@@ -151,8 +151,8 @@
             @enderror
 
             {{-- Desktop table --}}
-            <div class="hidden md:block overflow-x-auto">
-                <table class="min-w-full">
+            <div class="hidden md:block">
+                <table class="min-w-full" style="overflow: visible">
                     <thead class="bg-gray-50 border-b border-gray-200">
                         <tr>
                             <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 w-1/3">Concepto</th>
@@ -190,7 +190,7 @@
                                                 <p class="text-xs text-red-600 mt-0.5">{{ $message }}</p>
                                             @enderror
                                             @if(!empty($lineaDropdownVisible[$i]))
-                                                <div class="absolute z-20 mt-1 w-full rounded-md border border-gray-200 bg-white shadow-lg min-w-48">
+                                                <div class="absolute z-50 mt-1 w-full rounded-md border border-gray-200 bg-white shadow-lg min-w-48">
                                                     @if(!empty($lineaSearchResults[$i]))
                                                         <ul class="max-h-48 overflow-auto py-1">
                                                             @foreach($lineaSearchResults[$i] as $srv)

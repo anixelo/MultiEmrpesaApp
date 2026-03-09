@@ -53,8 +53,10 @@
                     <thead class="bg-gray-50">
                         <tr>
                             <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">Nombre</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">Tipo</th>
                             <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">Precio</th>
                             <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">IVA</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">Presup.</th>
                             <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">Estado</th>
                             <th class="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-gray-500">Acciones</th>
                         </tr>
@@ -65,11 +67,22 @@
                                 <td class="whitespace-nowrap px-6 py-4 text-sm font-medium text-gray-900">
                                     {{ $servicio->nombre }}
                                 </td>
+                                <td class="whitespace-nowrap px-6 py-4">
+                                    @php
+                                    $tipoColors = ['servicio'=>'bg-blue-100 text-blue-800','producto'=>'bg-green-100 text-green-800','otro'=>'bg-gray-100 text-gray-600'];
+                                    @endphp
+                                    <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium {{ $tipoColors[$servicio->tipo] ?? 'bg-gray-100 text-gray-600' }}">
+                                        {{ $servicio->tipo_label }}
+                                    </span>
+                                </td>
                                 <td class="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
                                     {{ number_format($servicio->precio, 2, ',', '.') }} €
                                 </td>
                                 <td class="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
                                     {{ $servicio->iva_tipo_label }}
+                                </td>
+                                <td class="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
+                                    {{ $servicio->lineas_presupuesto_count }}
                                 </td>
                                 <td class="whitespace-nowrap px-6 py-4 text-sm">
                                     @if ($servicio->activo)
@@ -99,7 +112,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="5" class="px-6 py-10 text-center text-sm text-gray-500">
+                                <td colspan="7" class="px-6 py-10 text-center text-sm text-gray-500">
                                     No se encontraron conceptos.
                                 </td>
                             </tr>
@@ -114,8 +127,11 @@
                         <div>
                             <p class="font-semibold text-gray-900">{{ $servicio->nombre }}</p>
                             <div class="flex flex-wrap gap-2 mt-1">
+                                @php $tipoColors = ['servicio'=>'bg-blue-100 text-blue-800','producto'=>'bg-green-100 text-green-800','otro'=>'bg-gray-100 text-gray-600']; @endphp
+                                <span class="inline-flex px-2 py-0.5 rounded-full text-xs font-medium {{ $tipoColors[$servicio->tipo] ?? 'bg-gray-100 text-gray-600' }}">{{ $servicio->tipo_label }}</span>
                                 <span class="text-xs text-gray-600">{{ number_format($servicio->precio, 2, ',', '.') }} €</span>
                                 <span class="text-xs text-gray-500">IVA: {{ $servicio->iva_tipo_label }}</span>
+                                <span class="text-xs text-gray-500">{{ $servicio->lineas_presupuesto_count }} presup.</span>
                                 @if ($servicio->activo)
                                 <span class="inline-flex px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">Activo</span>
                                 @else

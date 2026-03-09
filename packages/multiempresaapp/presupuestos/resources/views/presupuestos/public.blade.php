@@ -28,7 +28,7 @@
             <div class="px-8 py-6 border-b border-gray-200 flex items-start justify-between">
                 <div>
                     <h1 class="text-2xl font-bold text-gray-900">
-                        {{ $presupuesto->empresa?->name ?? config('app.name') }}
+                        {{ $presupuesto->negocio?->name ?? $presupuesto->empresa?->name ?? config('app.name') }}
                     </h1>
                     <p class="mt-1 text-sm text-gray-500">Presupuesto</p>
                 </div>
@@ -230,7 +230,7 @@
         </div>
 
         <p class="mt-6 text-center text-xs text-gray-400">
-            Este presupuesto ha sido generado por {{ $presupuesto->empresa?->name ?? config('app.name') }}.
+            Este presupuesto ha sido generado por {{ $presupuesto->negocio?->name ?? $presupuesto->empresa?->name ?? config('app.name') }}.
         </p>
     </div>
 
