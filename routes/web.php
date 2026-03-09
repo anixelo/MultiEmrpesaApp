@@ -14,7 +14,7 @@ use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\UserController as AdminUserController;
 use MultiempresaApp\Notifications\Http\Controllers\NotificationController;
 use MultiempresaApp\Tasks\Http\Controllers\Admin\TaskController as AdminTaskController;
-use MultiempresaApp\Tasks\Http\Controllers\Worker\DashboardController as WorkerDashboardController;
+use App\Http\Controllers\Worker\DashboardController as WorkerDashboardController;
 use MultiempresaApp\Incidents\Http\Controllers\Admin\IncidentController as AdminIncidentController;
 use MultiempresaApp\Incidents\Http\Controllers\SuperAdmin\IncidentController as SuperAdminIncidentController;
 use MultiempresaApp\Incidents\Http\Controllers\Worker\IncidentController as WorkerIncidentController;

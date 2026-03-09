@@ -5,6 +5,7 @@ namespace MultiempresaApp\Servicios\Models;
 use App\Models\Company;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use MultiempresaApp\Presupuestos\Models\PresupuestoLinea;
 
 class Servicio extends Model
 {
@@ -12,7 +13,7 @@ class Servicio extends Model
 
     protected $table = 'servicios';
 
-    protected $fillable = ['empresa_id', 'created_by', 'nombre', 'descripcion', 'precio', 'iva_tipo', 'activo', 'orden'];
+    protected $fillable = ['empresa_id', 'created_by', 'nombre', 'tipo', 'descripcion', 'precio', 'iva_tipo', 'activo', 'orden'];
 
     protected $dates = ['deleted_at'];
 
@@ -22,9 +23,20 @@ class Servicio extends Model
         'activo'  => 'boolean',
     ];
 
+    public const TIPOS = [
+        'servicio' => 'Servicio',
+        'producto' => 'Producto',
+        'otro'     => 'Otro',
+    ];
+
     public function company()
     {
         return $this->belongsTo(Company::class, 'empresa_id');
+    }
+
+    public function lineasPresupuesto()
+    {
+        return $this->hasMany(PresupuestoLinea::class, 'servicio_id');
     }
 
     public function scopeDeEmpresa($query, $empresaId)
@@ -35,6 +47,11 @@ class Servicio extends Model
     public function scopeActivos($query)
     {
         return $query->where('activo', true);
+    }
+
+    public function getTipoLabelAttribute(): string
+    {
+        return self::TIPOS[$this->tipo] ?? ucfirst($this->tipo ?? 'Servicio');
     }
 
     public function getIvaTipoLabelAttribute(): string

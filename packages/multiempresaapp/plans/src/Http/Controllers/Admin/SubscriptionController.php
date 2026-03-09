@@ -36,6 +36,10 @@ class SubscriptionController extends Controller
             return back()->with('error', 'No tienes una empresa asignada.');
         }
 
+        if ($company->isInPromo()) {
+            return back()->with('error', 'No puedes cambiar de plan mientras tienes una promoción activa.');
+        }
+
         $plan = Plan::findOrFail($request->plan_id);
 
         Subscription::updateOrCreate(

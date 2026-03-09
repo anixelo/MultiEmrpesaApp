@@ -20,7 +20,8 @@
         @endif
 
         <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-            <table class="min-w-full divide-y divide-gray-100">
+            {{-- Desktop table --}}
+            <table class="hidden md:table min-w-full divide-y divide-gray-100">
                 <thead class="bg-gray-50">
                     <tr>
                         <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Noticia</th>
@@ -82,8 +83,57 @@
                     @endforelse
                 </tbody>
             </table>
-        </div>
 
-        <div>{{ $noticias->links() }}</div>
+            {{-- Mobile cards (bocadillos) --}}
+            <div class="md:hidden divide-y divide-gray-100">
+                @forelse($noticias as $noticia)
+                <div class="p-4 space-y-2">
+                    <div class="flex items-start gap-3">
+                        @if($noticia->imagen)
+                        <img src="{{ Storage::url($noticia->imagen) }}" alt="{{ $noticia->titulo }}"
+                             class="w-12 h-9 object-cover rounded-lg shrink-0">
+                        @else
+                        <div class="w-12 h-9 bg-gray-100 rounded-lg flex items-center justify-center shrink-0">
+                            <svg class="w-5 h-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                        </div>
+                        @endif
+                        <div class="flex-1 min-w-0">
+                            <p class="font-semibold text-gray-900 truncate">{{ $noticia->titulo }}</p>
+                            <div class="flex flex-wrap gap-1.5 mt-1">
+                                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium
+                                    {{ $noticia->publicado ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-600' }}">
+                                    {{ $noticia->publicado ? 'Publicada' : 'Borrador' }}
+                                </span>
+                                <span class="text-xs text-gray-400">{{ $noticia->created_at->format('d/m/Y') }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="pt-2 border-t border-gray-100 flex flex-wrap gap-2">
+                        @if($noticia->publicado)
+                        <a href="{{ route('noticias.show', $noticia->slug) }}" target="_blank"
+                           class="inline-flex items-center px-3 py-1.5 text-xs font-medium text-gray-600 bg-gray-50 rounded-lg hover:bg-gray-100 transition">Ver</a>
+                        @endif
+                        <a href="{{ route('superadmin.noticias.edit', $noticia) }}"
+                           class="inline-flex items-center px-3 py-1.5 text-xs font-medium text-indigo-700 bg-indigo-50 rounded-lg hover:bg-indigo-100 transition">Editar</a>
+                        <form method="POST" action="{{ route('superadmin.noticias.destroy', $noticia) }}"
+                              onsubmit="return confirm('¿Eliminar esta noticia?')">
+                            @csrf @method('DELETE')
+                            <button type="submit" class="inline-flex items-center px-3 py-1.5 text-xs font-medium text-red-700 bg-red-50 rounded-lg hover:bg-red-100 transition">Eliminar</button>
+                        </form>
+                    </div>
+                </div>
+                @empty
+                <div class="px-6 py-12 text-center text-sm text-gray-400">
+                    No hay noticias aún. <a href="{{ route('superadmin.noticias.create') }}" class="text-indigo-600 hover:underline">Crea la primera</a>.
+                </div>
+                @endforelse
+            </div>
+
+            @if($noticias->hasPages())
+            <div class="px-6 py-4 border-t border-gray-100">
+                {{ $noticias->links() }}
+            </div>
+            @endif
+        </div>
     </div>
 </x-app-layout>

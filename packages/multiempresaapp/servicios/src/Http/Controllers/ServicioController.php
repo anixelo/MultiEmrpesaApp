@@ -14,6 +14,7 @@ class ServicioController extends Controller
         $buscar = $request->input('buscar');
 
         $servicios = Servicio::deEmpresa($empresaId)
+            ->withCount('lineasPresupuesto')
             ->when($buscar, function ($query) use ($buscar) {
                 $query->where('nombre', 'like', "%{$buscar}%");
             })
@@ -34,6 +35,7 @@ class ServicioController extends Controller
     {
         $request->validate([
             'nombre'      => 'required|max:255',
+            'tipo'        => 'required|in:servicio,producto,otro',
             'descripcion' => 'nullable',
             'precio'      => 'required|numeric|min:0',
             'iva_tipo'    => 'nullable|numeric|in:0,4,10,21',
@@ -41,7 +43,7 @@ class ServicioController extends Controller
             'orden'       => 'nullable|integer',
         ]);
 
-        Servicio::create(array_merge($request->only('nombre', 'descripcion', 'precio', 'iva_tipo', 'orden'), [
+        Servicio::create(array_merge($request->only('nombre', 'tipo', 'descripcion', 'precio', 'iva_tipo', 'orden'), [
             'empresa_id' => auth()->user()->company_id,
             'activo'     => $request->boolean('activo', true),
             'created_by' => auth()->id(),
@@ -83,6 +85,7 @@ class ServicioController extends Controller
 
         $request->validate([
             'nombre'      => 'required|max:255',
+            'tipo'        => 'required|in:servicio,producto,otro',
             'descripcion' => 'nullable',
             'precio'      => 'required|numeric|min:0',
             'iva_tipo'    => 'nullable|numeric|in:0,4,10,21',
@@ -90,7 +93,7 @@ class ServicioController extends Controller
             'orden'       => 'nullable|integer',
         ]);
 
-        $servicio->update(array_merge($request->only('nombre', 'descripcion', 'precio', 'iva_tipo', 'orden'), [
+        $servicio->update(array_merge($request->only('nombre', 'tipo', 'descripcion', 'precio', 'iva_tipo', 'orden'), [
             'activo' => $request->boolean('activo'),
         ]));
 

@@ -1,9 +1,14 @@
 <x-app-layout>
     <x-slot name="header">
         <div class="flex items-center justify-between">
-            <h2 class="text-xl font-semibold leading-tight text-gray-800">
-                Presupuestos
-            </h2>
+            <div>
+                <h2 class="text-xl font-semibold leading-tight text-gray-800">
+                    Presupuestos
+                </h2>
+                @if($maxPresupuestos > 0)
+                <p class="text-sm text-gray-500 mt-0.5">&mdash; {{ $currentMonthCount }} / {{ $maxPresupuestos }} presupuestos este mes</p>
+                @endif
+            </div>
             <a href="{{ route('admin.presupuestos.create') }}"
                class="inline-flex items-center rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
                 Nuevo Presupuesto
@@ -80,6 +85,7 @@
                     <thead class="bg-gray-50">
                         <tr>
                             <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">Número</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">Empresa</th>
                             <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">Cliente</th>
                             <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">Fecha</th>
                             <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">Válido hasta</th>
@@ -103,6 +109,9 @@
                             <tr>
                                 <td class="whitespace-nowrap px-6 py-4 text-sm font-medium text-gray-900">
                                     {{ $presupuesto->numero }}
+                                </td>
+                                <td class="whitespace-nowrap px-6 py-4 text-sm text-gray-700">
+                                    {{ $presupuesto->negocio?->name ?? '—' }}
                                 </td>
                                 <td class="whitespace-nowrap px-6 py-4 text-sm text-gray-700">
                                     {{ $presupuesto->cliente?->nombre ?? '—' }}
@@ -138,7 +147,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="7" class="px-6 py-10 text-center text-sm text-gray-500">
+                                <td colspan="8" class="px-6 py-10 text-center text-sm text-gray-500">
                                     No se encontraron presupuestos.
                                 </td>
                             </tr>
@@ -163,6 +172,9 @@
                         <div class="flex items-start justify-between gap-2">
                             <div>
                                 <p class="font-semibold text-gray-900">{{ $presupuesto->numero }}</p>
+                                @if($presupuesto->negocio)
+                                <p class="text-xs text-indigo-600 mt-0.5">{{ $presupuesto->negocio->name }}</p>
+                                @endif
                                 <p class="text-xs text-gray-600 mt-0.5">{{ $presupuesto->cliente?->nombre ?? '—' }}</p>
                             </div>
                             <span class="inline-flex rounded-full px-2 py-1 text-xs font-semibold {{ $badgeClass }} shrink-0">

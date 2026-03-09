@@ -3,7 +3,11 @@
         <div class="flex items-center justify-between">
             <div>
                 <h1 class="text-2xl font-bold text-gray-900">Empresas</h1>
-                <p class="text-sm text-gray-500 mt-0.5">Gestiona las empresas para usar en tus presupuestos</p>
+                <p class="text-sm text-gray-500 mt-0.5">Gestiona las empresas para usar en tus presupuestos
+                    @if($maxEmpresas > 0)
+                    &mdash; {{ $currentCount }} / {{ $maxEmpresas }} empresas activas
+                    @endif
+                </p>
             </div>
             <a href="{{ route('admin.empresas.create') }}"
                class="inline-flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-xl text-sm font-medium hover:bg-indigo-700 transition shadow-sm">

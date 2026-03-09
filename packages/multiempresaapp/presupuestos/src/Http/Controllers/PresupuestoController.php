@@ -25,7 +25,7 @@ class PresupuestoController extends Controller
     public function index(Request $request)
     {
         $empresaId = auth()->user()->company_id;
-        $query = Presupuesto::with(['cliente'])
+        $query = Presupuesto::with(['cliente', 'negocio'])
             ->where('empresa_id', $empresaId);
 
         if ($buscar = $request->input('buscar')) {
@@ -43,7 +43,14 @@ class PresupuestoController extends Controller
 
         $hasEmpresa = Empresa::where('company_id', $empresaId)->exists();
 
-        return view('presupuestos::presupuestos.index', compact('presupuestos', 'hasEmpresa'));
+        $company = auth()->user()->company;
+        $plan = $company?->activePlan();
+        $maxPresupuestos = $plan ? ($plan->max_presupuestos ?? 0) : 0;
+        $currentMonthCount = $company ? $company->presupuestos()
+            ->whereBetween('created_at', [now()->startOfMonth(), now()->endOfMonth()])
+            ->count() : 0;
+
+        return view('presupuestos::presupuestos.index', compact('presupuestos', 'hasEmpresa', 'maxPresupuestos', 'currentMonthCount'));
     }
 
     public function create()
@@ -286,7 +293,7 @@ class PresupuestoController extends Controller
 
     public function public(string $token)
     {
-        $presupuesto = Presupuesto::with(['cliente', 'lineas', 'empresa'])
+        $presupuesto = Presupuesto::with(['cliente', 'lineas', 'empresa', 'negocio'])
             ->where('token_publico', $token)
             ->firstOrFail();
 
@@ -320,7 +327,7 @@ class PresupuestoController extends Controller
 
     public function downloadPdf($id)
     {
-        $presupuesto = Presupuesto::with(['cliente', 'lineas.servicio', 'empresa'])->findOrFail($id);
+        $presupuesto = Presupuesto::with(['cliente', 'lineas.servicio', 'empresa', 'negocio'])->findOrFail($id);
 
         if ($presupuesto->empresa_id !== auth()->user()->company_id) {
             abort(403);
@@ -333,7 +340,7 @@ class PresupuestoController extends Controller
 
     public function sendEmail(Request $request, $id)
     {
-        $presupuesto = Presupuesto::with(['cliente', 'lineas', 'empresa'])->findOrFail($id);
+        $presupuesto = Presupuesto::with(['cliente', 'lineas', 'empresa', 'negocio'])->findOrFail($id);
 
         if ($presupuesto->empresa_id !== auth()->user()->company_id) {
             abort(403);
@@ -345,7 +352,7 @@ class PresupuestoController extends Controller
 
         $publicUrl    = route('presupuestos.public', $presupuesto->token_publico);
         $clienteNombre = $presupuesto->cliente->nombre;
-        $empresaNombre = $presupuesto->empresa?->name ?? config('app.name');
+        $empresaNombre = $presupuesto->negocio?->name ?? $presupuesto->empresa?->name ?? config('app.name');
 
         Mail::raw(
             "Hola {$clienteNombre},\n\nTe enviamos el presupuesto {$presupuesto->numero}.\n\nPuedes verlo aquí:\n{$publicUrl}\n\nGracias,\n{$empresaNombre}",

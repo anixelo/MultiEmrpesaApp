@@ -11,9 +11,14 @@ class EmpresaController extends Controller
     public function index()
     {
         $companyId = auth()->user()->company_id;
+        $company   = auth()->user()->company;
         $empresas  = Empresa::where('company_id', $companyId)->latest()->paginate(15);
 
-        return view('admin.empresas.index', compact('empresas'));
+        $plan        = $company?->activePlan();
+        $maxEmpresas = $plan ? ($plan->max_empresas ?? 0) : 0;
+        $currentCount = Empresa::where('company_id', $companyId)->where('active', true)->count();
+
+        return view('admin.empresas.index', compact('empresas', 'maxEmpresas', 'currentCount'));
     }
 
     public function create()

@@ -220,7 +220,7 @@
             @endif
 
             {{-- Acciones --}}
-            <div class="flex flex-wrap gap-3">
+            <div class="flex flex-wrap gap-3 justify-center">
                 <a href="{{ route('admin.presupuestos.edit', $presupuesto->id) }}"
                    class="inline-flex items-center rounded-md bg-yellow-500 px-4 py-2 text-sm font-medium text-white hover:bg-yellow-600">
                     Editar
