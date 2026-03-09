@@ -196,6 +196,45 @@
             <span class="font-normal text-gray-500">— visible en el sitio web y en la página de inicio</span>
         </label>
     </div>
+
+    {{-- Tags --}}
+    <div x-data="tagInput({{ json_encode(collect(old('tags', isset($noticia) ? $noticia->tags->pluck('nombre')->toArray() : []))->values()->all()) }})">
+        <label class="block text-sm font-medium text-gray-700 mb-1">Etiquetas</label>
+        <div class="flex flex-wrap gap-1.5 p-2 border border-gray-300 rounded-xl bg-white min-h-[44px] cursor-text"
+             @click="$refs.tagInput.focus()">
+            <template x-for="(tag, i) in tags" :key="i">
+                <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-indigo-100 text-indigo-700">
+                    <input type="hidden" :name="'tags[' + i + ']'" :value="tag">
+                    <span x-text="tag"></span>
+                    <button type="button" @click.stop="removeTag(i)" class="text-indigo-400 hover:text-indigo-700 ml-0.5 flex items-center">
+                        <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+                    </button>
+                </span>
+            </template>
+            <input x-ref="tagInput"
+                   type="text"
+                   placeholder="Añadir etiqueta…"
+                   class="flex-1 min-w-[140px] border-0 focus:ring-0 text-sm text-gray-700 p-0.5 bg-transparent"
+                   @keydown.enter.prevent="addFromInput()"
+                   @keydown.comma.prevent="addFromInput()"
+                   @keydown.backspace="onBackspace($event)">
+        </div>
+        <p class="text-xs text-gray-400 mt-1">Escribe una etiqueta y pulsa Enter o coma para añadirla. Puedes crear etiquetas nuevas.</p>
+
+        @if(isset($tags) && $tags->isNotEmpty())
+        <div class="mt-2 flex flex-wrap gap-1.5">
+            <span class="text-xs text-gray-400 self-center">Etiquetas existentes:</span>
+            @foreach($tags as $t)
+            <button type="button"
+                    @click="toggleExisting('{{ $t->nombre }}')"
+                    :class="tags.includes('{{ $t->nombre }}') ? 'bg-indigo-100 text-indigo-700 border-indigo-200' : 'bg-gray-50 text-gray-600 border-gray-200 hover:bg-indigo-50'"
+                    class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border transition-colors">
+                {{ $t->nombre }}
+            </button>
+            @endforeach
+        </div>
+        @endif
+    </div>
 </div>
 
 @once
@@ -240,6 +279,34 @@ function imagePreview() {
                 const reader = new FileReader();
                 reader.onload = (ev) => { this.preview = ev.target.result; };
                 reader.readAsDataURL(file);
+            }
+        },
+    };
+}
+
+function tagInput(initialTags) {
+    return {
+        tags: initialTags || [],
+        addFromInput() {
+            const val = this.$refs.tagInput.value.trim().replace(/,$/, '').trim();
+            if (val && !this.tags.includes(val)) {
+                this.tags.push(val);
+            }
+            this.$refs.tagInput.value = '';
+        },
+        removeTag(index) {
+            this.tags.splice(index, 1);
+        },
+        toggleExisting(nombre) {
+            if (this.tags.includes(nombre)) {
+                this.tags = this.tags.filter(t => t !== nombre);
+            } else {
+                this.tags.push(nombre);
+            }
+        },
+        onBackspace(e) {
+            if (e.target.value === '' && this.tags.length > 0) {
+                this.tags.pop();
             }
         },
     };

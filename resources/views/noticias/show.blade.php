@@ -121,6 +121,18 @@
             @if($noticia->meta_description)
             <p class="text-lg text-gray-600 leading-relaxed">{{ $noticia->meta_description }}</p>
             @endif
+            {{-- Tags --}}
+            @if($noticia->tags->isNotEmpty())
+            <div class="flex flex-wrap gap-2 mt-4">
+                @foreach($noticia->tags as $tag)
+                <a href="{{ route('noticias.tag', $tag->slug) }}"
+                   class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-700 hover:bg-indigo-100 hover:text-indigo-700 transition-colors">
+                    <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M17.707 9.293a1 1 0 010 1.414l-7 7a1 1 0 01-1.414 0l-7-7A.997.997 0 012 10V5a3 3 0 013-3h5c.256 0 .512.098.707.293l7 7zM5 6a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd"/></svg>
+                    {{ $tag->nombre }}
+                </a>
+                @endforeach
+            </div>
+            @endif
         </header>
 
         {{-- Featured image --}}
@@ -143,12 +155,61 @@
 
         {{-- Footer --}}
         <footer class="mt-10 pt-6 border-t border-gray-200">
+            {{-- Tags at bottom --}}
+            @if($noticia->tags->isNotEmpty())
+            <div class="flex flex-wrap gap-2 mb-5">
+                @foreach($noticia->tags as $tag)
+                <a href="{{ route('noticias.tag', $tag->slug) }}"
+                   class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-700 hover:bg-indigo-100 hover:text-indigo-700 transition-colors">
+                    <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M17.707 9.293a1 1 0 010 1.414l-7 7a1 1 0 01-1.414 0l-7-7A.997.997 0 012 10V5a3 3 0 013-3h5c.256 0 .512.098.707.293l7 7zM5 6a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd"/></svg>
+                    {{ $tag->nombre }}
+                </a>
+                @endforeach
+            </div>
+            @endif
             <a href="/" class="inline-flex items-center gap-2 text-sm text-indigo-600 hover:text-indigo-800 font-medium transition">
                 <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
                 Volver al inicio
             </a>
         </footer>
     </article>
+
+    {{-- Related news (same tags) --}}
+    @if(isset($relacionadas) && $relacionadas->isNotEmpty())
+    <aside class="mt-12 pt-8 border-t border-gray-200">
+        <h2 class="text-xl font-bold text-gray-900 mb-6">Noticias relacionadas</h2>
+        <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            @foreach($relacionadas as $rel)
+            <a href="{{ route('noticias.show', $rel->slug) }}"
+               class="group bg-white border border-gray-100 rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow">
+                @if($rel->imagen)
+                <div class="aspect-video overflow-hidden">
+                    <img src="{{ Storage::url($rel->imagen) }}" alt="{{ $rel->titulo }}"
+                         class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+                </div>
+                @else
+                <div class="aspect-video bg-gradient-to-br from-indigo-50 to-purple-50 flex items-center justify-center">
+                    <svg class="w-10 h-10 text-indigo-200" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1"><path stroke-linecap="round" stroke-linejoin="round" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"/></svg>
+                </div>
+                @endif
+                <div class="p-4">
+                    <h3 class="font-semibold text-gray-900 text-sm line-clamp-2 group-hover:text-indigo-600 transition-colors">{{ $rel->titulo }}</h3>
+                    @if($rel->tags->isNotEmpty())
+                    <div class="flex flex-wrap gap-1 mt-2">
+                        @foreach($rel->tags->take(3) as $t)
+                        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs bg-gray-100 text-gray-600">{{ $t->nombre }}</span>
+                        @endforeach
+                    </div>
+                    @endif
+                    @if($rel->publicado_en)
+                    <time class="text-xs text-gray-400 mt-1 block">{{ $rel->publicado_en->format('d/m/Y') }}</time>
+                    @endif
+                </div>
+            </a>
+            @endforeach
+        </div>
+    </aside>
+    @endif
 
     {{-- Other news --}}
     @if($otrasNoticias->isNotEmpty())

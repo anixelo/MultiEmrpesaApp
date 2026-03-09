@@ -46,6 +46,16 @@
                                 <div>
                                     <p class="text-sm font-medium text-gray-900 line-clamp-1">{{ $noticia->titulo }}</p>
                                     <p class="text-xs text-gray-400 mt-0.5">{{ $noticia->slug }}</p>
+                                    @if($noticia->tags->isNotEmpty())
+                                    <div class="flex flex-wrap gap-1 mt-1">
+                                        @foreach($noticia->tags as $tag)
+                                        <a href="{{ route('noticias.tag', $tag->slug) }}" target="_blank"
+                                           class="inline-flex items-center px-1.5 py-0.5 rounded text-xs bg-indigo-50 text-indigo-600 hover:bg-indigo-100 transition">
+                                            {{ $tag->nombre }}
+                                        </a>
+                                        @endforeach
+                                    </div>
+                                    @endif
                                 </div>
                             </div>
                         </td>

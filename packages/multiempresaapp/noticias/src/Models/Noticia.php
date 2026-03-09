@@ -3,6 +3,7 @@
 namespace MultiempresaApp\Noticias\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Str;
 
 class Noticia extends Model
@@ -61,5 +62,10 @@ class Noticia extends Model
     public function scopePublicadas($query)
     {
         return $query->where('publicado', true);
+    }
+
+    public function tags(): BelongsToMany
+    {
+        return $this->belongsToMany(Tag::class, 'noticia_tag');
     }
 }
