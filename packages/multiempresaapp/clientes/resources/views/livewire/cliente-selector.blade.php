@@ -92,7 +92,7 @@
                             @foreach ($searchModalResults as $cliente)
                                 <li>
                                     <button type="button"
-                                            wire:click="selectFromModal({{ $cliente['id'] }}, '{{ addslashes($cliente['nombre']) }}')"
+                                            wire:click="selectFromModal({{ $cliente['id'] }}, {{ json_encode($cliente['nombre']) }})"
                                             class="w-full px-6 py-3 text-left hover:bg-indigo-50 transition">
                                         <p class="text-sm font-medium text-gray-900">{{ $cliente['nombre'] }}</p>
                                         <p class="text-xs text-gray-500 mt-0.5">
