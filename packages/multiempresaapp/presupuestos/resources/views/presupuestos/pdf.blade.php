@@ -4,118 +4,468 @@
     <meta charset="UTF-8">
     <title>Presupuesto {{ $presupuesto->numero }}</title>
     <style>
-        body { font-family: DejaVu Sans, sans-serif; font-size: 12px; color: #111; margin: 0; padding: 20px; }
-        .header { display: flex; justify-content: space-between; margin-bottom: 24px; border-bottom: 2px solid #4F46E5; padding-bottom: 16px; }
-        .empresa-nombre { font-size: 20px; font-weight: bold; color: #4F46E5; }
-        .numero { font-size: 16px; font-weight: bold; text-align: right; }
-        .meta { font-size: 11px; color: #555; text-align: right; }
-        .section { margin-bottom: 16px; }
-        .label { font-size: 10px; text-transform: uppercase; color: #888; letter-spacing: 0.05em; margin-bottom: 4px; }
-        table { width: 100%; border-collapse: collapse; margin-bottom: 16px; }
-        th { background: #F3F4F6; text-align: left; padding: 6px 8px; font-size: 10px; text-transform: uppercase; color: #555; border-bottom: 1px solid #E5E7EB; }
-        td { padding: 6px 8px; border-bottom: 1px solid #F3F4F6; font-size: 11px; }
-        .text-right { text-align: right; }
-        .totals { margin-left: auto; width: 240px; }
-        .totals td { border: none; padding: 3px 8px; }
-        .total-row td { font-weight: bold; font-size: 13px; border-top: 2px solid #111; padding-top: 6px; }
-        .badge { display: inline-block; padding: 2px 8px; border-radius: 9999px; font-size: 10px; font-weight: bold; }
-        .badge-gray { background: #F3F4F6; color: #555; }
+        @page {
+            margin: 28px 24px;
+        }
+
+        body {
+            font-family: DejaVu Sans, sans-serif;
+            font-size: 12px;
+            color: #111827;
+            margin: 0;
+            padding: 0;
+            background: #ffffff;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        .document {
+            width: 100%;
+        }
+
+        .header {
+            width: 100%;
+            border-bottom: 2px solid #4F46E5;
+            padding-bottom: 18px;
+            margin-bottom: 24px;
+        }
+
+        .header-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .header-table td {
+            vertical-align: top;
+            border: none;
+            padding: 0;
+        }
+
+        .header-left {
+            width: 58%;
+        }
+
+        .header-right {
+            width: 42%;
+            text-align: right;
+        }
+
+        .brand-name {
+            font-size: 24px;
+            font-weight: bold;
+            color: #4F46E5;
+            line-height: 1.2;
+            margin-bottom: 6px;
+        }
+
+        .brand-subtitle {
+            font-size: 11px;
+            color: #6B7280;
+        }
+
+        .doc-title {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: #6B7280;
+            margin-bottom: 4px;
+        }
+
+        .doc-number {
+            font-size: 22px;
+            font-weight: bold;
+            color: #111827;
+            margin-bottom: 8px;
+        }
+
+        .meta-line {
+            font-size: 11px;
+            color: #4B5563;
+            line-height: 1.5;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 999px;
+            font-size: 10px;
+            font-weight: bold;
+            margin-top: 8px;
+        }
+
+        .badge-gray { background: #F3F4F6; color: #4B5563; }
         .badge-blue { background: #DBEAFE; color: #1D4ED8; }
         .badge-purple { background: #EDE9FE; color: #7C3AED; }
         .badge-green { background: #D1FAE5; color: #065F46; }
         .badge-red { background: #FEE2E2; color: #991B1B; }
-        .obs { background: #F9FAFB; padding: 10px 12px; border-left: 3px solid #E5E7EB; font-size: 11px; color: #374151; }
+
+        .info-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0 0;
+            margin-bottom: 22px;
+        }
+
+        .info-table td {
+            width: 50%;
+            vertical-align: top;
+            padding: 0;
+            border: none;
+        }
+
+        .info-box {
+            border: 1px solid #E5E7EB;
+            background: #F9FAFB;
+            border-radius: 8px;
+            padding: 14px 16px;
+            min-height: 110px;
+        }
+
+        .info-box-left {
+            margin-right: 8px;
+        }
+
+        .info-box-right {
+            margin-left: 8px;
+        }
+
+        .section-label {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: #6B7280;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        .info-name {
+            font-size: 14px;
+            font-weight: bold;
+            color: #111827;
+            margin-bottom: 6px;
+        }
+
+        .info-text {
+            font-size: 11px;
+            color: #374151;
+            line-height: 1.55;
+        }
+
+        .info-text div {
+            margin-bottom: 2px;
+        }
+
+        .lineas-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 22px;
+        }
+
+        .lineas-table thead th {
+            background: #EEF2FF;
+            color: #4338CA;
+            text-align: left;
+            padding: 10px 8px;
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            border-top: 1px solid #C7D2FE;
+            border-bottom: 1px solid #C7D2FE;
+        }
+
+        .lineas-table tbody td {
+            padding: 10px 8px;
+            border-bottom: 1px solid #E5E7EB;
+            font-size: 11px;
+            vertical-align: top;
+        }
+
+        .lineas-table tbody tr:nth-child(even) {
+            background: #FAFAFA;
+        }
+
+        .text-right {
+            text-align: right;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        .concepto {
+            font-weight: 600;
+            color: #111827;
+            margin-bottom: 2px;
+        }
+
+        .concepto-extra {
+            font-size: 10px;
+            color: #6B7280;
+        }
+
+        .totals-wrapper {
+            width: 100%;
+            margin-top: 8px;
+            margin-bottom: 24px;
+        }
+
+        .totals-table {
+            width: 300px;
+            margin-left: auto;
+            border-collapse: collapse;
+            border: 1px solid #E5E7EB;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .totals-table td {
+            padding: 9px 12px;
+            font-size: 11px;
+            border-bottom: 1px solid #E5E7EB;
+        }
+
+        .totals-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .totals-table .label-cell {
+            background: #F9FAFB;
+            color: #374151;
+        }
+
+        .totals-table .value-cell {
+            text-align: right;
+            font-weight: 600;
+            color: #111827;
+            background: #ffffff;
+        }
+
+        .totals-table .discount-row .label-cell,
+        .totals-table .discount-row .value-cell {
+            color: #DC2626;
+        }
+
+        .totals-table .total-row .label-cell,
+        .totals-table .total-row .value-cell {
+            background: #4F46E5;
+            color: #ffffff;
+            font-size: 13px;
+            font-weight: bold;
+        }
+
+        .extra-section {
+            margin-bottom: 18px;
+        }
+
+        .extra-box {
+            border: 1px solid #E5E7EB;
+            background: #F9FAFB;
+            border-radius: 8px;
+            padding: 12px 14px;
+            font-size: 11px;
+            color: #374151;
+            line-height: 1.6;
+        }
+
+        .footer-note {
+            margin-top: 28px;
+            padding-top: 14px;
+            border-top: 1px solid #E5E7EB;
+            font-size: 10px;
+            color: #6B7280;
+            text-align: center;
+            line-height: 1.5;
+        }
+
+        .nowrap {
+            white-space: nowrap;
+        }
     </style>
 </head>
 <body>
+@php
+    $badgeClass = match($presupuesto->estado) {
+        'enviado' => 'badge-blue',
+        'visto' => 'badge-purple',
+        'aceptado' => 'badge-green',
+        'rechazado' => 'badge-red',
+        default => 'badge-gray'
+    };
 
-<div class="header">
-    <div>
-        <div class="empresa-nombre">{{ $presupuesto->negocio?->name ?? $presupuesto->empresa?->name ?? config('app.name') }}</div>
-        <div style="margin-top:4px;font-size:11px;color:#555;">Presupuesto</div>
+    $estadoLabels = [
+        'borrador' => 'Borrador',
+        'enviado' => 'Enviado',
+        'visto' => 'Visto',
+        'aceptado' => 'Aceptado',
+        'rechazado' => 'Rechazado',
+    ];
+
+    $empresaNombre = $presupuesto->negocio?->name ?? $presupuesto->empresa?->name ?? config('app.name');
+@endphp
+
+<div class="document">
+
+    <div class="header">
+        <table class="header-table">
+            <tr>
+                <td class="header-left">
+                    <div class="brand-name">{{ $empresaNombre }}</div>
+                    <div class="brand-subtitle">Documento de presupuesto</div>
+                </td>
+                <td class="header-right">
+                    <div class="doc-title">Presupuesto</div>
+                    <div class="doc-number">{{ $presupuesto->numero }}</div>
+                    <div class="meta-line">Fecha: {{ $presupuesto->fecha->format('d/m/Y') }}</div>
+                    @if($presupuesto->validez_hasta)
+                        <div class="meta-line">Válido hasta: {{ $presupuesto->validez_hasta->format('d/m/Y') }}</div>
+                    @endif
+                    <div>
+                        <span class="badge {{ $badgeClass }}">
+                            {{ $estadoLabels[$presupuesto->estado] ?? $presupuesto->estado }}
+                        </span>
+                    </div>
+                </td>
+            </tr>
+        </table>
     </div>
-    <div>
-        <div class="numero">{{ $presupuesto->numero }}</div>
-        <div class="meta">Fecha: {{ $presupuesto->fecha->format('d/m/Y') }}</div>
-        @if($presupuesto->validez_hasta)
-        <div class="meta">Válido hasta: {{ $presupuesto->validez_hasta->format('d/m/Y') }}</div>
-        @endif
-        @php
-            $badgeClass = match($presupuesto->estado) {
-                'enviado' => 'badge-blue', 'visto' => 'badge-purple',
-                'aceptado' => 'badge-green', 'rechazado' => 'badge-red',
-                default => 'badge-gray'
-            };
-            $estadoLabels = ['borrador'=>'Borrador','enviado'=>'Enviado','visto'=>'Visto','aceptado'=>'Aceptado','rechazado'=>'Rechazado'];
-        @endphp
-        <div style="margin-top:6px;"><span class="badge {{ $badgeClass }}">{{ $estadoLabels[$presupuesto->estado] ?? $presupuesto->estado }}</span></div>
-    </div>
-</div>
 
-<div class="section">
-    <div class="label">Destinatario</div>
-    <div style="font-weight:bold;">{{ $presupuesto->cliente?->nombre ?? '—' }}</div>
-    @if($presupuesto->cliente?->email) <div>{{ $presupuesto->cliente->email }}</div> @endif
-    @if($presupuesto->cliente?->telefono) <div>{{ $presupuesto->cliente->telefono }}</div> @endif
-</div>
-
-<table>
-    <thead>
+    <table class="info-table">
         <tr>
-            <th>Concepto</th>
-            <th class="text-right">Cant.</th>
-            <th class="text-right">P. Unit.</th>
-            <th class="text-right">Dto.</th>
-            <th class="text-right">Base Imp.</th>
-            <th class="text-right">IVA</th>
-            <th class="text-right">Total</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach($presupuesto->lineas as $linea)
-        <tr>
-            <td>{{ $linea->concepto }}</td>
-            <td class="text-right">{{ number_format($linea->cantidad, 2, ',', '.') }}</td>
-            <td class="text-right">{{ number_format($linea->precio_unitario, 2, ',', '.') }} €</td>
-            <td class="text-right">
-                @if($linea->descuento_tipo === 'porcentaje' && $linea->descuento_valor) {{ number_format($linea->descuento_valor, 2, ',', '.') }}%
-                @elseif($linea->descuento_tipo === 'importe' && $linea->descuento_valor) {{ number_format($linea->descuento_valor, 2, ',', '.') }} €
-                @else —
-                @endif
+            <td>
+                <div class="info-box info-box-left">
+                    <div class="section-label">Emisor</div>
+                    <div class="info-name">{{ $empresaNombre }}</div>
+                    <div class="info-text">
+                        @if($presupuesto->empresa?->email)
+                            <div>{{ $presupuesto->empresa->email }}</div>
+                        @endif
+                        @if($presupuesto->empresa?->telefono)
+                            <div>{{ $presupuesto->empresa->telefono }}</div>
+                        @endif
+                        @if($presupuesto->empresa?->direccion)
+                            <div>{{ $presupuesto->empresa->direccion }}</div>
+                        @endif
+                    </div>
+                </div>
             </td>
-            <td class="text-right">{{ number_format($linea->base_imponible, 2, ',', '.') }} €</td>
-            <td class="text-right">{{ number_format($linea->iva_tipo, 0) }}%</td>
-            <td class="text-right"><strong>{{ number_format($linea->total, 2, ',', '.') }} €</strong></td>
+            <td>
+                <div class="info-box info-box-right">
+                    <div class="section-label">Destinatario</div>
+                    <div class="info-name">{{ $presupuesto->cliente?->nombre ?? '—' }}</div>
+                    <div class="info-text">
+                        @if($presupuesto->cliente?->email)
+                            <div>{{ $presupuesto->cliente->email }}</div>
+                        @endif
+                        @if($presupuesto->cliente?->telefono)
+                            <div>{{ $presupuesto->cliente->telefono }}</div>
+                        @endif
+                        @if($presupuesto->cliente?->direccion)
+                            <div>{{ $presupuesto->cliente->direccion }}</div>
+                        @endif
+                    </div>
+                </div>
+            </td>
         </tr>
-        @endforeach
-    </tbody>
-</table>
+    </table>
 
-<table class="totals">
-    <tbody>
-        <tr><td>Subtotal bruto</td><td class="text-right">{{ number_format($presupuesto->subtotal_bruto, 2, ',', '.') }} €</td></tr>
-        @if($presupuesto->subtotal_descuentos > 0)
-        <tr><td style="color:#DC2626;">Descuentos</td><td class="text-right" style="color:#DC2626;">- {{ number_format($presupuesto->subtotal_descuentos, 2, ',', '.') }} €</td></tr>
+    <table class="lineas-table">
+        <thead>
+            <tr>
+                <th style="width: 34%;">Concepto</th>
+                <th class="text-right nowrap" style="width: 9%;">Cant.</th>
+                <th class="text-right nowrap" style="width: 14%;">P. unit.</th>
+                <th class="text-right nowrap" style="width: 11%;">Dto.</th>
+                <th class="text-right nowrap" style="width: 12%;">Base imp.</th>
+                <th class="text-right nowrap" style="width: 8%;">IVA</th>
+                <th class="text-right nowrap" style="width: 12%;">Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach($presupuesto->lineas as $linea)
+                <tr>
+                    <td>
+                        <div class="concepto">{{ $linea->concepto }}</div>
+                        @if(!empty($linea->descripcion))
+                            <div class="concepto-extra">{{ $linea->descripcion }}</div>
+                        @endif
+                    </td>
+                    <td class="text-right nowrap">{{ number_format($linea->cantidad, 2, ',', '.') }}</td>
+                    <td class="text-right nowrap">{{ number_format($linea->precio_unitario, 2, ',', '.') }} €</td>
+                    <td class="text-right nowrap">
+                        @if($linea->descuento_tipo === 'porcentaje' && $linea->descuento_valor)
+                            {{ number_format($linea->descuento_valor, 2, ',', '.') }}%
+                        @elseif($linea->descuento_tipo === 'importe' && $linea->descuento_valor)
+                            {{ number_format($linea->descuento_valor, 2, ',', '.') }} €
+                        @else
+                            —
+                        @endif
+                    </td>
+                    <td class="text-right nowrap">{{ number_format($linea->base_imponible, 2, ',', '.') }} €</td>
+                    <td class="text-right nowrap">{{ number_format($linea->iva_tipo, 0) }}%</td>
+                    <td class="text-right nowrap"><strong>{{ number_format($linea->total, 2, ',', '.') }} €</strong></td>
+                </tr>
+            @endforeach
+        </tbody>
+    </table>
+
+    <div class="totals-wrapper">
+        <table class="totals-table">
+            <tbody>
+                <tr>
+                    <td class="label-cell">Subtotal bruto</td>
+                    <td class="value-cell">{{ number_format($presupuesto->subtotal_bruto, 2, ',', '.') }} €</td>
+                </tr>
+
+                @if($presupuesto->subtotal_descuentos > 0)
+                    <tr class="discount-row">
+                        <td class="label-cell">Descuentos</td>
+                        <td class="value-cell">- {{ number_format($presupuesto->subtotal_descuentos, 2, ',', '.') }} €</td>
+                    </tr>
+                @endif
+
+                <tr>
+                    <td class="label-cell">Base imponible</td>
+                    <td class="value-cell">{{ number_format($presupuesto->total_base_imponible, 2, ',', '.') }} €</td>
+                </tr>
+                <tr>
+                    <td class="label-cell">IVA</td>
+                    <td class="value-cell">{{ number_format($presupuesto->total_iva, 2, ',', '.') }} €</td>
+                </tr>
+                <tr class="total-row">
+                    <td class="label-cell">Total</td>
+                    <td class="value-cell">{{ number_format($presupuesto->total, 2, ',', '.') }} €</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    @if($presupuesto->observaciones)
+        <div class="extra-section">
+            <div class="section-label">Observaciones</div>
+            <div class="extra-box">
+                {{ $presupuesto->observaciones }}
+            </div>
+        </div>
+    @endif
+
+    @if($presupuesto->forma_pago)
+        <div class="extra-section">
+            <div class="section-label">Forma de pago</div>
+            <div class="extra-box">
+                {{ $presupuesto->forma_pago }}
+            </div>
+        </div>
+    @endif
+
+    <div class="footer-note">
+        Gracias por confiar en {{ $empresaNombre }}.
+        @if($presupuesto->validez_hasta)
+            Este presupuesto es válido hasta el {{ $presupuesto->validez_hasta->format('d/m/Y') }}.
         @endif
-        <tr><td>Base imponible</td><td class="text-right">{{ number_format($presupuesto->total_base_imponible, 2, ',', '.') }} €</td></tr>
-        <tr><td>IVA</td><td class="text-right">{{ number_format($presupuesto->total_iva, 2, ',', '.') }} €</td></tr>
-        <tr class="total-row"><td>TOTAL</td><td class="text-right">{{ number_format($presupuesto->total, 2, ',', '.') }} €</td></tr>
-    </tbody>
-</table>
+    </div>
 
-@if($presupuesto->observaciones)
-<div class="section">
-    <div class="label">Observaciones</div>
-    <div class="obs">{{ $presupuesto->observaciones }}</div>
 </div>
-@endif
-
-@if($presupuesto->forma_pago)
-<div class="section">
-    <div class="label">Forma de pago</div>
-    <div>{{ $presupuesto->forma_pago }}</div>
-</div>
-@endif
-
 </body>
 </html>

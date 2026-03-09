@@ -6,100 +6,240 @@
     <title>Presupuesto {{ $presupuesto->numero }}</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-gray-100 min-h-screen py-8 px-4">
+<body class="min-h-screen bg-gradient-to-br from-slate-50 via-gray-50 to-indigo-50 py-6 sm:py-10 px-4 text-gray-900">
 
-    <div class="mx-auto max-w-4xl">
+    @php
+        $empresaNombre = $presupuesto->negocio?->name ?? $presupuesto->empresa?->name ?? config('app.name');
+
+        $estadoStyles = [
+            'borrador'  => 'bg-gray-100 text-gray-700 ring-1 ring-gray-200',
+            'enviado'   => 'bg-blue-50 text-blue-700 ring-1 ring-blue-200',
+            'visto'     => 'bg-purple-50 text-purple-700 ring-1 ring-purple-200',
+            'aceptado'  => 'bg-green-50 text-green-700 ring-1 ring-green-200',
+            'rechazado' => 'bg-red-50 text-red-700 ring-1 ring-red-200',
+        ];
+
+        $estadoLabels = [
+            'borrador'  => 'Borrador',
+            'enviado'   => 'Enviado',
+            'visto'     => 'Visto',
+            'aceptado'  => 'Aceptado',
+            'rechazado' => 'Rechazado',
+        ];
+
+        $badgeClass = $estadoStyles[$presupuesto->estado] ?? 'bg-gray-100 text-gray-700 ring-1 ring-gray-200';
+        $estadoLabel = $estadoLabels[$presupuesto->estado] ?? ucfirst($presupuesto->estado);
+    @endphp
+
+    <div class="mx-auto max-w-6xl">
 
         {{-- Flash messages --}}
         @if (session('success'))
-            <div class="mb-6 rounded-md bg-green-50 border border-green-200 p-4">
-                <p class="text-sm text-green-700 font-medium">{{ session('success') }}</p>
-            </div>
-        @endif
-        @if (session('info'))
-            <div class="mb-6 rounded-md bg-blue-50 border border-blue-200 p-4">
-                <p class="text-sm text-blue-700 font-medium">{{ session('info') }}</p>
+            <div class="mb-6 rounded-2xl border border-green-200 bg-green-50 px-5 py-4 shadow-sm">
+                <p class="text-sm font-medium text-green-700">{{ session('success') }}</p>
             </div>
         @endif
 
-        <div class="bg-white shadow-lg rounded-lg overflow-hidden">
+        @if (session('info'))
+            <div class="mb-6 rounded-2xl border border-blue-200 bg-blue-50 px-5 py-4 shadow-sm">
+                <p class="text-sm font-medium text-blue-700">{{ session('info') }}</p>
+            </div>
+        @endif
+
+        <div class="overflow-hidden rounded-3xl border border-white/60 bg-white shadow-2xl shadow-slate-200/70">
 
             {{-- Header --}}
-            <div class="px-8 py-6 border-b border-gray-200 flex items-start justify-between">
-                <div>
-                    <h1 class="text-2xl font-bold text-gray-900">
-                        {{ $presupuesto->negocio?->name ?? $presupuesto->empresa?->name ?? config('app.name') }}
-                    </h1>
-                    <p class="mt-1 text-sm text-gray-500">Presupuesto</p>
+            <div class="relative overflow-hidden border-b border-gray-100 bg-gradient-to-r from-indigo-600 via-indigo-600 to-purple-600 px-6 py-8 sm:px-8 sm:py-10">
+                <div class="absolute inset-0 pointer-events-none">
+                    <div class="absolute -top-16 -right-16 h-40 w-40 rounded-full bg-white/10 blur-2xl"></div>
+                    <div class="absolute -bottom-16 -left-16 h-40 w-40 rounded-full bg-white/10 blur-2xl"></div>
                 </div>
-                <div class="text-right">
-                    <p class="text-xl font-semibold text-gray-900">{{ $presupuesto->numero }}</p>
-                    <p class="text-sm text-gray-500">Fecha: {{ $presupuesto->fecha->format('d/m/Y') }}</p>
-                    @if ($presupuesto->validez_hasta)
-                        <p class="text-sm text-gray-500">Válido hasta: {{ $presupuesto->validez_hasta->format('d/m/Y') }}</p>
-                    @endif
-                    @php
-                        $estadoStyles = [
-                            'borrador'  => 'bg-gray-100 text-gray-700',
-                            'enviado'   => 'bg-blue-100 text-blue-700',
-                            'visto'     => 'bg-purple-100 text-purple-700',
-                            'aceptado'  => 'bg-green-100 text-green-700',
-                            'rechazado' => 'bg-red-100 text-red-700',
-                        ];
-                        $estadoLabels = [
-                            'borrador'  => 'Borrador',
-                            'enviado'   => 'Enviado',
-                            'visto'     => 'Visto',
-                            'aceptado'  => 'Aceptado',
-                            'rechazado' => 'Rechazado',
-                        ];
-                        $badgeClass = $estadoStyles[$presupuesto->estado] ?? 'bg-gray-100 text-gray-700';
-                        $estadoLabel = $estadoLabels[$presupuesto->estado] ?? ucfirst($presupuesto->estado);
-                    @endphp
-                    <span class="mt-2 inline-flex rounded-full px-3 py-1 text-xs font-semibold {{ $badgeClass }}">
-                        {{ $estadoLabel }}
-                    </span>
+
+                <div class="relative flex flex-col gap-8 lg:flex-row lg:items-start lg:justify-between">
+                    <div class="text-white">
+                        <div class="mb-3 inline-flex items-center gap-2 rounded-full bg-white/15 px-3 py-1 text-xs font-semibold tracking-wide text-white/90">
+                            Presupuesto profesional
+                        </div>
+
+                        <h1 class="text-2xl font-bold sm:text-3xl">
+                            {{ $empresaNombre }}
+                        </h1>
+
+                        <p class="mt-2 text-sm text-indigo-100 sm:text-base">
+                            Documento de presupuesto preparado para su revisión.
+                        </p>
+                    </div>
+
+                    <div class="rounded-2xl bg-white/95 p-5 shadow-lg backdrop-blur sm:min-w-[300px]">
+                        <div class="flex items-start justify-between gap-4">
+                            <div>
+                                <p class="text-xs font-semibold uppercase tracking-[0.18em] text-gray-400">
+                                    Número
+                                </p>
+                                <p class="mt-1 text-2xl font-bold text-gray-900">
+                                    {{ $presupuesto->numero }}
+                                </p>
+                            </div>
+
+                            <span class="inline-flex rounded-full px-3 py-1 text-xs font-semibold {{ $badgeClass }}">
+                                {{ $estadoLabel }}
+                            </span>
+                        </div>
+
+                        <div class="mt-5 grid gap-3 sm:grid-cols-2">
+                            <div class="rounded-xl bg-gray-50 px-4 py-3">
+                                <p class="text-[11px] font-semibold uppercase tracking-wider text-gray-400">Fecha</p>
+                                <p class="mt-1 text-sm font-medium text-gray-800">
+                                    {{ $presupuesto->fecha->format('d/m/Y') }}
+                                </p>
+                            </div>
+
+                            @if ($presupuesto->validez_hasta)
+                                <div class="rounded-xl bg-gray-50 px-4 py-3">
+                                    <p class="text-[11px] font-semibold uppercase tracking-wider text-gray-400">Válido hasta</p>
+                                    <p class="mt-1 text-sm font-medium text-gray-800">
+                                        {{ $presupuesto->validez_hasta->format('d/m/Y') }}
+                                    </p>
+                                </div>
+                            @endif
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            {{-- Cliente --}}
-            <div class="px-8 py-5 border-b border-gray-200">
-                <h2 class="text-xs font-medium uppercase tracking-wider text-gray-500 mb-2">Destinatario</h2>
-                <p class="font-semibold text-gray-900">{{ $presupuesto->cliente?->nombre ?? '—' }}</p>
-                @if ($presupuesto->cliente?->email)
-                    <p class="text-sm text-gray-600">{{ $presupuesto->cliente->email }}</p>
-                @endif
-                @if ($presupuesto->cliente?->telefono)
-                    <p class="text-sm text-gray-600">{{ $presupuesto->cliente->telefono }}</p>
-                @endif
-                @if ($presupuesto->cliente?->direccion)
-                    <p class="text-sm text-gray-600">{{ $presupuesto->cliente->direccion }}</p>
-                @endif
+            {{-- Datos principales --}}
+            <div class="grid gap-6 border-b border-gray-100 px-6 py-6 sm:px-8 lg:grid-cols-2">
+                <div class="rounded-2xl border border-gray-200 bg-gray-50/70 p-5">
+                    <h2 class="mb-3 text-xs font-semibold uppercase tracking-[0.18em] text-gray-500">
+                        Emisor
+                    </h2>
+
+                    <p class="text-lg font-bold text-gray-900">{{ $empresaNombre }}</p>
+
+                    <div class="mt-3 space-y-1 text-sm text-gray-600">
+                        @if ($presupuesto->empresa?->email)
+                            <p>{{ $presupuesto->empresa->email }}</p>
+                        @endif
+                        @if ($presupuesto->empresa?->telefono)
+                            <p>{{ $presupuesto->empresa->telefono }}</p>
+                        @endif
+                        @if ($presupuesto->empresa?->direccion)
+                            <p>{{ $presupuesto->empresa->direccion }}</p>
+                        @endif
+                    </div>
+                </div>
+
+                <div class="rounded-2xl border border-gray-200 bg-gray-50/70 p-5">
+                    <h2 class="mb-3 text-xs font-semibold uppercase tracking-[0.18em] text-gray-500">
+                        Destinatario
+                    </h2>
+
+                    <p class="text-lg font-bold text-gray-900">{{ $presupuesto->cliente?->nombre ?? '—' }}</p>
+
+                    <div class="mt-3 space-y-1 text-sm text-gray-600">
+                        @if ($presupuesto->cliente?->email)
+                            <p>{{ $presupuesto->cliente->email }}</p>
+                        @endif
+                        @if ($presupuesto->cliente?->telefono)
+                            <p>{{ $presupuesto->cliente->telefono }}</p>
+                        @endif
+                        @if ($presupuesto->cliente?->direccion)
+                            <p>{{ $presupuesto->cliente->direccion }}</p>
+                        @endif
+                    </div>
+                </div>
             </div>
 
             {{-- Líneas --}}
-            <div class="px-8 py-5">
-                {{-- Desktop table --}}
-                <div class="hidden sm:block overflow-x-auto">
-                <table class="min-w-full divide-y divide-gray-200">
-                    <thead>
-                        <tr class="text-xs font-medium uppercase tracking-wider text-gray-500">
-                            <th class="pb-3 text-left">Concepto</th>
-                            <th class="pb-3 text-right">Cant.</th>
-                            <th class="pb-3 text-right">P. Unit.</th>
-                            <th class="pb-3 text-right">Descuento</th>
-                            <th class="pb-3 text-right">Base Imp.</th>
-                            <th class="pb-3 text-right">IVA</th>
-                            <th class="pb-3 text-right">Total</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-gray-100">
-                        @foreach ($presupuesto->lineas as $linea)
-                            <tr>
-                                <td class="py-3 text-sm text-gray-900">{{ $linea->concepto }}</td>
-                                <td class="py-3 text-right text-sm text-gray-700">{{ number_format($linea->cantidad, 2, ',', '.') }}</td>
-                                <td class="py-3 text-right text-sm text-gray-700">{{ number_format($linea->precio_unitario, 2, ',', '.') }} €</td>
-                                <td class="py-3 text-right text-sm text-gray-700">
+            <div class="px-6 py-6 sm:px-8">
+                <div class="mb-5 flex items-center justify-between gap-4">
+                    <div>
+                        <h2 class="text-xl font-bold text-gray-900">Detalle del presupuesto</h2>
+                        <p class="mt-1 text-sm text-gray-500">
+                            Conceptos incluidos y resumen económico.
+                        </p>
+                    </div>
+                </div>
+
+                {{-- Desktop --}}
+                <div class="hidden overflow-hidden rounded-2xl border border-gray-200 sm:block">
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full">
+                            <thead class="bg-gray-50">
+                                <tr class="text-xs font-semibold uppercase tracking-wider text-gray-500">
+                                    <th class="px-5 py-4 text-left">Concepto</th>
+                                    <th class="px-4 py-4 text-right">Cant.</th>
+                                    <th class="px-4 py-4 text-right">P. unit.</th>
+                                    <th class="px-4 py-4 text-right">Descuento</th>
+                                    <th class="px-4 py-4 text-right">Base imp.</th>
+                                    <th class="px-4 py-4 text-right">IVA</th>
+                                    <th class="px-5 py-4 text-right">Total</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-100 bg-white">
+                                @foreach ($presupuesto->lineas as $linea)
+                                    <tr class="hover:bg-gray-50/70">
+                                        <td class="px-5 py-4 align-top">
+                                            <p class="text-sm font-semibold text-gray-900">{{ $linea->concepto }}</p>
+                                            @if (!empty($linea->descripcion))
+                                                <p class="mt-1 text-xs text-gray-500">{{ $linea->descripcion }}</p>
+                                            @endif
+                                        </td>
+                                        <td class="px-4 py-4 text-right text-sm text-gray-700">
+                                            {{ number_format($linea->cantidad, 2, ',', '.') }}
+                                        </td>
+                                        <td class="px-4 py-4 text-right text-sm text-gray-700">
+                                            {{ number_format($linea->precio_unitario, 2, ',', '.') }} €
+                                        </td>
+                                        <td class="px-4 py-4 text-right text-sm text-gray-700">
+                                            @if ($linea->descuento_tipo === 'porcentaje' && $linea->descuento_valor)
+                                                {{ number_format($linea->descuento_valor, 2, ',', '.') }}%
+                                            @elseif ($linea->descuento_tipo === 'importe' && $linea->descuento_valor)
+                                                {{ number_format($linea->descuento_valor, 2, ',', '.') }} €
+                                            @else
+                                                —
+                                            @endif
+                                        </td>
+                                        <td class="px-4 py-4 text-right text-sm text-gray-700">
+                                            {{ number_format($linea->base_imponible, 2, ',', '.') }} €
+                                        </td>
+                                        <td class="px-4 py-4 text-right text-sm text-gray-700">
+                                            {{ number_format($linea->iva_tipo, 0) }}%
+                                        </td>
+                                        <td class="px-5 py-4 text-right text-sm font-semibold text-gray-900">
+                                            {{ number_format($linea->total, 2, ',', '.') }} €
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                {{-- Mobile --}}
+                <div class="space-y-4 sm:hidden">
+                    @foreach ($presupuesto->lineas as $linea)
+                        <div class="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm">
+                            <div class="border-b border-gray-100 px-4 py-4">
+                                <p class="font-semibold text-gray-900">{{ $linea->concepto }}</p>
+                                @if (!empty($linea->descripcion))
+                                    <p class="mt-1 text-sm text-gray-500">{{ $linea->descripcion }}</p>
+                                @endif
+                            </div>
+
+                            <div class="grid grid-cols-2 gap-x-4 gap-y-3 px-4 py-4 text-sm">
+                                <div class="text-gray-500">Cantidad</div>
+                                <div class="text-right font-medium text-gray-700">
+                                    {{ number_format($linea->cantidad, 2, ',', '.') }}
+                                </div>
+
+                                <div class="text-gray-500">P. unit.</div>
+                                <div class="text-right font-medium text-gray-700">
+                                    {{ number_format($linea->precio_unitario, 2, ',', '.') }} €
+                                </div>
+
+                                <div class="text-gray-500">Descuento</div>
+                                <div class="text-right font-medium text-gray-700">
                                     @if ($linea->descuento_tipo === 'porcentaje' && $linea->descuento_valor)
                                         {{ number_format($linea->descuento_valor, 2, ',', '.') }}%
                                     @elseif ($linea->descuento_tipo === 'importe' && $linea->descuento_valor)
@@ -107,130 +247,166 @@
                                     @else
                                         —
                                     @endif
-                                </td>
-                                <td class="py-3 text-right text-sm text-gray-700">{{ number_format($linea->base_imponible, 2, ',', '.') }} €</td>
-                                <td class="py-3 text-right text-sm text-gray-700">{{ number_format($linea->iva_tipo, 0) }}%</td>
-                                <td class="py-3 text-right text-sm font-medium text-gray-900">{{ number_format($linea->total, 2, ',', '.') }} €</td>
-                            </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-                </div>
+                                </div>
 
-                {{-- Mobile cards (bocadillos) --}}
-                <div class="sm:hidden divide-y divide-gray-100">
-                    @foreach ($presupuesto->lineas as $linea)
-                    <div class="py-4 space-y-2">
-                        <p class="font-medium text-gray-900">{{ $linea->concepto }}</p>
-                        <div class="grid grid-cols-2 gap-x-4 gap-y-1 text-sm">
-                            <div class="text-gray-500">Cantidad</div>
-                            <div class="text-right text-gray-700">{{ number_format($linea->cantidad, 2, ',', '.') }}</div>
-                            <div class="text-gray-500">P. Unit.</div>
-                            <div class="text-right text-gray-700">{{ number_format($linea->precio_unitario, 2, ',', '.') }} €</div>
-                            @if ($linea->descuento_tipo && $linea->descuento_valor)
-                            <div class="text-gray-500">Descuento</div>
-                            <div class="text-right text-gray-700">
-                                @if ($linea->descuento_tipo === 'porcentaje'){{ number_format($linea->descuento_valor, 2, ',', '.') }}%
-                                @else{{ number_format($linea->descuento_valor, 2, ',', '.') }} €@endif
+                                <div class="text-gray-500">Base imp.</div>
+                                <div class="text-right font-medium text-gray-700">
+                                    {{ number_format($linea->base_imponible, 2, ',', '.') }} €
+                                </div>
+
+                                <div class="text-gray-500">IVA</div>
+                                <div class="text-right font-medium text-gray-700">
+                                    {{ number_format($linea->iva_tipo, 0) }}%
+                                </div>
                             </div>
-                            @endif
-                            <div class="text-gray-500">Base Imp.</div>
-                            <div class="text-right text-gray-700">{{ number_format($linea->base_imponible, 2, ',', '.') }} €</div>
-                            <div class="text-gray-500">IVA</div>
-                            <div class="text-right text-gray-700">{{ number_format($linea->iva_tipo, 0) }}%</div>
+
+                            <div class="border-t border-gray-100 bg-gray-50 px-4 py-3 text-right">
+                                <span class="text-sm font-bold text-gray-900">
+                                    Total: {{ number_format($linea->total, 2, ',', '.') }} €
+                                </span>
+                            </div>
                         </div>
-                        <div class="flex justify-end border-t border-gray-100 pt-2">
-                            <span class="text-sm font-semibold text-gray-900">Total: {{ number_format($linea->total, 2, ',', '.') }} €</span>
-                        </div>
-                    </div>
                     @endforeach
                 </div>
             </div>
 
             {{-- Totales --}}
-            <div class="px-8 py-5 border-t border-gray-200">
-                <div class="ml-auto max-w-xs space-y-1">
-                    <div class="flex justify-between text-sm text-gray-600">
-                        <span>Subtotal bruto</span>
-                        <span>{{ number_format($presupuesto->subtotal_bruto, 2, ',', '.') }} €</span>
-                    </div>
-                    @if ($presupuesto->subtotal_descuentos > 0)
-                        <div class="flex justify-between text-sm text-red-600">
-                            <span>Descuentos</span>
-                            <span>- {{ number_format($presupuesto->subtotal_descuentos, 2, ',', '.') }} €</span>
+            <div class="border-t border-gray-100 bg-gray-50/70 px-6 py-6 sm:px-8">
+                <div class="grid gap-6 lg:grid-cols-[1fr_360px] lg:items-start">
+                    <div class="hidden lg:block"></div>
+
+                    <div class="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm">
+                        <div class="border-b border-gray-100 px-5 py-4">
+                            <h3 class="text-sm font-semibold uppercase tracking-[0.18em] text-gray-500">
+                                Resumen
+                            </h3>
                         </div>
-                    @endif
-                    <div class="flex justify-between text-sm text-gray-600">
-                        <span>Base imponible</span>
-                        <span>{{ number_format($presupuesto->total_base_imponible, 2, ',', '.') }} €</span>
-                    </div>
-                    <div class="flex justify-between text-sm text-gray-600">
-                        <span>IVA</span>
-                        <span>{{ number_format($presupuesto->total_iva, 2, ',', '.') }} €</span>
-                    </div>
-                    <div class="flex justify-between border-t border-gray-300 pt-2 text-lg font-bold text-gray-900">
-                        <span>TOTAL</span>
-                        <span>{{ number_format($presupuesto->total, 2, ',', '.') }} €</span>
+
+                        <div class="space-y-3 px-5 py-5">
+                            <div class="flex justify-between text-sm text-gray-600">
+                                <span>Subtotal bruto</span>
+                                <span>{{ number_format($presupuesto->subtotal_bruto, 2, ',', '.') }} €</span>
+                            </div>
+
+                            @if ($presupuesto->subtotal_descuentos > 0)
+                                <div class="flex justify-between text-sm font-medium text-red-600">
+                                    <span>Descuentos</span>
+                                    <span>- {{ number_format($presupuesto->subtotal_descuentos, 2, ',', '.') }} €</span>
+                                </div>
+                            @endif
+
+                            <div class="flex justify-between text-sm text-gray-600">
+                                <span>Base imponible</span>
+                                <span>{{ number_format($presupuesto->total_base_imponible, 2, ',', '.') }} €</span>
+                            </div>
+
+                            <div class="flex justify-between text-sm text-gray-600">
+                                <span>IVA</span>
+                                <span>{{ number_format($presupuesto->total_iva, 2, ',', '.') }} €</span>
+                            </div>
+
+                            <div class="border-t border-gray-200 pt-4">
+                                <div class="flex items-center justify-between rounded-2xl bg-indigo-600 px-4 py-4 text-white shadow-lg shadow-indigo-200">
+                                    <span class="text-sm font-semibold uppercase tracking-wider">Total</span>
+                                    <span class="text-xl font-bold">{{ number_format($presupuesto->total, 2, ',', '.') }} €</span>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            {{-- Observaciones --}}
-            @if ($presupuesto->observaciones)
-                <div class="px-8 py-5 border-t border-gray-200">
-                    <h3 class="text-xs font-medium uppercase tracking-wider text-gray-500 mb-2">Observaciones</h3>
-                    <p class="text-sm text-gray-700 whitespace-pre-line">{{ $presupuesto->observaciones }}</p>
-                </div>
-            @endif
-
-            @if ($presupuesto->forma_pago)
-                <div class="px-8 py-4 border-t border-gray-200">
-                    <h3 class="text-xs font-medium uppercase tracking-wider text-gray-500 mb-1">Forma de pago</h3>
-                    <p class="text-sm text-gray-700">{{ $presupuesto->forma_pago }}</p>
-                </div>
-            @endif
-
-            {{-- Accept / Reject buttons --}}
-            @if ($presupuesto->estado === 'aceptado')
-                <div class="px-8 py-6 border-t border-green-200 bg-green-50 text-center">
-                    <p class="text-lg font-semibold text-green-700">✓ Presupuesto Aceptado</p>
-                    @if ($presupuesto->aceptado_en)
-                        <p class="text-sm text-green-600 mt-1">Aceptado el {{ $presupuesto->aceptado_en->format('d/m/Y H:i') }}</p>
+            {{-- Observaciones / forma de pago --}}
+            @if ($presupuesto->observaciones || $presupuesto->forma_pago)
+                <div class="grid gap-6 border-t border-gray-100 px-6 py-6 sm:px-8 lg:grid-cols-2">
+                    @if ($presupuesto->observaciones)
+                        <div class="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
+                            <h3 class="mb-3 text-xs font-semibold uppercase tracking-[0.18em] text-gray-500">
+                                Observaciones
+                            </h3>
+                            <p class="whitespace-pre-line text-sm leading-6 text-gray-700">{{ $presupuesto->observaciones }}</p>
+                        </div>
                     @endif
+
+                    @if ($presupuesto->forma_pago)
+                        <div class="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
+                            <h3 class="mb-3 text-xs font-semibold uppercase tracking-[0.18em] text-gray-500">
+                                Forma de pago
+                            </h3>
+                            <p class="text-sm leading-6 text-gray-700">{{ $presupuesto->forma_pago }}</p>
+                        </div>
+                    @endif
+                </div>
+            @endif
+
+            {{-- Estado final / acciones --}}
+            @if ($presupuesto->estado === 'aceptado')
+                <div class="border-t border-green-200 bg-green-50 px-6 py-8 text-center sm:px-8">
+                    <div class="mx-auto max-w-xl">
+                        <div class="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-green-100 text-2xl text-green-700">
+                            ✓
+                        </div>
+                        <p class="text-xl font-bold text-green-700">Presupuesto aceptado</p>
+                        @if ($presupuesto->aceptado_en)
+                            <p class="mt-2 text-sm text-green-600">
+                                Aceptado el {{ $presupuesto->aceptado_en->format('d/m/Y H:i') }}
+                            </p>
+                        @endif
+                    </div>
                 </div>
             @elseif ($presupuesto->estado === 'rechazado')
-                <div class="px-8 py-6 border-t border-red-200 bg-red-50 text-center">
-                    <p class="text-lg font-semibold text-red-700">✗ Presupuesto Rechazado</p>
-                    @if ($presupuesto->rechazado_en)
-                        <p class="text-sm text-red-600 mt-1">Rechazado el {{ $presupuesto->rechazado_en->format('d/m/Y H:i') }}</p>
-                    @endif
+                <div class="border-t border-red-200 bg-red-50 px-6 py-8 text-center sm:px-8">
+                    <div class="mx-auto max-w-xl">
+                        <div class="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-red-100 text-2xl text-red-700">
+                            ✕
+                        </div>
+                        <p class="text-xl font-bold text-red-700">Presupuesto rechazado</p>
+                        @if ($presupuesto->rechazado_en)
+                            <p class="mt-2 text-sm text-red-600">
+                                Rechazado el {{ $presupuesto->rechazado_en->format('d/m/Y H:i') }}
+                            </p>
+                        @endif
+                    </div>
                 </div>
             @elseif (in_array($presupuesto->estado, ['enviado', 'visto']))
-                <div class="px-8 py-6 border-t border-gray-200 bg-gray-50 flex flex-col sm:flex-row gap-4 justify-center items-center">
-                    <p class="text-sm text-gray-600">¿Deseas aceptar o rechazar este presupuesto?</p>
-                    <form method="POST" action="{{ route('presupuestos.aceptar', $presupuesto->token_publico) }}">
-                        @csrf
-                        <button type="submit"
-                                onclick="return confirm('¿Confirmas que deseas ACEPTAR este presupuesto?')"
-                                class="inline-flex items-center rounded-md bg-green-600 px-6 py-2 text-sm font-medium text-white hover:bg-green-700">
-                            ✓ Aceptar presupuesto
-                        </button>
-                    </form>
-                    <form method="POST" action="{{ route('presupuestos.rechazar', $presupuesto->token_publico) }}">
-                        @csrf
-                        <button type="submit"
-                                onclick="return confirm('¿Confirmas que deseas RECHAZAR este presupuesto?')"
-                                class="inline-flex items-center rounded-md bg-red-600 px-6 py-2 text-sm font-medium text-white hover:bg-red-700">
-                            ✗ Rechazar presupuesto
-                        </button>
-                    </form>
+                <div class="border-t border-gray-100 bg-white px-6 py-8 sm:px-8">
+                    <div class="mx-auto max-w-3xl rounded-3xl border border-gray-200 bg-gray-50 px-6 py-6 text-center shadow-sm">
+                        <h3 class="text-xl font-bold text-gray-900">¿Deseas aceptar o rechazar este presupuesto?</h3>
+                        <p class="mt-2 text-sm text-gray-600">
+                            Revisa la información y confirma tu decisión.
+                        </p>
+
+                        <div class="mt-6 flex flex-col items-center justify-center gap-3 sm:flex-row">
+                            <form method="POST" action="{{ route('presupuestos.aceptar', $presupuesto->token_publico) }}">
+                                @csrf
+                                <button
+                                    type="submit"
+                                    onclick="return confirm('¿Confirmas que deseas ACEPTAR este presupuesto?')"
+                                    class="inline-flex min-w-[220px] items-center justify-center rounded-xl bg-green-600 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-green-100 transition hover:bg-green-700"
+                                >
+                                    ✓ Aceptar presupuesto
+                                </button>
+                            </form>
+
+                            <form method="POST" action="{{ route('presupuestos.rechazar', $presupuesto->token_publico) }}">
+                                @csrf
+                                <button
+                                    type="submit"
+                                    onclick="return confirm('¿Confirmas que deseas RECHAZAR este presupuesto?')"
+                                    class="inline-flex min-w-[220px] items-center justify-center rounded-xl bg-red-600 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-red-100 transition hover:bg-red-700"
+                                >
+                                    ✕ Rechazar presupuesto
+                                </button>
+                            </form>
+                        </div>
+                    </div>
                 </div>
             @endif
 
         </div>
 
         <p class="mt-6 text-center text-xs text-gray-400">
-            Este presupuesto ha sido generado por {{ $presupuesto->negocio?->name ?? $presupuesto->empresa?->name ?? config('app.name') }}.
+            Este presupuesto ha sido generado por {{ $empresaNombre }}.
         </p>
     </div>
 
