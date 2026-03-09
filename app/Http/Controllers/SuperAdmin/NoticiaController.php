@@ -9,18 +9,20 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
 use MultiempresaApp\Noticias\Models\Noticia;
+use MultiempresaApp\Noticias\Models\Tag;
 
 class NoticiaController extends Controller
 {
     public function index(): View
     {
-        $noticias = Noticia::latest()->paginate(20);
+        $noticias = Noticia::with('tags')->latest()->paginate(20);
         return view('superadmin.noticias.index', compact('noticias'));
     }
 
     public function create(): View
     {
-        return view('superadmin.noticias.create');
+        $tags = Tag::orderBy('nombre')->get();
+        return view('superadmin.noticias.create', compact('tags'));
     }
 
     public function store(Request $request): RedirectResponse
@@ -31,6 +33,8 @@ class NoticiaController extends Controller
             'imagen'           => ['nullable', 'image', 'max:5120'],
             'meta_description' => ['nullable', 'string', 'max:255'],
             'publicado'        => ['nullable', 'boolean'],
+            'tags'             => ['nullable', 'array'],
+            'tags.*'           => ['string', 'max:100'],
         ]);
 
         $data = [
@@ -46,7 +50,12 @@ class NoticiaController extends Controller
             $data['imagen'] = $this->saveOptimizedImage($request->file('imagen'));
         }
 
-        Noticia::create($data);
+        $noticia = Noticia::create($data);
+
+        if ($request->filled('tags')) {
+            $tagIds = $this->resolveTagIds($request->input('tags', []));
+            $noticia->tags()->sync($tagIds);
+        }
 
         return redirect()->route('superadmin.noticias.index')
             ->with('success', 'Noticia creada correctamente.');
@@ -54,7 +63,9 @@ class NoticiaController extends Controller
 
     public function edit(Noticia $noticia): View
     {
-        return view('superadmin.noticias.edit', compact('noticia'));
+        $noticia->load('tags');
+        $tags = Tag::orderBy('nombre')->get();
+        return view('superadmin.noticias.edit', compact('noticia', 'tags'));
     }
 
     public function update(Request $request, Noticia $noticia): RedirectResponse
@@ -65,6 +76,8 @@ class NoticiaController extends Controller
             'imagen'           => ['nullable', 'image', 'max:5120'],
             'meta_description' => ['nullable', 'string', 'max:255'],
             'publicado'        => ['nullable', 'boolean'],
+            'tags'             => ['nullable', 'array'],
+            'tags.*'           => ['string', 'max:100'],
         ]);
 
         $wasPublicado = $noticia->publicado;
@@ -89,6 +102,9 @@ class NoticiaController extends Controller
 
         $noticia->update($data);
 
+        $tagIds = $this->resolveTagIds($request->input('tags', []));
+        $noticia->tags()->sync($tagIds);
+
         return redirect()->route('superadmin.noticias.index')
             ->with('success', 'Noticia actualizada correctamente.');
     }
@@ -102,6 +118,25 @@ class NoticiaController extends Controller
 
         return redirect()->route('superadmin.noticias.index')
             ->with('success', 'Noticia eliminada correctamente.');
+    }
+
+    /**
+     * Resolve tag names to IDs, creating new tags as needed.
+     *
+     * @param  array<string>  $tagNames
+     * @return array<int>
+     */
+    protected function resolveTagIds(array $tagNames): array
+    {
+        return collect($tagNames)
+            ->filter()
+            ->map(function (string $nombre) {
+                $nombre = trim($nombre);
+                return Tag::firstOrCreate(['nombre' => $nombre])->id;
+            })
+            ->unique()
+            ->values()
+            ->all();
     }
 
     protected function saveOptimizedImage(\Illuminate\Http\UploadedFile $file): string

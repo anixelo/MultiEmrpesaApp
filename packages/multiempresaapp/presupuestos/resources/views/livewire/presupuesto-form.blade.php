@@ -14,6 +14,13 @@
     {{-- Hidden field for negocio_id --}}
     <input type="hidden" name="negocio_id" value="{{ $negocioId }}">
 
+    {{-- Hidden fields for step-3 data (always in DOM so they are submitted from any step) --}}
+    <input type="hidden" name="fecha" value="{{ $fecha }}">
+    <input type="hidden" name="validez_hasta" value="{{ $validezHasta }}">
+    <input type="hidden" name="forma_pago" value="{{ $formaPago }}">
+    <input type="hidden" name="observaciones" value="{{ $observaciones }}">
+    <input type="hidden" name="notas" value="{{ $notas }}">
+
     {{-- Hidden fields for lines (sent with form) --}}
     @foreach ($lineas as $i => $linea)
         <input type="hidden" name="lineas[{{ $i }}][concepto]"        value="{{ $linea['concepto'] }}">
