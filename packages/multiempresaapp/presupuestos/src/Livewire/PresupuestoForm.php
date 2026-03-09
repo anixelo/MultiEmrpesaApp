@@ -38,6 +38,9 @@ class PresupuestoForm extends Component
     public string $quickServicioPrecio = '0';
     public string $quickServicioIva = '';
 
+    // Wizard step (only used for create mode)
+    public int $step = 1;
+
     public function mount(?int $presupuestoId = null): void
     {
         $empresaId = auth()->user()->company_id;
@@ -98,6 +101,36 @@ class PresupuestoForm extends Component
 
         if (empty($this->lineas)) {
             $this->addLinea();
+        }
+    }
+
+    public function nextStep(): void
+    {
+        if ($this->step === 2) {
+            $this->validate([
+                'clienteId' => 'required|integer',
+            ], [
+                'clienteId.required' => 'Debes seleccionar un cliente antes de continuar.',
+            ]);
+        }
+
+        if ($this->step === 3) {
+            $this->validate([
+                'fecha' => 'required|date',
+            ], [
+                'fecha.required' => 'La fecha es obligatoria.',
+            ]);
+        }
+
+        if ($this->step < 4) {
+            $this->step++;
+        }
+    }
+
+    public function prevStep(): void
+    {
+        if ($this->step > 1) {
+            $this->step--;
         }
     }
 
