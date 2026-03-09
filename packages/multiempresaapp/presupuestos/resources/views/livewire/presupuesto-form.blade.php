@@ -27,33 +27,231 @@
         @endif
     @endforeach
 
+    @if (!$presupuestoId)
+    {{-- ============================
+         CREATE MODE: 4-Step Wizard
+         ============================ --}}
+
+    {{-- Step indicator --}}
+    <div class="mb-6">
+        <ol class="flex items-center w-full text-sm font-medium text-center text-gray-500">
+            @php
+                $steps = [
+                    1 => 'Empresa',
+                    2 => 'Cliente',
+                    3 => 'Datos generales',
+                    4 => 'Líneas',
+                ];
+            @endphp
+            @foreach($steps as $num => $label)
+            <li class="flex {{ $num < count($steps) ? 'md:w-full' : '' }} items-center {{ $step >= $num ? 'text-indigo-600' : 'text-gray-400' }}">
+                <span class="flex items-center gap-1.5 {{ $num < count($steps) ? 'after:content-[\'/\'] md:after:content-[\'\'] after:mx-2 md:after:w-full md:after:h-px md:after:border md:after:border-gray-200 md:after:inline-block md:after:mx-4' : '' }}">
+                    <span class="inline-flex items-center justify-center w-6 h-6 rounded-full text-xs font-bold
+                        {{ $step > $num ? 'bg-indigo-600 text-white' : ($step === $num ? 'border-2 border-indigo-600 text-indigo-600' : 'border-2 border-gray-300 text-gray-400') }}">
+                        @if($step > $num)
+                            <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                        @else
+                            {{ $num }}
+                        @endif
+                    </span>
+                    <span class="hidden sm:inline">{{ $label }}</span>
+                </span>
+            </li>
+            @endforeach
+        </ol>
+    </div>
+
+    {{-- Step 1: Datos de la empresa --}}
+    @if($step === 1)
+    <div class="overflow-hidden bg-white shadow sm:rounded-lg">
+        <div class="px-6 py-4 border-b border-gray-200">
+            <h3 class="text-sm font-medium text-gray-900">Paso 1 — Datos de la empresa</h3>
+            <p class="text-xs text-gray-500 mt-0.5">Selecciona la empresa con la que emitirás el presupuesto</p>
+        </div>
+        <div class="px-6 py-5">
+            @if(count($empresasDisponibles) > 1)
+            <div>
+                <label class="block text-sm font-medium text-gray-700">Empresa <span class="text-red-500">*</span></label>
+                <select wire:model.live="negocioId"
+                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                    <option value="">— Seleccionar empresa —</option>
+                    @foreach($empresasDisponibles as $emp)
+                        <option value="{{ $emp['id'] }}" {{ $negocioId == $emp['id'] ? 'selected' : '' }}>{{ $emp['name'] }}</option>
+                    @endforeach
+                </select>
+            </div>
+            @elseif(count($empresasDisponibles) === 1)
+            <div class="p-4 bg-indigo-50 rounded-lg border border-indigo-200">
+                <p class="text-sm font-medium text-indigo-800">{{ $empresasDisponibles[0]['name'] }}</p>
+                <p class="text-xs text-indigo-600 mt-0.5">Empresa seleccionada automáticamente</p>
+            </div>
+            @else
+            <div class="p-4 bg-amber-50 rounded-lg border border-amber-200">
+                <p class="text-sm text-amber-800">No tienes empresas configuradas. Puedes continuar sin seleccionar empresa o <a href="{{ route('admin.empresas.create') }}" class="font-medium underline">crear una</a>.</p>
+            </div>
+            @endif
+        </div>
+        <div class="px-6 pb-5 flex justify-end">
+            <button type="button" wire:click="nextStep"
+                    class="inline-flex items-center gap-2 rounded-md bg-indigo-600 px-5 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
+                Siguiente
+                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+            </button>
+        </div>
+    </div>
+    @endif
+
+    {{-- Step 2: Datos del cliente --}}
+    @if($step === 2)
+    <div class="overflow-hidden bg-white shadow sm:rounded-lg">
+        <div class="px-6 py-4 border-b border-gray-200">
+            <h3 class="text-sm font-medium text-gray-900">Paso 2 — Datos del cliente</h3>
+            <p class="text-xs text-gray-500 mt-0.5">Busca o crea el cliente para este presupuesto</p>
+        </div>
+        <div class="px-6 py-5">
+            <livewire:clientes.cliente-selector
+                :key="'selector-new'"
+                :cliente-id="$clienteId"
+                :cliente-nombre="$clienteNombre"
+            />
+            @if ($clienteNombre)
+                <p class="mt-2 text-xs text-gray-500">Cliente seleccionado: <strong>{{ $clienteNombre }}</strong></p>
+            @endif
+            @error('clienteId')
+                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+            @enderror
+        </div>
+        <div class="px-6 pb-5 flex justify-between">
+            <button type="button" wire:click="prevStep"
+                    class="inline-flex items-center gap-2 rounded-md bg-gray-100 px-5 py-2 text-sm font-medium text-gray-700 hover:bg-gray-200">
+                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
+                Anterior
+            </button>
+            <button type="button" wire:click="nextStep"
+                    class="inline-flex items-center gap-2 rounded-md bg-indigo-600 px-5 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
+                Siguiente
+                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+            </button>
+        </div>
+    </div>
+    @endif
+
+    {{-- Step 3: Datos generales --}}
+    @if($step === 3)
+    <div class="overflow-hidden bg-white shadow sm:rounded-lg">
+        <div class="px-6 py-4 border-b border-gray-200">
+            <h3 class="text-sm font-medium text-gray-900">Paso 3 — Datos generales</h3>
+            <p class="text-xs text-gray-500 mt-0.5">Completa la información básica del presupuesto</p>
+        </div>
+        <div class="px-6 py-5 grid grid-cols-1 gap-5 sm:grid-cols-2">
+
+            {{-- Fecha --}}
+            <div>
+                <label class="block text-sm font-medium text-gray-700">
+                    Fecha <span class="text-red-500">*</span>
+                </label>
+                <input type="date"
+                       wire:model.live="fecha"
+                       name="fecha"
+                       value="{{ $fecha }}"
+                       class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm @error('fecha') border-red-300 @enderror">
+                @error('fecha')
+                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                @enderror
+            </div>
+
+            {{-- Válido hasta --}}
+            <div>
+                <label class="block text-sm font-medium text-gray-700">Válido hasta</label>
+                <input type="date"
+                       wire:model.live="validezHasta"
+                       name="validez_hasta"
+                       value="{{ $validezHasta }}"
+                       class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+            </div>
+
+            {{-- Forma de pago --}}
+            <div>
+                <label class="block text-sm font-medium text-gray-700">Forma de pago</label>
+                <select wire:model="formaPago"
+                        name="forma_pago"
+                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                    <option value="">— Seleccionar —</option>
+                    <option value="Transferencia bancaria">Transferencia bancaria</option>
+                    <option value="Bizum">Bizum</option>
+                    <option value="Tarjeta de crédito o débito">Tarjeta de crédito o débito</option>
+                    <option value="PayPal">PayPal</option>
+                </select>
+            </div>
+
+            {{-- Observaciones para el cliente --}}
+            <div>
+                <label class="block text-sm font-medium text-gray-700">Observaciones (para el cliente)</label>
+                <textarea wire:model="observaciones"
+                          name="observaciones"
+                          rows="2"
+                          class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">{{ $observaciones }}</textarea>
+            </div>
+
+            {{-- Notas internas --}}
+            <div class="sm:col-span-2">
+                <label class="block text-sm font-medium text-gray-700">Notas internas</label>
+                <textarea wire:model="notas"
+                          name="notas"
+                          rows="2"
+                          class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">{{ $notas }}</textarea>
+            </div>
+
+        </div>
+        <div class="px-6 pb-5 flex justify-between">
+            <button type="button" wire:click="prevStep"
+                    class="inline-flex items-center gap-2 rounded-md bg-gray-100 px-5 py-2 text-sm font-medium text-gray-700 hover:bg-gray-200">
+                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
+                Anterior
+            </button>
+            <button type="button" wire:click="nextStep"
+                    class="inline-flex items-center gap-2 rounded-md bg-indigo-600 px-5 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
+                Siguiente
+                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+            </button>
+        </div>
+    </div>
+    @endif
+
+    {{-- Step 4: Líneas --}}
+    @if($step === 4)
+    @include('presupuestos::livewire.partials.lineas-section')
+    <div class="mt-4 flex items-center gap-3">
+        <button type="button" wire:click="prevStep"
+                class="inline-flex items-center gap-2 rounded-md bg-gray-100 px-5 py-2 text-sm font-medium text-gray-700 hover:bg-gray-200">
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
+            Anterior
+        </button>
+        <button type="submit"
+                class="inline-flex items-center rounded-md bg-indigo-600 px-6 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
+            Crear presupuesto
+        </button>
+        <a href="{{ route('admin.presupuestos.index') }}"
+           class="inline-flex items-center rounded-md bg-gray-100 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-200">
+            Cancelar
+        </a>
+    </div>
+    @endif
+
+    @else
+    {{-- ============================
+         EDIT MODE: 4 Sections
+         ============================ --}}
     <div class="space-y-6">
 
-        {{-- Sección: Cliente y fechas --}}
+        {{-- Sección 1: Datos de la empresa --}}
         <div class="overflow-hidden bg-white shadow sm:rounded-lg">
             <div class="px-6 py-4 border-b border-gray-200">
-                <h3 class="text-sm font-medium text-gray-900">Datos generales</h3>
+                <h3 class="text-sm font-medium text-gray-900">Datos de la empresa</h3>
             </div>
-            <div class="px-6 py-5 grid grid-cols-1 gap-5 sm:grid-cols-2">
-
-                {{-- Cliente selector --}}
-                <div class="sm:col-span-2">
-                    <livewire:clientes.cliente-selector
-                        :key="'selector-' . ($presupuestoId ?? 'new')"
-                        :cliente-id="$clienteId"
-                        :cliente-nombre="$clienteNombre"
-                    />
-                    @if ($clienteNombre)
-                        <p class="mt-1 text-xs text-gray-500">Cliente seleccionado: <strong>{{ $clienteNombre }}</strong></p>
-                    @endif
-                    @error('cliente_id')
-                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                    @enderror
-                </div>
-
-                {{-- Empresa (negocio) selector --}}
+            <div class="px-6 py-5">
                 @if(count($empresasDisponibles) > 1)
-                <div class="sm:col-span-2">
+                <div>
                     <label class="block text-sm font-medium text-gray-700">Empresa</label>
                     <select wire:model.live="negocioId"
                             class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
@@ -67,11 +265,42 @@
                     @enderror
                 </div>
                 @elseif(count($empresasDisponibles) === 1)
-                <div class="sm:col-span-2">
+                <div>
                     <label class="block text-sm font-medium text-gray-700">Empresa</label>
                     <p class="mt-1 text-sm text-gray-600">{{ $empresasDisponibles[0]['name'] }}</p>
                 </div>
+                @else
+                <p class="text-sm text-gray-500 italic">Sin empresa asignada.</p>
                 @endif
+            </div>
+        </div>
+
+        {{-- Sección 2: Datos del cliente --}}
+        <div class="overflow-hidden bg-white shadow sm:rounded-lg">
+            <div class="px-6 py-4 border-b border-gray-200">
+                <h3 class="text-sm font-medium text-gray-900">Datos del cliente</h3>
+            </div>
+            <div class="px-6 py-5">
+                <livewire:clientes.cliente-selector
+                    :key="'selector-' . $presupuestoId"
+                    :cliente-id="$clienteId"
+                    :cliente-nombre="$clienteNombre"
+                />
+                @if ($clienteNombre)
+                    <p class="mt-1 text-xs text-gray-500">Cliente seleccionado: <strong>{{ $clienteNombre }}</strong></p>
+                @endif
+                @error('cliente_id')
+                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                @enderror
+            </div>
+        </div>
+
+        {{-- Sección 3: Datos generales --}}
+        <div class="overflow-hidden bg-white shadow sm:rounded-lg">
+            <div class="px-6 py-4 border-b border-gray-200">
+                <h3 class="text-sm font-medium text-gray-900">Datos generales</h3>
+            </div>
+            <div class="px-6 py-5 grid grid-cols-1 gap-5 sm:grid-cols-2">
 
                 {{-- Fecha --}}
                 <div>
@@ -133,314 +362,14 @@
             </div>
         </div>
 
-        {{-- Sección: Líneas --}}
-        <div class="overflow-hidden bg-white shadow sm:rounded-lg">
-            <div class="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
-                <h3 class="text-sm font-medium text-gray-900">Líneas del presupuesto</h3>
-                <button type="button"
-                        wire:click="addLinea"
-                        class="inline-flex items-center rounded-md bg-indigo-50 px-3 py-1.5 text-sm font-medium text-indigo-700 hover:bg-indigo-100">
-                    + Añadir línea
-                </button>
-            </div>
-
-            @error('lineas')
-                <div class="px-6 pt-3">
-                    <p class="text-sm text-red-600">{{ $message }}</p>
-                </div>
-            @enderror
-
-            {{-- Desktop table --}}
-            <div class="hidden md:block">
-                <table class="min-w-full" style="overflow: visible">
-                    <thead class="bg-gray-50 border-b border-gray-200">
-                        <tr>
-                            <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 w-1/3">Concepto</th>
-                            <th class="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-gray-500 w-16">Cant.</th>
-                            <th class="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-gray-500 w-24">P. Unit.</th>
-                            <th class="px-4 py-3 text-center text-xs font-medium uppercase tracking-wider text-gray-500 w-28">Descuento</th>
-                            <th class="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-gray-500 w-20">IVA %</th>
-                            <th class="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-gray-500 w-24">Base Imp.</th>
-                            <th class="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-gray-500 w-24">Total</th>
-                            <th class="px-4 py-3 w-10"></th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-gray-100 bg-white">
-                        @foreach ($lineas as $i => $linea)
-                            <tr wire:key="linea-{{ $i }}">
-                                {{-- Concepto con búsqueda de conceptos --}}
-                                <td class="px-4 py-2" x-data="{ open{{ $i }}: @entangle('lineaDropdownVisible.'.$i) }">
-                                    <div class="relative">
-                                        @if(!empty($linea['concepto']) && !empty($linea['servicio_id']))
-                                            <div class="flex items-center gap-1 rounded border border-gray-300 bg-gray-50 px-2 py-1.5 text-sm">
-                                                <span class="flex-1 truncate">{{ $linea['concepto'] }}</span>
-                                                <button type="button"
-                                                        wire:click="$set('lineas.{{ $i }}.servicio_id', null); $set('lineas.{{ $i }}.concepto', '')"
-                                                        class="text-gray-400 hover:text-gray-600 text-xs leading-none">&times;</button>
-                                            </div>
-                                        @else
-                                            <input type="text"
-                                                   wire:model.live="lineaSearch.{{ $i }}"
-                                                   wire:keyup="searchServicioForLinea({{ $i }}, $event.target.value)"
-                                                   wire:blur="copySearchToConcepto({{ $i }})"
-                                                   placeholder="Buscar concepto o escribir..."
-                                                   autocomplete="off"
-                                                   class="block w-full rounded border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm @error('lineas.'.$i.'.concepto') border-red-300 @enderror">
-                                            @error('lineas.'.$i.'.concepto')
-                                                <p class="text-xs text-red-600 mt-0.5">{{ $message }}</p>
-                                            @enderror
-                                            @if(!empty($lineaDropdownVisible[$i]))
-                                                <div class="absolute z-50 mt-1 w-full rounded-md border border-gray-200 bg-white shadow-lg min-w-48">
-                                                    @if(!empty($lineaSearchResults[$i]))
-                                                        <ul class="max-h-48 overflow-auto py-1">
-                                                            @foreach($lineaSearchResults[$i] as $srv)
-                                                                <li>
-                                                                    <button type="button"
-                                                                            wire:click="selectServicioForLinea({{ $i }}, {{ $srv['id'] }}, {{ json_encode($srv['nombre']) }}, {{ $srv['precio'] }}, {{ $srv['iva_tipo'] ?? 'null' }})"
-                                                                            class="w-full px-3 py-2 text-left text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-700">
-                                                                        <span class="font-medium">{{ $srv['nombre'] }}</span>
-                                                                        <span class="ml-2 text-xs text-gray-400">{{ number_format($srv['precio'], 2, ',', '.') }} €</span>
-                                                                    </button>
-                                                                </li>
-                                                            @endforeach
-                                                        </ul>
-                                                    @endif
-                                                    <div class="border-t border-gray-100">
-                                                        <button type="button"
-                                                                wire:click="openServicioModal({{ $i }})"
-                                                                class="w-full px-3 py-2 text-left text-sm text-indigo-600 hover:bg-indigo-50">
-                                                            + Crear nuevo concepto
-                                                        </button>
-                                                    </div>
-                                                </div>
-                                            @endif
-                                        @endif
-                                    </div>
-                                </td>
-                                {{-- Cantidad --}}
-                                <td class="px-4 py-2">
-                                    <input type="number"
-                                           wire:model.live="lineas.{{ $i }}.cantidad"
-                                           step="0.01"
-                                           min="0"
-                                           class="block w-full rounded border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm text-right">
-                                </td>
-                                {{-- Precio unitario --}}
-                                <td class="px-4 py-2">
-                                    <input type="number"
-                                           wire:model.live="lineas.{{ $i }}.precio_unitario"
-                                           step="0.01"
-                                           min="0"
-                                           class="block w-full rounded border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm text-right">
-                                </td>
-                                {{-- Descuento --}}
-                                <td class="px-4 py-2">
-                                    <div class="flex gap-1">
-                                        <select wire:model.live="lineas.{{ $i }}.descuento_tipo"
-                                                class="block w-16 rounded border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-xs">
-                                            <option value="">—</option>
-                                            <option value="porcentaje">%</option>
-                                            <option value="importe">€</option>
-                                        </select>
-                                        @if (!empty($linea['descuento_tipo']))
-                                            <input type="number"
-                                                   wire:model.live="lineas.{{ $i }}.descuento_valor"
-                                                   step="0.01"
-                                                   min="0"
-                                                   class="block w-16 rounded border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm text-right">
-                                        @endif
-                                    </div>
-                                </td>
-                                {{-- IVA tipo --}}
-                                <td class="px-4 py-2">
-                                    <select wire:model.live="lineas.{{ $i }}.iva_tipo"
-                                            class="block w-full rounded border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm">
-                                        <option value="0">0%</option>
-                                        <option value="4">4%</option>
-                                        <option value="10">10%</option>
-                                        <option value="21">21%</option>
-                                    </select>
-                                </td>
-                                {{-- Base imponible (read-only) --}}
-                                <td class="px-4 py-2 text-right text-sm text-gray-700">
-                                    {{ number_format($linea['base_imponible'] ?? 0, 2, ',', '.') }} €
-                                </td>
-                                {{-- Total (read-only) --}}
-                                <td class="px-4 py-2 text-right text-sm font-medium text-gray-900">
-                                    {{ number_format($linea['total'] ?? 0, 2, ',', '.') }} €
-                                </td>
-                                {{-- Remove --}}
-                                <td class="px-4 py-2 text-center">
-                                    @if (count($lineas) > 1)
-                                        <button type="button"
-                                                wire:click="removeLinea({{ $i }})"
-                                                class="text-red-400 hover:text-red-600 text-lg leading-none"
-                                                title="Eliminar línea">
-                                            &times;
-                                        </button>
-                                    @endif
-                                </td>
-                            </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-            </div>
-
-            {{-- Mobile cards (bocadillos) --}}
-            <div class="md:hidden divide-y divide-gray-100">
-                @foreach ($lineas as $i => $linea)
-                <div class="p-4 space-y-3" wire:key="linea-card-{{ $i }}">
-                    <div class="flex items-center justify-between">
-                        <span class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Línea {{ $i + 1 }}</span>
-                        @if (count($lineas) > 1)
-                        <button type="button"
-                                wire:click="removeLinea({{ $i }})"
-                                class="text-red-400 hover:text-red-600 text-lg leading-none"
-                                title="Eliminar línea">
-                            &times;
-                        </button>
-                        @endif
-                    </div>
-                    {{-- Concepto --}}
-                    <div x-data="{ open{{ $i }}: @entangle('lineaDropdownVisible.'.$i) }">
-                        <label class="block text-xs font-medium text-gray-500 mb-1">Concepto</label>
-                        <div class="relative">
-                            @if(!empty($linea['concepto']) && !empty($linea['servicio_id']))
-                                <div class="flex items-center gap-1 rounded border border-gray-300 bg-gray-50 px-2 py-1.5 text-sm">
-                                    <span class="flex-1 truncate">{{ $linea['concepto'] }}</span>
-                                    <button type="button"
-                                            wire:click="$set('lineas.{{ $i }}.servicio_id', null); $set('lineas.{{ $i }}.concepto', '')"
-                                            class="text-gray-400 hover:text-gray-600 text-xs leading-none">&times;</button>
-                                </div>
-                            @else
-                                <input type="text"
-                                       wire:model.live="lineaSearch.{{ $i }}"
-                                       wire:keyup="searchServicioForLinea({{ $i }}, $event.target.value)"
-                                       wire:blur="copySearchToConcepto({{ $i }})"
-                                       placeholder="Buscar concepto o escribir..."
-                                       autocomplete="off"
-                                       class="block w-full rounded border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm @error('lineas.'.$i.'.concepto') border-red-300 @enderror">
-                                @error('lineas.'.$i.'.concepto')
-                                    <p class="text-xs text-red-600 mt-0.5">{{ $message }}</p>
-                                @enderror
-                                @if(!empty($lineaDropdownVisible[$i]))
-                                    <div class="absolute z-20 mt-1 w-full rounded-md border border-gray-200 bg-white shadow-lg">
-                                        @if(!empty($lineaSearchResults[$i]))
-                                            <ul class="max-h-48 overflow-auto py-1">
-                                                @foreach($lineaSearchResults[$i] as $srv)
-                                                    <li>
-                                                        <button type="button"
-                                                                wire:click="selectServicioForLinea({{ $i }}, {{ $srv['id'] }}, {{ json_encode($srv['nombre']) }}, {{ $srv['precio'] }}, {{ $srv['iva_tipo'] ?? 'null' }})"
-                                                                class="w-full px-3 py-2 text-left text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-700">
-                                                            <span class="font-medium">{{ $srv['nombre'] }}</span>
-                                                            <span class="ml-2 text-xs text-gray-400">{{ number_format($srv['precio'], 2, ',', '.') }} €</span>
-                                                        </button>
-                                                    </li>
-                                                @endforeach
-                                            </ul>
-                                        @endif
-                                        <div class="border-t border-gray-100">
-                                            <button type="button"
-                                                    wire:click="openServicioModal({{ $i }})"
-                                                    class="w-full px-3 py-2 text-left text-sm text-indigo-600 hover:bg-indigo-50">
-                                                + Crear nuevo concepto
-                                            </button>
-                                        </div>
-                                    </div>
-                                @endif
-                            @endif
-                        </div>
-                    </div>
-                    {{-- Cantidad / Precio --}}
-                    <div class="grid grid-cols-2 gap-3">
-                        <div>
-                            <label class="block text-xs font-medium text-gray-500 mb-1">Cantidad</label>
-                            <input type="number"
-                                   wire:model.live="lineas.{{ $i }}.cantidad"
-                                   step="0.01" min="0"
-                                   class="block w-full rounded border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm text-right">
-                        </div>
-                        <div>
-                            <label class="block text-xs font-medium text-gray-500 mb-1">P. Unit. (€)</label>
-                            <input type="number"
-                                   wire:model.live="lineas.{{ $i }}.precio_unitario"
-                                   step="0.01" min="0"
-                                   class="block w-full rounded border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm text-right">
-                        </div>
-                    </div>
-                    {{-- Descuento / IVA --}}
-                    <div class="grid grid-cols-2 gap-3">
-                        <div>
-                            <label class="block text-xs font-medium text-gray-500 mb-1">Descuento</label>
-                            <div class="flex gap-1">
-                                <select wire:model.live="lineas.{{ $i }}.descuento_tipo"
-                                        class="block w-16 rounded border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-xs">
-                                    <option value="">—</option>
-                                    <option value="porcentaje">%</option>
-                                    <option value="importe">€</option>
-                                </select>
-                                @if (!empty($linea['descuento_tipo']))
-                                    <input type="number"
-                                           wire:model.live="lineas.{{ $i }}.descuento_valor"
-                                           step="0.01" min="0"
-                                           class="block w-full rounded border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm text-right">
-                                @endif
-                            </div>
-                        </div>
-                        <div>
-                            <label class="block text-xs font-medium text-gray-500 mb-1">IVA %</label>
-                            <select wire:model.live="lineas.{{ $i }}.iva_tipo"
-                                    class="block w-full rounded border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm">
-                                <option value="0">0%</option>
-                                <option value="4">4%</option>
-                                <option value="10">10%</option>
-                                <option value="21">21%</option>
-                            </select>
-                        </div>
-                    </div>
-                    {{-- Totales de la línea --}}
-                    <div class="flex justify-between text-sm border-t border-gray-100 pt-2">
-                        <span class="text-gray-500">Base imp.: <span class="text-gray-700">{{ number_format($linea['base_imponible'] ?? 0, 2, ',', '.') }} €</span></span>
-                        <span class="font-semibold text-gray-900">Total: {{ number_format($linea['total'] ?? 0, 2, ',', '.') }} €</span>
-                    </div>
-                </div>
-                @endforeach
-            </div>
-
-            {{-- Totales --}}
-            <div class="border-t border-gray-200 px-6 py-4">
-                <div class="ml-auto max-w-xs space-y-1">
-                    <div class="flex justify-between text-sm text-gray-600">
-                        <span>Subtotal bruto</span>
-                        <span>{{ number_format($subtotalBruto, 2, ',', '.') }} €</span>
-                    </div>
-                    @if ($subtotalDescuentos > 0)
-                        <div class="flex justify-between text-sm text-red-600">
-                            <span>Descuentos</span>
-                            <span>- {{ number_format($subtotalDescuentos, 2, ',', '.') }} €</span>
-                        </div>
-                    @endif
-                    <div class="flex justify-between text-sm text-gray-600">
-                        <span>Base imponible</span>
-                        <span>{{ number_format($totalBaseImponible, 2, ',', '.') }} €</span>
-                    </div>
-                    <div class="flex justify-between text-sm text-gray-600">
-                        <span>IVA</span>
-                        <span>{{ number_format($totalIva, 2, ',', '.') }} €</span>
-                    </div>
-                    <div class="flex justify-between border-t border-gray-300 pt-2 text-base font-bold text-gray-900">
-                        <span>TOTAL</span>
-                        <span>{{ number_format($total, 2, ',', '.') }} €</span>
-                    </div>
-                </div>
-            </div>
-        </div>
+        {{-- Sección 4: Líneas --}}
+        @include('presupuestos::livewire.partials.lineas-section')
 
         {{-- Botones de acción --}}
         <div class="flex items-center gap-3">
             <button type="submit"
                     class="inline-flex items-center rounded-md bg-indigo-600 px-6 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
-                {{ $presupuestoId ? 'Actualizar presupuesto' : 'Crear presupuesto' }}
+                Actualizar presupuesto
             </button>
             <a href="{{ route('admin.presupuestos.index') }}"
                class="inline-flex items-center rounded-md bg-gray-100 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-200">
@@ -449,6 +378,8 @@
         </div>
 
     </div>
+    @endif
+
     </form>
 
     {{-- Modal crear servicio rápido --}}

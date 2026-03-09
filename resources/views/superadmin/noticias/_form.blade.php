@@ -25,7 +25,34 @@
         <input type="hidden" name="contenido" x-model="content">
 
         {{-- Toolbar --}}
-        <div class="flex flex-wrap items-center gap-1 border border-gray-300 rounded-t-xl bg-gray-50 px-2 py-1.5">
+        <div class="flex flex-wrap items-center gap-0.5 border border-gray-300 rounded-t-xl bg-gray-50 px-2 py-1.5">
+            {{-- Undo / Redo --}}
+            <button type="button" @click="exec('undo')"
+                    class="p-1.5 rounded hover:bg-gray-200 transition text-gray-700 w-8 h-8 flex items-center justify-center"
+                    title="Deshacer (Ctrl+Z)">
+                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"/></svg>
+            </button>
+            <button type="button" @click="exec('redo')"
+                    class="p-1.5 rounded hover:bg-gray-200 transition text-gray-700 w-8 h-8 flex items-center justify-center"
+                    title="Rehacer (Ctrl+Y)">
+                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M21 10H11a8 8 0 00-8 8v2M21 10l-6 6m6-6l-6-6"/></svg>
+            </button>
+            <div class="w-px h-5 bg-gray-300 mx-1"></div>
+            {{-- Headings --}}
+            <button type="button" @click="exec('formatBlock', 'h1')"
+                    class="p-1.5 rounded hover:bg-gray-200 transition text-gray-700 text-xs font-bold w-8 h-8 flex items-center justify-center"
+                    title="Título H1">H1</button>
+            <button type="button" @click="exec('formatBlock', 'h2')"
+                    class="p-1.5 rounded hover:bg-gray-200 transition text-gray-700 text-xs font-bold w-8 h-8 flex items-center justify-center"
+                    title="Título H2">H2</button>
+            <button type="button" @click="exec('formatBlock', 'h3')"
+                    class="p-1.5 rounded hover:bg-gray-200 transition text-gray-700 text-xs font-bold w-8 h-8 flex items-center justify-center"
+                    title="Título H3">H3</button>
+            <button type="button" @click="exec('formatBlock', 'p')"
+                    class="p-1.5 rounded hover:bg-gray-200 transition text-gray-700 text-xs w-8 h-8 flex items-center justify-center"
+                    title="Párrafo">¶</button>
+            <div class="w-px h-5 bg-gray-300 mx-1"></div>
+            {{-- Text formatting --}}
             <button type="button" @click="exec('bold')"
                     class="p-1.5 rounded hover:bg-gray-200 transition text-gray-700 font-bold text-sm w-8 h-8 flex items-center justify-center"
                     title="Negrita (Ctrl+B)"><b>B</b></button>
@@ -34,26 +61,76 @@
                     title="Cursiva (Ctrl+I)"><i>I</i></button>
             <button type="button" @click="exec('underline')"
                     class="p-1.5 rounded hover:bg-gray-200 transition text-gray-700 underline text-sm w-8 h-8 flex items-center justify-center"
-                    title="Subrayado"><u>U</u></button>
+                    title="Subrayado (Ctrl+U)"><u>U</u></button>
+            <button type="button" @click="exec('strikeThrough')"
+                    class="p-1.5 rounded hover:bg-gray-200 transition text-gray-700 line-through text-sm w-8 h-8 flex items-center justify-center"
+                    title="Tachado"><s>S</s></button>
             <div class="w-px h-5 bg-gray-300 mx-1"></div>
+            {{-- Text alignment --}}
+            <button type="button" @click="exec('justifyLeft')"
+                    class="p-1.5 rounded hover:bg-gray-200 transition text-gray-700 w-8 h-8 flex items-center justify-center"
+                    title="Alinear izquierda">
+                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h10M4 18h16"/></svg>
+            </button>
+            <button type="button" @click="exec('justifyCenter')"
+                    class="p-1.5 rounded hover:bg-gray-200 transition text-gray-700 w-8 h-8 flex items-center justify-center"
+                    title="Centrar">
+                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M7 12h10M4 18h16"/></svg>
+            </button>
+            <button type="button" @click="exec('justifyRight')"
+                    class="p-1.5 rounded hover:bg-gray-200 transition text-gray-700 w-8 h-8 flex items-center justify-center"
+                    title="Alinear derecha">
+                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M10 12h10M4 18h16"/></svg>
+            </button>
+            <button type="button" @click="exec('justifyFull')"
+                    class="p-1.5 rounded hover:bg-gray-200 transition text-gray-700 w-8 h-8 flex items-center justify-center"
+                    title="Justificar">
+                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/></svg>
+            </button>
+            <div class="w-px h-5 bg-gray-300 mx-1"></div>
+            {{-- Lists --}}
+            <button type="button" @click="exec('insertUnorderedList')"
+                    class="p-1.5 rounded hover:bg-gray-200 transition text-gray-700 w-8 h-8 flex items-center justify-center"
+                    title="Lista sin orden">
+                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/></svg>
+            </button>
+            <button type="button" @click="exec('insertOrderedList')"
+                    class="p-1.5 rounded hover:bg-gray-200 transition text-gray-700 w-8 h-8 flex items-center justify-center"
+                    title="Lista numerada">
+                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+            </button>
+            <button type="button" @click="exec('indent')"
+                    class="p-1.5 rounded hover:bg-gray-200 transition text-gray-700 w-8 h-8 flex items-center justify-center"
+                    title="Aumentar sangría">
+                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 7h18M3 12h12M3 17h18M9 9l3 3-3 3"/></svg>
+            </button>
+            <button type="button" @click="exec('outdent')"
+                    class="p-1.5 rounded hover:bg-gray-200 transition text-gray-700 w-8 h-8 flex items-center justify-center"
+                    title="Reducir sangría">
+                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M21 7H3M21 12H9M21 17H3M15 9l-3 3 3 3"/></svg>
+            </button>
+            <div class="w-px h-5 bg-gray-300 mx-1"></div>
+            {{-- Link & HR --}}
             <button type="button" @click="insertLink()"
                     class="p-1.5 rounded hover:bg-gray-200 transition text-gray-700 text-sm flex items-center gap-1 px-2 h-8"
                     title="Insertar enlace">
                 <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/></svg>
                 Enlace
             </button>
-            <div class="w-px h-5 bg-gray-300 mx-1"></div>
-            <button type="button" @click="exec('insertUnorderedList')"
-                    class="p-1.5 rounded hover:bg-gray-200 transition text-gray-700 text-sm w-8 h-8 flex items-center justify-center"
-                    title="Lista">
-                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/></svg>
+            <button type="button" @click="exec('insertHorizontalRule')"
+                    class="p-1.5 rounded hover:bg-gray-200 transition text-gray-700 text-xs flex items-center gap-1 px-2 h-8"
+                    title="Línea horizontal">
+                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 12h16"/></svg>
+                HR
             </button>
-            <button type="button" @click="exec('formatBlock', 'h2')"
-                    class="p-1.5 rounded hover:bg-gray-200 transition text-gray-700 text-xs font-bold w-8 h-8 flex items-center justify-center"
-                    title="Encabezado">H2</button>
-            <button type="button" @click="exec('formatBlock', 'p')"
-                    class="p-1.5 rounded hover:bg-gray-200 transition text-gray-700 text-xs w-8 h-8 flex items-center justify-center"
-                    title="Párrafo">¶</button>
+            <div class="w-px h-5 bg-gray-300 mx-1"></div>
+            {{-- Clear formatting --}}
+            <button type="button" @click="exec('removeFormat')"
+                    class="p-1.5 rounded hover:bg-gray-200 transition text-gray-500 text-xs flex items-center gap-1 px-2 h-8"
+                    title="Limpiar formato">
+                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+                Limpiar
+            </button>
         </div>
 
         {{-- Editor area --}}
@@ -62,7 +139,10 @@
              @input="syncContent()"
              @keydown.ctrl.b.prevent="exec('bold')"
              @keydown.ctrl.i.prevent="exec('italic')"
-             class="min-h-[250px] p-4 border border-t-0 border-gray-300 rounded-b-xl focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500 prose max-w-none text-sm text-gray-800 bg-white"
+             @keydown.ctrl.u.prevent="exec('underline')"
+             @keydown.ctrl.z.prevent="exec('undo')"
+             @keydown.ctrl.y.prevent="exec('redo')"
+             class="min-h-[300px] p-4 border border-t-0 border-gray-300 rounded-b-xl focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500 prose max-w-none text-sm text-gray-800 bg-white"
              style="line-height: 1.7;">
         </div>
         @error('contenido')<p class="text-xs text-red-600 mt-1">{{ $message }}</p>@enderror

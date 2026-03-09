@@ -67,6 +67,7 @@
                 @endif
                 @if(auth()->user()->isAdmin())
                 <a href="{{ route('admin.incidents.index') }}" class="text-gray-500 hover:text-indigo-600 transition">Incidencias</a>
+                <a href="{{ route('admin.subscription') }}" class="text-gray-500 hover:text-indigo-600 transition">Suscripción</a>
                 @endif
                 @if(auth()->user()->isSuperAdmin())
                 <a href="{{ route('superadmin.incidents.index') }}" class="text-gray-500 hover:text-indigo-600 transition">Incidencias</a>
