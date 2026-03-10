@@ -2,7 +2,6 @@
 
 return [
     App\Providers\AppServiceProvider::class,
-    MultiempresaApp\Tasks\Providers\TasksServiceProvider::class,
     MultiempresaApp\Incidents\Providers\IncidentsServiceProvider::class,
     MultiempresaApp\Notifications\Providers\NotificationsServiceProvider::class,
     MultiempresaApp\Plans\Providers\PlansServiceProvider::class,
@@ -10,4 +9,5 @@ return [
     MultiempresaApp\Servicios\Providers\ServiciosServiceProvider::class,
     MultiempresaApp\Presupuestos\Providers\PresupuestosServiceProvider::class,
     MultiempresaApp\Noticias\Providers\NoticiasServiceProvider::class,
+    MultiempresaApp\Notas\Providers\NotasServiceProvider::class,
 ];

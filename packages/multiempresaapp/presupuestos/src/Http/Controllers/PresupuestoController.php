@@ -53,12 +53,13 @@ class PresupuestoController extends Controller
         return view('presupuestos::presupuestos.index', compact('presupuestos', 'hasEmpresa', 'maxPresupuestos', 'currentMonthCount'));
     }
 
-    public function create()
+    public function create(Request $request)
     {
         $empresaId = auth()->user()->company_id;
         $config    = PresupuestoConfiguracion::getOrCreateForEmpresa($empresaId);
+        $notaId    = $request->query('nota_id');
 
-        return view('presupuestos::presupuestos.create', compact('config'));
+        return view('presupuestos::presupuestos.create', compact('config', 'notaId'));
     }
 
     public function store(Request $request)

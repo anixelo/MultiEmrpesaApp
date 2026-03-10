@@ -25,6 +25,13 @@
                 <svg class="w-4 h-4 text-violet-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
                 Nuevo Presupuesto
             </a>
+            @if($notasEnabled)
+            <a href="{{ route('admin.notas.create') }}"
+               class="inline-flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-xl text-sm font-medium text-gray-700 hover:bg-gray-50 transition shadow-sm">
+                <svg class="w-4 h-4 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+                Nueva Nota
+            </a>
+            @endif
         </div>
 
 
@@ -120,85 +127,38 @@
         </div>
         @endif
 
-        {{-- Tasks section (only if enabled) --}}
-        @if($tasksEnabled)
-        <div class="col-span-3  bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-            <h2 class="font-semibold text-gray-900 mb-4">Mis Tareas Asignadas</h2>
-
-            {{-- Task stats --}}
-            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-5">
-                @php
-                $tCards = [
-                    ['label' => 'Total', 'value' => $taskStats['total'], 'color' => 'gray'],
-                    ['label' => 'Pendientes', 'value' => $taskStats['pendiente'], 'color' => 'yellow'],
-                    ['label' => 'En progreso', 'value' => $taskStats['en_progreso'], 'color' => 'blue'],
-                    ['label' => 'Completadas', 'value' => $taskStats['completada'], 'color' => 'green'],
-                ];
-                @endphp
-                @foreach($tCards as $tc)
-                <div class="bg-gray-50 rounded-xl p-3 text-center">
-                    <p class="text-xl font-bold text-gray-900">{{ $tc['value'] }}</p>
-                    <p class="text-xs text-gray-500 mt-0.5">{{ $tc['label'] }}</p>
+        {{-- Notas section (only if enabled) --}}
+        @if($notasEnabled)
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+            <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
+                <h2 class="font-semibold text-gray-900">Últimas notas</h2>
+                <a href="{{ route('admin.notas.index') }}" class="text-xs text-indigo-600 hover:underline">Ver todas</a>
+            </div>
+            @if($recentNotas->isNotEmpty())
+            <div class="divide-y divide-gray-50">
+                @foreach($recentNotas as $nota)
+                <div class="px-5 py-4 flex items-center justify-between gap-3">
+                    <div class="flex-1 min-w-0">
+                        <p class="text-sm font-semibold text-gray-900 truncate">{{ $nota->titulo }}</p>
+                        <div class="flex flex-wrap gap-1.5 mt-1">
+                            <span class="text-xs text-gray-500">{{ $nota->cliente?->nombre ?? '—' }}</span>
+                            @if($nota->presupuesto_id)
+                                <span class="inline-flex px-1.5 py-0.5 rounded text-xs font-medium bg-green-100 text-green-700">Con presupuesto</span>
+                            @endif
+                        </div>
+                    </div>
+                    <a href="{{ route('admin.notas.show', $nota->id) }}"
+                       class="shrink-0 inline-flex items-center gap-1 px-3 py-1.5 text-xs font-medium text-indigo-700 bg-indigo-50 rounded-lg hover:bg-indigo-100 transition">
+                        Ver
+                    </a>
                 </div>
                 @endforeach
             </div>
-
-            {{-- Tasks list --}}
-            <div class="space-y-3">
-                @forelse($tasks as $task)
-                @php
-                $priorityColors = ['baja' => 'gray', 'media' => 'blue', 'alta' => 'orange', 'urgente' => 'red'];
-                $statusColors   = ['pendiente' => 'yellow', 'en_progreso' => 'blue', 'completada' => 'green', 'cancelada' => 'red'];
-                $statusLabels   = ['pendiente' => 'Pendiente', 'en_progreso' => 'En progreso', 'completada' => 'Completada', 'cancelada' => 'Cancelada'];
-                $priorityLabels = ['baja' => 'Baja', 'media' => 'Media', 'alta' => 'Alta', 'urgente' => 'Urgente'];
-                @endphp
-                <div class="bg-gray-50 rounded-xl p-4">
-                    <div class="flex items-start justify-between gap-4">
-                        <div class="flex-1 min-w-0">
-                            <div class="flex flex-wrap items-center gap-2 mb-1">
-                                <span class="inline-flex px-2 py-0.5 rounded-full text-xs font-medium bg-{{ $statusColors[$task->status] }}-100 text-{{ $statusColors[$task->status] }}-800">
-                                    {{ $statusLabels[$task->status] }}
-                                </span>
-                                <span class="inline-flex px-2 py-0.5 rounded-full text-xs font-medium bg-{{ $priorityColors[$task->priority] }}-100 text-{{ $priorityColors[$task->priority] }}-800">
-                                    {{ $priorityLabels[$task->priority] }}
-                                </span>
-                                @if($task->due_date)
-                                <span class="text-xs text-gray-400 flex items-center gap-1">
-                                    <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-                                    {{ $task->due_date->format('d/m/Y') }}
-                                    @if($task->due_date->isPast() && $task->status !== 'completada')
-                                    <span class="text-red-500 font-medium">Vencida</span>
-                                    @endif
-                                </span>
-                                @endif
-                            </div>
-                            <h3 class="font-semibold text-gray-900">{{ $task->title }}</h3>
-                            @if($task->description)
-                            <p class="text-sm text-gray-500 mt-1">{{ $task->description }}</p>
-                            @endif
-                        </div>
-                        @if($task->status !== 'completada' && $task->status !== 'cancelada')
-                        <form method="POST" action="{{ route('worker.tasks.update-status', $task) }}" class="shrink-0">
-                            @csrf @method('PATCH')
-                            <select name="status" onchange="this.form.submit()"
-                                    class="text-xs border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
-                                <option value="pendiente"   {{ $task->status === 'pendiente'   ? 'selected' : '' }}>Pendiente</option>
-                                <option value="en_progreso" {{ $task->status === 'en_progreso' ? 'selected' : '' }}>En progreso</option>
-                                <option value="completada"  {{ $task->status === 'completada'  ? 'selected' : '' }}>Completada</option>
-                            </select>
-                        </form>
-                        @else
-                        <span class="text-xs text-gray-400 italic shrink-0">{{ $statusLabels[$task->status] }}</span>
-                        @endif
-                    </div>
-                </div>
-                @empty
-                <p class="text-sm text-gray-400 text-center py-4">No tienes tareas asignadas.</p>
-                @endforelse
+            @else
+            <div class="px-6 py-8 text-center">
+                <p class="text-sm text-gray-400">No hay notas registradas.</p>
+                <a href="{{ route('admin.notas.create') }}" class="mt-2 inline-flex text-xs text-indigo-600 hover:underline">Crear primera nota</a>
             </div>
-
-            @if($tasks->hasPages())
-            <div class="mt-4">{{ $tasks->links() }}</div>
             @endif
         </div>
         @endif
