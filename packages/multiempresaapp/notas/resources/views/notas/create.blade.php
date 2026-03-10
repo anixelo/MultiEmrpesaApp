@@ -54,35 +54,154 @@
 
                 @if($step === 1)
                 {{-- STEP 1: Select Client --}}
-                <form method="GET" action="{{ route('admin.notas.create') }}" class="space-y-5">
+                <div x-data="{
+                    search: '',
+                    selected: null,
+                    selectedId: '',
+                    showNew: false,
+                    newNombre: '',
+                    newEmail: '',
+                    newTelefono: '',
+                    saving: false,
+                    clientes: @json($clientes),
+                    get filtered() {
+                        if (!this.search.trim()) return this.clientes;
+                        const q = this.search.toLowerCase();
+                        return this.clientes.filter(c =>
+                            c.nombre.toLowerCase().includes(q) ||
+                            (c.email && c.email.toLowerCase().includes(q))
+                        );
+                    },
+                    select(c) {
+                        this.selected = c;
+                        this.selectedId = c.id;
+                        this.search = c.nombre;
+                        this.showNew = false;
+                    },
+                    clear() {
+                        this.selected = null;
+                        this.selectedId = '';
+                        this.search = '';
+                    },
+                    async saveNew() {
+                        if (!this.newNombre.trim()) return;
+                        this.saving = true;
+                        try {
+                            const resp = await fetch('{{ route('admin.clientes.quick-store') }}', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content,
+                                    'Accept': 'application/json'
+                                },
+                                body: JSON.stringify({nombre: this.newNombre, email: this.newEmail, telefono: this.newTelefono})
+                            });
+                            if (!resp.ok) {
+                                alert('Error al crear el cliente. Por favor, inténtalo de nuevo.');
+                                return;
+                            }
+                            const data = await resp.json();
+                            if (data && data.id && data.nombre) {
+                                this.clientes.push(data);
+                                this.select(data);
+                                this.showNew = false;
+                                this.newNombre = '';
+                                this.newEmail = '';
+                                this.newTelefono = '';
+                            }
+                        } catch (e) {
+                            alert('Error al crear el cliente. Por favor, inténtalo de nuevo.');
+                        } finally {
+                            this.saving = false;
+                        }
+                    }
+                }" class="space-y-5">
+
+                    {{-- Client search --}}
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Cliente <span class="text-red-500">*</span></label>
-                        <select name="cliente_id" required
-                                class="w-full border border-gray-300 rounded-xl px-3 py-2 text-sm focus:ring-indigo-500 focus:border-indigo-500">
-                            <option value="">— Selecciona un cliente —</option>
-                            @foreach($clientes as $c)
-                            <option value="{{ $c->id }}">{{ $c->nombre }}{{ $c->email ? ' — ' . $c->email : '' }}</option>
-                            @endforeach
-                        </select>
-                        @if($clientes->isEmpty())
-                        <p class="mt-2 text-xs text-amber-600">
-                            No tienes clientes registrados.
-                            <a href="{{ route('admin.clientes.create') }}" class="underline">Crea uno primero.</a>
-                        </p>
-                        @endif
+                        <label class="block text-sm font-medium text-gray-700 mb-1">
+                            Cliente <span class="text-red-500">*</span>
+                        </label>
+
+                        <template x-if="!selected">
+                            <div class="relative">
+                                <input type="text" x-model="search"
+                                       class="w-full border border-gray-300 rounded-xl px-3 py-2 text-sm focus:ring-indigo-500 focus:border-indigo-500"
+                                       placeholder="Buscar cliente por nombre o email...">
+
+                                <div x-show="search.trim().length > 0" class="absolute z-10 mt-1 w-full bg-white border border-gray-200 rounded-xl shadow-lg max-h-48 overflow-y-auto">
+                                    <template x-for="c in filtered" :key="c.id">
+                                        <button type="button" @click="select(c)"
+                                                class="w-full text-left px-4 py-2.5 text-sm hover:bg-indigo-50 transition">
+                                            <span class="font-medium text-gray-900" x-text="c.nombre"></span>
+                                            <span class="text-gray-400" x-show="c.email" x-text="' — ' + c.email"></span>
+                                        </button>
+                                    </template>
+                                    <template x-if="filtered.length === 0">
+                                        <p class="px-4 py-2.5 text-sm text-gray-400">No se encontraron clientes.</p>
+                                    </template>
+                                </div>
+                            </div>
+                        </template>
+
+                        <template x-if="selected">
+                            <div class="flex items-center gap-3 rounded-xl border border-indigo-200 bg-indigo-50 px-4 py-2.5">
+                                <div class="flex-1 min-w-0">
+                                    <p class="text-sm font-semibold text-gray-900" x-text="selected.nombre"></p>
+                                    <p class="text-xs text-gray-500" x-show="selected.email" x-text="selected.email"></p>
+                                </div>
+                                <button type="button" @click="clear()"
+                                        class="text-xs text-indigo-600 hover:underline shrink-0">Cambiar</button>
+                            </div>
+                        </template>
                     </div>
 
-                    <div class="flex items-center justify-end gap-3 pt-2 border-t border-gray-100">
-                        <a href="{{ route('admin.notas.index') }}"
-                           class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-xl hover:bg-gray-50 transition">
-                            Cancelar
-                        </a>
-                        <button type="submit"
-                                class="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-xl hover:bg-indigo-700 transition shadow-sm">
-                            Siguiente →
+                    {{-- Create new client --}}
+                    <div>
+                        <button type="button" @click="showNew = !showNew"
+                                class="inline-flex items-center gap-1.5 text-sm text-indigo-600 hover:underline">
+                            <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/>
+                            </svg>
+                            Crear nuevo cliente
                         </button>
+
+                        <div x-show="showNew" x-transition class="mt-3 rounded-xl border border-gray-200 bg-gray-50 p-4 space-y-3">
+                            <p class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Nuevo cliente</p>
+                            <input type="text" x-model="newNombre" placeholder="Nombre *"
+                                   class="w-full border border-gray-300 rounded-xl px-3 py-2 text-sm focus:ring-indigo-500 focus:border-indigo-500">
+                            <input type="email" x-model="newEmail" placeholder="Email"
+                                   class="w-full border border-gray-300 rounded-xl px-3 py-2 text-sm focus:ring-indigo-500 focus:border-indigo-500">
+                            <input type="text" x-model="newTelefono" placeholder="Teléfono"
+                                   class="w-full border border-gray-300 rounded-xl px-3 py-2 text-sm focus:ring-indigo-500 focus:border-indigo-500">
+                            <div class="flex gap-2 pt-1">
+                                <button type="button" @click="saveNew()" :disabled="saving || !newNombre.trim()"
+                                        class="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-xl hover:bg-indigo-700 transition disabled:opacity-50">
+                                    <span x-text="saving ? 'Guardando...' : 'Guardar'"></span>
+                                </button>
+                                <button type="button" @click="showNew = false"
+                                        class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-xl hover:bg-gray-50 transition">
+                                    Cancelar
+                                </button>
+                            </div>
+                        </div>
                     </div>
-                </form>
+
+                    {{-- Proceed to step 2 --}}
+                    <form method="GET" action="{{ route('admin.notas.create') }}" class="pt-2 border-t border-gray-100">
+                        <input type="hidden" name="cliente_id" :value="selectedId">
+                        <div class="flex items-center justify-end gap-3">
+                            <a href="{{ route('admin.notas.index') }}"
+                               class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-xl hover:bg-gray-50 transition">
+                                Cancelar
+                            </a>
+                            <button type="submit" :disabled="!selectedId"
+                                    class="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-xl hover:bg-indigo-700 transition shadow-sm disabled:opacity-40">
+                                Siguiente →
+                            </button>
+                        </div>
+                    </form>
+                </div>
 
                 @else
                 {{-- STEP 2: Write Note --}}

@@ -429,24 +429,153 @@
             </section>
         @endunless
 
+            @if(($incidentStats['total'] ?? 0) > 0)
+                @php
+                    $incidentCards = [
+                        [
+                            'label' => 'Total incidencias',
+                            'value' => $incidentStats['total'],
+                            'iconWrap' => 'bg-gray-50',
+                            'iconColor' => 'text-gray-600',
+                            'icon' => 'M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z',
+                        ],
+                        [
+                            'label' => 'Abiertas',
+                            'value' => $incidentStats['open'],
+                            'iconWrap' => 'bg-blue-50',
+                            'iconColor' => 'text-blue-600',
+                            'icon' => 'M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z',
+                        ],
+                        [
+                            'label' => 'En progreso',
+                            'value' => $incidentStats['in_progress'],
+                            'iconWrap' => 'bg-orange-50',
+                            'iconColor' => 'text-orange-600',
+                            'icon' => 'M12 6v6l4 2',
+                        ],
+                        [
+                            'label' => 'Resueltas',
+                            'value' => $incidentStats['resolved'],
+                            'iconWrap' => 'bg-green-50',
+                            'iconColor' => 'text-green-600',
+                            'icon' => 'M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z',
+                        ],
+                    ];
+                    $incidentStatusClasses = [
+                        'open' => 'bg-blue-100 text-blue-800',
+                        'in_review' => 'bg-yellow-100 text-yellow-800',
+                        'in_progress' => 'bg-orange-100 text-orange-800',
+                        'resolved' => 'bg-green-100 text-green-800',
+                        'closed' => 'bg-gray-100 text-gray-600',
+                    ];
+                    $incidentPriorityClasses = [
+                        'baja' => 'bg-gray-100 text-gray-600',
+                        'media' => 'bg-blue-100 text-blue-800',
+                        'alta' => 'bg-orange-100 text-orange-800',
+                        'urgente' => 'bg-red-100 text-red-800',
+                    ];
+                @endphp
 
+                <section class="space-y-4">
+                    <div class="flex items-center justify-between">
+                        <h2 class="text-base font-semibold text-gray-900">Incidencias</h2>
+                        <a href="{{ route('admin.incidents.index') }}" class="text-xs font-medium text-indigo-600 hover:underline">Ver todas</a>
+                    </div>
 
+                    <div class="grid grid-cols-2 gap-4 xl:grid-cols-4">
+                        @foreach($incidentCards as $card)
+                            <article class="flex items-center gap-4 rounded-2xl border border-gray-100 bg-white p-5 shadow-sm">
+                                <div class="rounded-xl p-3 {{ $card['iconWrap'] }}">
+                                    <svg class="h-6 w-6 {{ $card['iconColor'] }}" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="{{ $card['icon'] }}" />
+                                    </svg>
+                                </div>
+                                <div>
+                                    <p class="text-2xl font-bold text-gray-900">{{ $card['value'] }}</p>
+                                    <p class="mt-0.5 text-xs text-gray-500">{{ $card['label'] }}</p>
+                                </div>
+                            </article>
+                        @endforeach
+                    </div>
 
+                    @if(isset($recentIncidents) && $recentIncidents->isNotEmpty())
+                        <article class="overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm">
+                            <div class="flex items-center justify-between border-b border-gray-100 px-6 py-4">
+                                <h2 class="text-base font-semibold text-gray-900">Últimas incidencias</h2>
+                                <a href="{{ route('admin.incidents.index') }}" class="text-xs font-medium text-indigo-600 hover:underline">Ver todas</a>
+                            </div>
 
+                            <div class="hidden overflow-x-auto sm:block">
+                                <table class="min-w-full divide-y divide-gray-100">
+                                    <thead class="bg-gray-50">
+                                        <tr>
+                                            <th class="px-5 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">Incidencia</th>
+                                            <th class="px-5 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">Creada por</th>
+                                            <th class="px-5 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">Prioridad</th>
+                                            <th class="px-5 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">Estado</th>
+                                            <th class="px-5 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">Fecha</th>
+                                            <th class="px-5 py-3 text-right text-xs font-medium uppercase tracking-wider text-gray-500">Acción</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="divide-y divide-gray-50 bg-white">
+                                        @foreach($recentIncidents as $incident)
+                                            @php
+                                                $sClass = $incidentStatusClasses[$incident->status] ?? 'bg-gray-100 text-gray-600';
+                                                $pClass = $incidentPriorityClasses[$incident->priority] ?? 'bg-gray-100 text-gray-600';
+                                            @endphp
+                                            <tr class="hover:bg-gray-50/60">
+                                                <td class="whitespace-nowrap px-5 py-3 text-sm font-medium text-gray-900">
+                                                    {{ Str::limit($incident->title, 50) }}
+                                                </td>
+                                                <td class="whitespace-nowrap px-5 py-3 text-sm text-gray-600">
+                                                    {{ $incident->user?->name ?? '—' }}
+                                                </td>
+                                                <td class="whitespace-nowrap px-5 py-3">
+                                                    <span class="inline-flex rounded-full px-2 py-0.5 text-xs font-medium {{ $pClass }}">
+                                                        {{ $incident->priority_label }}
+                                                    </span>
+                                                </td>
+                                                <td class="whitespace-nowrap px-5 py-3">
+                                                    <span class="inline-flex rounded-full px-2 py-0.5 text-xs font-medium {{ $sClass }}">
+                                                        {{ $incident->status_label }}
+                                                    </span>
+                                                </td>
+                                                <td class="whitespace-nowrap px-5 py-3 text-sm text-gray-500">
+                                                    {{ $incident->created_at->format('d/m/Y') }}
+                                                </td>
+                                                <td class="whitespace-nowrap px-5 py-3 text-right">
+                                                    <a href="{{ route('incidents.show', $incident) }}" class="text-xs font-medium text-indigo-600 hover:text-indigo-900">Ver</a>
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
 
-
-
-
-
-
-
-
-
-
+                            <div class="divide-y divide-gray-50 sm:hidden">
+                                @foreach($recentIncidents as $incident)
+                                    @php
+                                        $sClass = $incidentStatusClasses[$incident->status] ?? 'bg-gray-100 text-gray-600';
+                                        $pClass = $incidentPriorityClasses[$incident->priority] ?? 'bg-gray-100 text-gray-600';
+                                    @endphp
+                                    <div class="flex items-center justify-between gap-3 px-5 py-4">
+                                        <div class="min-w-0 flex-1">
+                                            <p class="truncate text-sm font-semibold text-gray-900">{{ $incident->title }}</p>
+                                            <div class="mt-1 flex flex-wrap items-center gap-1.5">
+                                                <span class="inline-flex rounded-full px-2 py-0.5 text-xs font-medium {{ $sClass }}">{{ $incident->status_label }}</span>
+                                                <span class="inline-flex rounded-full px-2 py-0.5 text-xs font-medium {{ $pClass }}">{{ $incident->priority_label }}</span>
+                                                <span class="text-xs text-gray-400">{{ $incident->created_at->format('d/m/Y') }}</span>
+                                            </div>
+                                        </div>
+                                        <a href="{{ route('incidents.show', $incident) }}" class="shrink-0 text-xs font-medium text-indigo-600">Ver</a>
+                                    </div>
+                                @endforeach
+                            </div>
+                        </article>
+                    @endif
+                </section>
+            @endif
 
     </div>
-
-
-
 
 </x-app-layout>
