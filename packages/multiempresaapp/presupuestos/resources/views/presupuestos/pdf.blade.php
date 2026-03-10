@@ -311,7 +311,21 @@
         <table class="header-table">
             <tr>
                 <td class="header-left">
+                    @if($presupuesto->negocio?->logo)
+                    @php
+                        $logoRelPath = $presupuesto->negocio->logo;
+                        $logoPath = realpath(public_path('storage/' . $logoRelPath));
+                        $storageBase = realpath(public_path('storage'));
+                        $logoSafe = $logoPath && str_starts_with($logoPath, $storageBase);
+                    @endphp
+                    @if($logoSafe && file_exists($logoPath))
+                    <img src="{{ 'file://' . $logoPath }}" alt="{{ $empresaNombre }}" style="max-height:60px;max-width:180px;margin-bottom:6px;object-fit:contain;">
+                    @else
                     <div class="brand-name">{{ $empresaNombre }}</div>
+                    @endif
+                    @else
+                    <div class="brand-name">{{ $empresaNombre }}</div>
+                    @endif
                     <div class="brand-subtitle">Documento de presupuesto</div>
                 </td>
                 <td class="header-right">

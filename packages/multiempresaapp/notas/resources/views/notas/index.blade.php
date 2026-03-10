@@ -34,11 +34,17 @@
                            value="{{ request('buscar') }}"
                            placeholder="Buscar por título, contenido o cliente..."
                            class="block rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                    <select name="presupuesto"
+                            class="block rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                        <option value="">Todas las notas</option>
+                        <option value="con" {{ request('presupuesto') === 'con' ? 'selected' : '' }}>Con presupuesto</option>
+                        <option value="sin" {{ request('presupuesto') === 'sin' ? 'selected' : '' }}>Sin presupuesto</option>
+                    </select>
                     <button type="submit"
                             class="inline-flex items-center rounded-md bg-gray-600 px-4 py-2 text-sm font-medium text-white hover:bg-gray-700">
                         Filtrar
                     </button>
-                    @if (request('buscar'))
+                    @if (request('buscar') || request('presupuesto'))
                         <a href="{{ route('admin.notas.index') }}"
                            class="inline-flex items-center rounded-md bg-gray-100 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-200">
                             Limpiar

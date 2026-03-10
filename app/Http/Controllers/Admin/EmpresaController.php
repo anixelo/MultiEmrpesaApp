@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Empresa;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class EmpresaController extends Controller
 {
@@ -48,11 +49,18 @@ class EmpresaController extends Controller
             'email'   => 'nullable|email|max:255',
             'phone'   => 'nullable|string|max:50',
             'address' => 'nullable|string',
+            'logo'    => 'nullable|image|mimes:jpeg,png,jpg,gif,webp,svg|max:2048',
             'active'  => 'boolean',
         ]);
 
         $validated['company_id'] = auth()->user()->company_id;
         $validated['active']     = $request->boolean('active', true);
+
+        if ($request->hasFile('logo')) {
+            $validated['logo'] = $request->file('logo')->store('empresas/logos', 'public');
+        } else {
+            unset($validated['logo']);
+        }
 
         Empresa::create($validated);
 
@@ -85,10 +93,25 @@ class EmpresaController extends Controller
             'email'   => 'nullable|email|max:255',
             'phone'   => 'nullable|string|max:50',
             'address' => 'nullable|string',
+            'logo'    => 'nullable|image|mimes:jpeg,png,jpg,gif,webp,svg|max:2048',
             'active'  => 'boolean',
         ]);
 
         $validated['active'] = $request->boolean('active', false);
+
+        if ($request->hasFile('logo')) {
+            if ($empresa->logo) {
+                Storage::disk('public')->delete($empresa->logo);
+            }
+            $validated['logo'] = $request->file('logo')->store('empresas/logos', 'public');
+        } elseif ($request->boolean('remove_logo')) {
+            if ($empresa->logo) {
+                Storage::disk('public')->delete($empresa->logo);
+            }
+            $validated['logo'] = null;
+        } else {
+            unset($validated['logo']);
+        }
 
         $empresa->update($validated);
 
@@ -105,6 +128,10 @@ class EmpresaController extends Controller
         }
 
         $empresa->delete();
+
+        if ($empresa->logo) {
+            Storage::disk('public')->delete($empresa->logo);
+        }
 
         return redirect()->route('admin.empresas.index')
             ->with('success', 'Empresa eliminada correctamente.');
