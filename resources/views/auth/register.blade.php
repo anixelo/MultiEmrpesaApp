@@ -52,6 +52,16 @@
             <x-input-error :messages="$errors->get('password_confirmation')" class="mt-2" />
         </div>
 
+        {{-- Privacy notice --}}
+        <div class="mt-5 rounded-xl bg-gray-50 border border-gray-200 p-4 text-xs text-gray-600 leading-relaxed">
+            <svg class="w-4 h-4 inline-block text-indigo-500 mr-1 align-text-bottom" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+            {{ config('app.name') }} únicamente utiliza los datos personales en la medida necesaria para prestar nuestros Servicios.
+            Para más detalles puedes consultar nuestra
+            <a href="{{ route('pages.privacy') }}" class="text-indigo-600 hover:underline font-medium" target="_blank">Política de Privacidad</a>.
+            Al registrarme acepto los
+            <a href="{{ route('pages.terms') }}" class="text-indigo-600 hover:underline font-medium" target="_blank">términos y condiciones</a>.
+        </div>
+
         <div class="flex items-center justify-end mt-4">
             <a class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" href="{{ route('login') }}">
                 {{ __('¿Ya tienes cuenta?') }}

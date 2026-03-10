@@ -131,10 +131,19 @@
                 <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
                 Limpiar
             </button>
+            <div class="w-px h-5 bg-gray-300 mx-1"></div>
+            {{-- HTML code view toggle --}}
+            <button type="button" @click="toggleHtml()"
+                    :class="showHtml ? 'bg-indigo-100 text-indigo-700' : 'text-gray-700'"
+                    class="p-1.5 rounded hover:bg-gray-200 transition text-xs flex items-center gap-1 px-2 h-8 font-mono font-bold"
+                    title="Ver/editar código HTML">
+                &lt;/&gt;
+            </button>
         </div>
 
         {{-- Editor area --}}
         <div x-ref="editor"
+             x-show="!showHtml"
              contenteditable="true"
              @input="syncContent()"
              @keydown.ctrl.b.prevent="exec('bold')"
@@ -142,9 +151,16 @@
              @keydown.ctrl.u.prevent="exec('underline')"
              @keydown.ctrl.z.prevent="exec('undo')"
              @keydown.ctrl.y.prevent="exec('redo')"
-             class="min-h-[300px] p-4 border border-t-0 border-gray-300 rounded-b-xl focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500 prose max-w-none text-sm text-gray-800 bg-white"
+             class="min-h-[300px] p-4 border border-t-0 border-gray-300 rounded-b-xl focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500 [&_ul]:list-disc [&_ol]:list-decimal [&_ul]:pl-5 [&_ol]:pl-5 [&_ul]:my-2 [&_ol]:my-2 max-w-none text-sm text-gray-800 bg-white"
              style="line-height: 1.7;">
         </div>
+        {{-- HTML source code view --}}
+        <textarea x-ref="htmlEditor"
+                  x-show="showHtml"
+                  x-model="content"
+                  @input="$refs.editor.innerHTML = content"
+                  class="min-h-[300px] w-full p-4 border border-t-0 border-gray-300 rounded-b-xl focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500 text-xs text-gray-700 font-mono bg-gray-50"
+                  style="line-height: 1.7; resize: vertical;"></textarea>
         @error('contenido')<p class="text-xs text-red-600 mt-1">{{ $message }}</p>@enderror
     </div>
 
@@ -243,17 +259,20 @@
 function richEditor() {
     return {
         content: @json(old('contenido', $noticia->contenido ?? '')),
+        showHtml: false,
         init() {
             if (this.content) {
                 this.$refs.editor.innerHTML = this.content;
             }
         },
         exec(cmd, value = null) {
+            if (this.showHtml) return;
             this.$refs.editor.focus();
             document.execCommand(cmd, false, value);
             this.syncContent();
         },
         insertLink() {
+            if (this.showHtml) return;
             const url = prompt('Introduce la URL del enlace:');
             if (url) {
                 this.$refs.editor.focus();
@@ -263,6 +282,18 @@ function richEditor() {
                 links.forEach(a => a.setAttribute('target', '_blank'));
                 this.syncContent();
             }
+        },
+        toggleHtml() {
+            if (!this.showHtml) {
+                // Switching to HTML view: sync textarea with current editor content
+                this.syncContent();
+            } else {
+                // Switching back to WYSIWYG: load editor from textarea content
+                this.$nextTick(() => {
+                    this.$refs.editor.innerHTML = this.content;
+                });
+            }
+            this.showHtml = !this.showHtml;
         },
         syncContent() {
             this.content = this.$refs.editor.innerHTML;

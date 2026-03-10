@@ -307,6 +307,17 @@ class PresupuestoController extends Controller
         return view('presupuestos::presupuestos.public', compact('presupuesto'));
     }
 
+    public function downloadPublicPdf(string $token)
+    {
+        $presupuesto = Presupuesto::with(['cliente', 'lineas.servicio', 'empresa', 'negocio'])
+            ->where('token_publico', $token)
+            ->firstOrFail();
+
+        $pdf = Pdf::loadView('presupuestos::presupuestos.pdf', compact('presupuesto'));
+
+        return $pdf->download('presupuesto-' . $presupuesto->numero . '.pdf');
+    }
+
     public function aceptar(string $token)
     {
         $presupuesto = Presupuesto::where('token_publico', $token)->firstOrFail();

@@ -145,11 +145,18 @@
         @endif
 
         {{-- Content --}}
-        <div class="prose prose-lg max-w-none text-gray-700
-                    prose-headings:text-gray-900 prose-headings:font-bold
-                    prose-a:text-indigo-600 prose-a:no-underline hover:prose-a:underline
-                    prose-strong:text-gray-900
-                    prose-ul:list-disc prose-ol:list-decimal">
+        <div class="max-w-none text-gray-700 text-base leading-relaxed
+                    [&_h1]:text-3xl [&_h1]:font-bold [&_h1]:text-gray-900 [&_h1]:mt-6 [&_h1]:mb-3
+                    [&_h2]:text-2xl [&_h2]:font-bold [&_h2]:text-gray-900 [&_h2]:mt-5 [&_h2]:mb-2
+                    [&_h3]:text-xl [&_h3]:font-bold [&_h3]:text-gray-900 [&_h3]:mt-4 [&_h3]:mb-2
+                    [&_p]:my-3
+                    [&_a]:text-indigo-600 [&_a]:no-underline hover:[&_a]:underline
+                    [&_strong]:text-gray-900 [&_strong]:font-bold
+                    [&_ul]:list-disc [&_ul]:pl-6 [&_ul]:my-3
+                    [&_ol]:list-decimal [&_ol]:pl-6 [&_ol]:my-3
+                    [&_li]:my-1
+                    [&_blockquote]:border-l-4 [&_blockquote]:border-gray-300 [&_blockquote]:pl-4 [&_blockquote]:italic [&_blockquote]:text-gray-600 [&_blockquote]:my-4
+                    [&_hr]:my-6 [&_hr]:border-gray-200">
             {!! $noticia->contenido !!}
         </div>
 

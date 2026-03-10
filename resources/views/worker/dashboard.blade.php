@@ -118,6 +118,80 @@
             @endforeach
         </div>
 
+        {{-- Recent presupuestos --}}
+        @if($recentPresupuestos->isNotEmpty())
+        @php
+        $colorMap = [
+            'gray'   => 'bg-gray-100 text-gray-700',
+            'blue'   => 'bg-blue-100 text-blue-700',
+            'purple' => 'bg-purple-100 text-purple-700',
+            'green'  => 'bg-green-100 text-green-700',
+            'red'    => 'bg-red-100 text-red-700',
+        ];
+        @endphp
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+            <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
+                <h2 class="font-semibold text-gray-900">Últimos presupuestos</h2>
+                <a href="{{ route('admin.presupuestos.index') }}" class="text-xs text-indigo-600 hover:underline">Ver todos</a>
+            </div>
+            {{-- Desktop table --}}
+            <div class="hidden sm:block overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-100">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-5 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">Número</th>
+                            <th class="px-5 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">Cliente</th>
+                            <th class="px-5 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">Fecha</th>
+                            <th class="px-5 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">Estado</th>
+                            <th class="px-5 py-3 text-right text-xs font-medium uppercase tracking-wider text-gray-500">Total</th>
+                            <th class="px-5 py-3 text-right text-xs font-medium uppercase tracking-wider text-gray-500">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-50 bg-white">
+                        @foreach($recentPresupuestos as $p)
+                        @php $badgeClass = $colorMap[$p->estado_color] ?? 'bg-gray-100 text-gray-700'; @endphp
+                        <tr>
+                            <td class="px-5 py-3 text-sm font-medium text-gray-900 whitespace-nowrap">{{ $p->numero }}</td>
+                            <td class="px-5 py-3 text-sm text-gray-600 whitespace-nowrap">{{ $p->cliente?->nombre ?? '—' }}</td>
+                            <td class="px-5 py-3 text-sm text-gray-500 whitespace-nowrap">{{ $p->fecha->format('d/m/Y') }}</td>
+                            <td class="px-5 py-3 whitespace-nowrap">
+                                <span class="inline-flex rounded-full px-2 py-0.5 text-xs font-semibold {{ $badgeClass }}">{{ $p->estado_label }}</span>
+                            </td>
+                            <td class="px-5 py-3 text-sm font-medium text-gray-900 text-right whitespace-nowrap">{{ number_format($p->total, 2, ',', '.') }} €</td>
+                            <td class="px-5 py-3 text-right whitespace-nowrap">
+                                <div class="flex items-center justify-end gap-2">
+                                    <a href="{{ route('admin.presupuestos.show', $p->id) }}" class="text-xs text-indigo-600 hover:text-indigo-900 font-medium">Ver</a>
+                                    <a href="{{ route('admin.presupuestos.edit', $p->id) }}" class="text-xs text-yellow-600 hover:text-yellow-900 font-medium">Editar</a>
+                                    <a href="{{ route('admin.presupuestos.pdf', $p->id) }}" class="text-xs text-red-600 hover:text-red-900 font-medium">PDF</a>
+                                </div>
+                            </td>
+                        </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+            {{-- Mobile list --}}
+            <div class="sm:hidden divide-y divide-gray-50">
+                @foreach($recentPresupuestos as $p)
+                @php $badgeClass = $colorMap[$p->estado_color] ?? 'bg-gray-100 text-gray-700'; @endphp
+                <div class="px-5 py-4 flex items-center justify-between gap-3">
+                    <div class="flex-1 min-w-0">
+                        <div class="flex items-center gap-2 flex-wrap">
+                            <span class="text-sm font-semibold text-gray-900">{{ $p->numero }}</span>
+                            <span class="inline-flex rounded-full px-2 py-0.5 text-xs font-semibold {{ $badgeClass }}">{{ $p->estado_label }}</span>
+                        </div>
+                        <p class="text-xs text-gray-500 mt-0.5">{{ $p->cliente?->nombre ?? '—' }} · {{ $p->fecha->format('d/m/Y') }}</p>
+                    </div>
+                    <div class="shrink-0 flex gap-2">
+                        <a href="{{ route('admin.presupuestos.show', $p->id) }}" class="text-xs text-indigo-600 font-medium">Ver</a>
+                        <a href="{{ route('admin.presupuestos.pdf', $p->id) }}" class="text-xs text-red-600 font-medium">PDF</a>
+                    </div>
+                </div>
+                @endforeach
+            </div>
+        </div>
+        @endif
+
         {{-- Tasks section (only if enabled) --}}
         @if($tasksEnabled)
         <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">

@@ -68,6 +68,17 @@
                     {{ $slot }}
                 </div>
 
+                {{-- Footer links --}}
+                <div class="mt-6 text-center">
+                    <nav class="flex flex-wrap items-center justify-center gap-3 text-xs text-gray-400">
+                        <a href="{{ route('pages.privacy') }}" class="hover:text-indigo-600 transition">Política de Privacidad</a>
+                        <span>·</span>
+                        <a href="{{ route('pages.terms') }}" class="hover:text-indigo-600 transition">Términos y Condiciones</a>
+                        <span>·</span>
+                        <a href="{{ route('pages.contact') }}" class="hover:text-indigo-600 transition">Contacto</a>
+                    </nav>
+                </div>
+
             </div>
         </div>
 
