@@ -30,6 +30,14 @@ class NotaController extends Controller
             });
         }
 
+        if ($presupuesto = $request->input('presupuesto')) {
+            if ($presupuesto === 'con') {
+                $query->whereNotNull('presupuesto_id');
+            } elseif ($presupuesto === 'sin') {
+                $query->whereNull('presupuesto_id');
+            }
+        }
+
         $notas = $query->latest()->paginate(15)->withQueryString();
 
         return view('notas::notas.index', compact('notas'));

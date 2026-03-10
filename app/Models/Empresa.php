@@ -10,8 +10,13 @@ class Empresa extends Model
     use HasFactory;
 
     protected $fillable = [
-        'company_id', 'name', 'nif', 'email', 'phone', 'address', 'active',
+        'company_id', 'name', 'nif', 'email', 'phone', 'address', 'logo', 'active',
     ];
+
+    public function getLogoUrlAttribute(): ?string
+    {
+        return $this->logo ? \Storage::url($this->logo) : null;
+    }
 
     protected function casts(): array
     {

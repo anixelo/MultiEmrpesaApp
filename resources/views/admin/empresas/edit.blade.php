@@ -13,7 +13,7 @@
 
     <div class="max-w-2xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
         <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-            <form method="POST" action="{{ route('admin.empresas.update', $empresa) }}" class="space-y-5">
+            <form method="POST" action="{{ route('admin.empresas.update', $empresa) }}" enctype="multipart/form-data" class="space-y-5">
                 @csrf
                 @method('PUT')
 
@@ -49,6 +49,23 @@
                     <label class="block text-sm font-medium text-gray-700 mb-1">Dirección</label>
                     <textarea name="address" rows="2"
                               class="w-full border border-gray-300 rounded-xl px-3 py-2 text-sm focus:ring-indigo-500 focus:border-indigo-500">{{ old('address', $empresa->address) }}</textarea>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Logo de la empresa</label>
+                    @if($empresa->logo)
+                    <div class="mb-2 flex items-center gap-3">
+                        <img src="{{ Storage::url($empresa->logo) }}" alt="Logo actual" class="h-16 w-auto rounded-lg border border-gray-200 object-contain">
+                        <div class="flex items-center gap-2">
+                            <input type="checkbox" name="remove_logo" id="remove_logo" value="1" class="rounded border-gray-300 text-red-600 focus:ring-red-500">
+                            <label for="remove_logo" class="text-sm text-red-600">Eliminar logo actual</label>
+                        </div>
+                    </div>
+                    @endif
+                    <input type="file" name="logo" accept="image/*"
+                           class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-medium file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100">
+                    <p class="mt-1 text-xs text-gray-400">PNG, JPG, SVG o WebP. Máx. 2 MB. Deja vacío para mantener el actual.</p>
+                    @error('logo')<p class="mt-1 text-xs text-red-600">{{ $message }}</p>@enderror
                 </div>
 
                 <div class="flex items-center gap-3">

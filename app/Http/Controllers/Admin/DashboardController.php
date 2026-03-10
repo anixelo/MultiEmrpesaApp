@@ -57,7 +57,7 @@ class DashboardController extends Controller
             ->get();
 
         $recentNotas = Nota::where('empresa_id', $company->id)
-            ->with(['cliente'])
+            ->with(['cliente', 'presupuesto'])
             ->latest()
             ->take(5)
             ->get();

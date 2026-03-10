@@ -14,10 +14,13 @@ class IncidentController extends Controller
     public function index(Request $request)
     {
         $user = $request->user();
-        $incidents = Incident::where('user_id', $user->id)
-            ->with('user')
-            ->latest()
-            ->paginate(10);
+        $query = Incident::where('user_id', $user->id)->with('user');
+
+        if ($status = $request->get('status')) {
+            $query->where('status', $status);
+        }
+
+        $incidents = $query->latest()->paginate(10);
         return view('worker.incidents.index', compact('incidents'));
     }
 

@@ -22,6 +22,22 @@
         <div class="rounded-xl bg-red-50 border border-red-200 p-4 text-red-800 text-sm">{{ session('error') }}</div>
         @endif
 
+        {{-- Filters --}}
+        <form method="GET" class="flex flex-wrap gap-3">
+            <select name="status" onchange="this.form.submit()"
+                    class="border border-gray-300 rounded-xl px-3 py-2 text-sm focus:ring-indigo-500 focus:border-indigo-500">
+                <option value="">Todos los estados</option>
+                <option value="open" {{ request('status') === 'open' ? 'selected' : '' }}>Abierta</option>
+                <option value="in_review" {{ request('status') === 'in_review' ? 'selected' : '' }}>En Revisión</option>
+                <option value="in_progress" {{ request('status') === 'in_progress' ? 'selected' : '' }}>En Progreso</option>
+                <option value="resolved" {{ request('status') === 'resolved' ? 'selected' : '' }}>Resuelta</option>
+                <option value="closed" {{ request('status') === 'closed' ? 'selected' : '' }}>Cerrada</option>
+            </select>
+            @if(request('status'))
+            <a href="{{ route('worker.incidents.index') }}" class="px-3 py-2 text-sm text-gray-500 border border-gray-300 rounded-xl hover:bg-gray-50 transition">Limpiar</a>
+            @endif
+        </form>
+
         <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
             {{-- Desktop table --}}
             <table class="hidden md:table min-w-full divide-y divide-gray-100">

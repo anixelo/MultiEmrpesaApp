@@ -68,9 +68,15 @@
 
                 <div class="relative flex flex-col gap-8 lg:flex-row lg:items-start lg:justify-between">
                     <div class="text-white">
+                        @if($presupuesto->negocio?->logo)
+                        <div class="mb-4">
+                            <img src="{{ Storage::url($presupuesto->negocio->logo) }}" alt="{{ $empresaNombre }}" class="h-14 w-auto object-contain rounded-lg bg-white/90 px-2 py-1">
+                        </div>
+                        @else
                         <div class="mb-3 inline-flex items-center gap-2 rounded-full bg-white/15 px-3 py-1 text-xs font-semibold tracking-wide text-white/90">
                             Presupuesto profesional
                         </div>
+                        @endif
 
                         <h1 class="text-2xl font-bold sm:text-3xl">
                             {{ $empresaNombre }}

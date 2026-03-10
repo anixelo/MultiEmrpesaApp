@@ -13,7 +13,7 @@
 
     <div class="max-w-2xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
         <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-            <form method="POST" action="{{ route('admin.empresas.store') }}" class="space-y-5">
+            <form method="POST" action="{{ route('admin.empresas.store') }}" enctype="multipart/form-data" class="space-y-5">
                 @csrf
 
                 <div>
@@ -50,6 +50,14 @@
                     <label class="block text-sm font-medium text-gray-700 mb-1">Dirección</label>
                     <textarea name="address" rows="2"
                               class="w-full border border-gray-300 rounded-xl px-3 py-2 text-sm focus:ring-indigo-500 focus:border-indigo-500">{{ old('address') }}</textarea>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Logo de la empresa</label>
+                    <input type="file" name="logo" accept="image/*"
+                           class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-medium file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100">
+                    <p class="mt-1 text-xs text-gray-400">PNG, JPG, SVG o WebP. Máx. 2 MB.</p>
+                    @error('logo')<p class="mt-1 text-xs text-red-600">{{ $message }}</p>@enderror
                 </div>
 
                 <div class="flex items-center gap-3">

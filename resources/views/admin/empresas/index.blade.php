@@ -36,7 +36,12 @@
                     @forelse($empresas as $empresa)
                     <tr class="hover:bg-gray-50 transition">
                         <td class="px-6 py-4">
-                            <div class="font-medium text-gray-900">{{ $empresa->name }}</div>
+                            <div class="flex items-center gap-3">
+                                @if($empresa->logo)
+                                <img src="{{ Storage::url($empresa->logo) }}" alt="" class="h-8 w-8 rounded-lg object-contain border border-gray-100">
+                                @endif
+                                <div class="font-medium text-gray-900">{{ $empresa->name }}</div>
+                            </div>
                         </td>
                         <td class="px-6 py-4 text-sm text-gray-500">{{ $empresa->nif ?? '—' }}</td>
                         <td class="px-6 py-4">
@@ -81,14 +86,19 @@
             <div class="md:hidden divide-y divide-gray-100">
                 @forelse($empresas as $empresa)
                 <div class="p-4 space-y-2">
-                    <div>
-                        <p class="font-semibold text-gray-900">{{ $empresa->name }}</p>
-                        @if($empresa->nif)<p class="text-xs text-gray-500">NIF: {{ $empresa->nif }}</p>@endif
-                        <div class="flex flex-wrap gap-1.5 mt-1.5">
-                            <span class="inline-flex px-2 py-0.5 rounded-full text-xs font-medium {{ $empresa->active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
-                                {{ $empresa->active ? 'Activa' : 'Inactiva' }}
-                            </span>
-                            @if($empresa->email)<span class="text-xs text-gray-500">{{ $empresa->email }}</span>@endif
+                    <div class="flex items-center gap-3">
+                        @if($empresa->logo)
+                        <img src="{{ Storage::url($empresa->logo) }}" alt="" class="h-10 w-10 rounded-lg object-contain border border-gray-100 shrink-0">
+                        @endif
+                        <div>
+                            <p class="font-semibold text-gray-900">{{ $empresa->name }}</p>
+                            @if($empresa->nif)<p class="text-xs text-gray-500">NIF: {{ $empresa->nif }}</p>@endif
+                            <div class="flex flex-wrap gap-1.5 mt-1.5">
+                                <span class="inline-flex px-2 py-0.5 rounded-full text-xs font-medium {{ $empresa->active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
+                                    {{ $empresa->active ? 'Activa' : 'Inactiva' }}
+                                </span>
+                                @if($empresa->email)<span class="text-xs text-gray-500">{{ $empresa->email }}</span>@endif
+                            </div>
                         </div>
                     </div>
                     <div class="pt-2 border-t border-gray-100 flex flex-wrap gap-2">
