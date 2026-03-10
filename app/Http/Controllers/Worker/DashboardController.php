@@ -64,7 +64,7 @@ class DashboardController extends Controller
         $recentPresupuestos = Presupuesto::where('empresa_id', $companyId)
             ->with(['cliente'])
             ->latest()
-            ->limit(5)
+            ->take(5)
             ->get();
 
         return view('worker.dashboard', compact(

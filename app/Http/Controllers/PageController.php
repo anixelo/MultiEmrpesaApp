@@ -30,10 +30,8 @@ class PageController extends Controller
             'message' => 'required|string|min:10|max:2000',
         ]);
 
-        // Log the contact form submission (email sending would be configured separately)
-        \Illuminate\Support\Facades\Log::info('Contact form submission', [
-            'name'    => $request->name,
-            'email'   => $request->email,
+        // Log the contact form submission (no PII in logs)
+        \Illuminate\Support\Facades\Log::info('Contact form submission received', [
             'subject' => $request->subject,
         ]);
 

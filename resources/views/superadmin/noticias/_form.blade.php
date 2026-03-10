@@ -285,15 +285,16 @@ function richEditor() {
         },
         toggleHtml() {
             if (!this.showHtml) {
-                // Switching to HTML view: sync textarea with current editor content
+                // Switching to HTML view: sync content then show textarea
                 this.syncContent();
+                this.showHtml = true;
             } else {
-                // Switching back to WYSIWYG: load editor from textarea content
+                // Switching back to WYSIWYG: hide textarea, then load editor
+                this.showHtml = false;
                 this.$nextTick(() => {
                     this.$refs.editor.innerHTML = this.content;
                 });
             }
-            this.showHtml = !this.showHtml;
         },
         syncContent() {
             this.content = this.$refs.editor.innerHTML;

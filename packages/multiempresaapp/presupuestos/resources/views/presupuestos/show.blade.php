@@ -255,7 +255,7 @@
                 pendingUrl: null,
                 pendingForm: null,
                 trigger(action, url = null, formId = null) {
-                    if (!{{ $esBorrador ? 'true' : 'false' }}) {
+                    if (!@json($esBorrador)) {
                         if (action === 'whatsapp' && url) window.open(url, '_blank');
                         else if (action === 'pdf' && url) window.location.href = url;
                         else if (formId) document.getElementById(formId).submit();
