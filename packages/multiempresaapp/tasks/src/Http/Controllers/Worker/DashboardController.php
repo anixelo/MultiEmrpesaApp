@@ -42,52 +42,13 @@ class DashboardController extends Controller
             ->get()
             ->pluck('count', 'estado');
 
-        // Task data (only if tasks are enabled)
-        $tasksEnabled = $company && $company->canUseTasks();
-        $tasks        = collect();
-        $taskStats    = ['total' => 0, 'pendiente' => 0, 'en_progreso' => 0, 'completada' => 0];
-
-        if ($tasksEnabled) {
-            $tasks = Task::where('assigned_to', $user->id)
-                ->orderByRaw("FIELD(priority, 'urgente', 'alta', 'media', 'baja')")
-                ->orderBy('due_date')
-                ->paginate(5);
-
-            $taskStats = [
-                'total'       => Task::where('assigned_to', $user->id)->count(),
-                'pendiente'   => Task::where('assigned_to', $user->id)->where('status', 'pendiente')->count(),
-                'en_progreso' => Task::where('assigned_to', $user->id)->where('status', 'en_progreso')->count(),
-                'completada'  => Task::where('assigned_to', $user->id)->where('status', 'completada')->count(),
-            ];
-        }
 
         return view('worker.dashboard', compact(
             'user', 'company',
             'incidentStats', 'recentIncidents',
-            'presupuestoStats', 'presupuestosByStatus',
-            'tasksEnabled', 'tasks', 'taskStats'
+            'presupuestoStats', 'presupuestosByStatus'
         ));
     }
 
-    public function updateTaskStatus(Request $request, Task $task)
-    {
-        $user    = $request->user();
-        $company = $user->company;
 
-        if ($company && !$company->canUseTasks()) {
-            abort(403, 'Tu plan no incluye gestión de tareas.');
-        }
-
-        if ($task->assigned_to !== $user->id) {
-            abort(403);
-        }
-
-        $request->validate([
-            'status' => 'required|in:pendiente,en_progreso,completada,cancelada',
-        ]);
-
-        $task->update(['status' => $request->status]);
-
-        return back()->with('success', 'Estado de la tarea actualizado.');
-    }
 }

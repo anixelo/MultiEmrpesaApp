@@ -1,5 +1,5 @@
-const CACHE_NAME = 'multiempresa-v1';
-const STATIC_CACHE = 'multiempresa-static-v1';
+const CACHE_NAME = 'mispresupuestos-v2';
+const STATIC_CACHE = 'mispresupuestos-static-v2';
 
 const STATIC_ASSETS = [
     '/',

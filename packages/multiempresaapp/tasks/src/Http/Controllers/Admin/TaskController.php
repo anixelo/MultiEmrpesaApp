@@ -18,9 +18,6 @@ class TaskController extends Controller
             return redirect()->route('admin.dashboard')->with('error', 'No tienes una empresa asignada.');
         }
 
-        if (!$company->canUseTasks()) {
-            return redirect()->route('admin.dashboard')->with('error', 'Tu plan actual no incluye gestión de tareas. Actualiza tu plan para acceder a esta funcionalidad.');
-        }
 
         $tasks = Task::where('company_id', $company->id)
             ->with(['assignedUser', 'creator'])
@@ -39,9 +36,6 @@ class TaskController extends Controller
             return redirect()->route('admin.dashboard')->with('error', 'No tienes una empresa asignada.');
         }
 
-        if (!$company->canUseTasks()) {
-            return redirect()->route('admin.dashboard')->with('error', 'Tu plan actual no incluye gestión de tareas.');
-        }
 
         $workers = User::where('company_id', $company->id)
             ->whereHas('roles', fn ($q) => $q->whereIn('name', ['trabajador', 'administrador']))
@@ -55,10 +49,6 @@ class TaskController extends Controller
     {
         $user = $request->user();
         $company = $user->company;
-
-        if (!$company || !$company->canUseTasks()) {
-            return redirect()->route('admin.dashboard')->with('error', 'Tu plan actual no incluye gestión de tareas.');
-        }
 
         $validated = $request->validate([
             'title'       => 'required|string|max:255',
@@ -94,10 +84,6 @@ class TaskController extends Controller
 
         if (!$company || $task->company_id !== $company->id) {
             abort(403);
-        }
-
-        if (!$company->canUseTasks()) {
-            return redirect()->route('admin.dashboard')->with('error', 'Tu plan actual no incluye gestión de tareas.');
         }
 
         $workers = User::where('company_id', $company->id)

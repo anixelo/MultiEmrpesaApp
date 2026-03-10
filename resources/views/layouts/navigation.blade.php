@@ -69,6 +69,13 @@
                                   {{ request()->routeIs('admin.presupuestos.*') ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50' }}">
                             Presupuestos
                         </a>
+                        @if(auth()->user()->company?->canUseNotas())
+                        <a href="{{ route('admin.notas.index') }}"
+                           class="px-3 py-2 rounded-lg text-sm font-medium transition
+                                  {{ request()->routeIs('admin.notas.*') ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50' }}">
+                             Notas
+                        </a>
+                        @endif
                         {{-- Datos dropdown (admin) --}}
                         <div x-data="{ datosOpen: false }" class="relative">
                             <button @click="datosOpen = !datosOpen" @click.outside="datosOpen = false"
@@ -93,13 +100,7 @@
                                 </a>
                             </div>
                         </div>
-                        @if(auth()->user()->company?->canUseTasks())
-                        <a href="{{ route('admin.tasks.index') }}"
-                           class="px-3 py-2 rounded-lg text-sm font-medium transition
-                                  {{ request()->routeIs('admin.tasks.*') ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50' }}">
-                             Tareas
-                        </a>
-                        @endif
+
                         <a href="{{ route('admin.users.index') }}"
                            class="px-3 py-2 rounded-lg text-sm font-medium transition
                                   {{ request()->routeIs('admin.users.*') ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50' }}">
@@ -253,11 +254,11 @@
 
             @if(auth()->user()->isAdmin())
             <a href="{{ route('admin.dashboard') }}" class="block px-3 py-2 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50">Panel Admin</a>
-            @if(auth()->user()->company?->canUseTasks())
-            <a href="{{ route('admin.tasks.index') }}" class="block px-3 py-2 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50">Tareas</a>
-            @endif
-            <a href="{{ route('admin.users.index') }}" class="block px-3 py-2 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50">Usuarios</a>
+            
             <a href="{{ route('admin.presupuestos.index') }}" class="block px-3 py-2 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50">Presupuestos</a>
+            @if(auth()->user()->company?->canUseNotas())
+            <a href="{{ route('admin.notas.index') }}" class="block px-3 py-2 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50">Notas</a>
+            @endif
             <div x-data="{ datosOpen: false }">
                 <button @click="datosOpen = !datosOpen" class="flex items-center justify-between w-full px-3 py-2 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50">
                     Datos
@@ -269,6 +270,7 @@
                     <a href="{{ route('admin.empresas.index') }}" class="block px-3 py-2 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50">Empresas</a>
                 </div>
             </div>
+            <a href="{{ route('admin.users.index') }}" class="block px-3 py-2 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50">Usuarios</a>
             @endif
 
             @if(auth()->user()->isSuperAdmin())

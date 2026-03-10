@@ -57,6 +57,310 @@
         {{ $slot }}
     </main>
 
+
+
+
+
+<div id="pwa-install-banner" class="hidden fixed inset-x-0 bottom-6 z-50 px-4">
+    <div class="mx-auto max-w-md">
+        <div id="pwa-install-card" class="bg-white border border-gray-200 rounded-2xl shadow-xl p-5 flex gap-4 items-start">
+
+                    <div id="pwa-install-icon" class="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-indigo-100 text-indigo-600">
+                    <img 
+                        src="/pwa-icons/icon-192x192.png" 
+                        alt="Logo {{ config('app.name') }}" 
+                        class="w-8 h-8 shrink-0"
+                    >
+                    </div>
+
+            <div class="flex-1">
+                <p id="pwa-install-title" class="text-sm font-semibold text-gray-900"></p>
+                <p id="pwa-install-text" class="text-sm text-gray-500 mt-1"></p>
+                <div id="pwa-install-actions" class="mt-4 flex gap-2 flex-wrap"></div>
+            </div>
+
+            <button
+                id="pwa-install-close"
+                class="text-gray-400 hover:text-gray-600 text-lg leading-none"
+                type="button"
+            >
+                ✕
+            </button>
+
+        </div>
+    </div>
+</div>
+<div id="pwa-inline-install" class="hidden max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8 mb-8">
+    <div class="rounded-2xl border border-indigo-100 bg-indigo-50 p-4 sm:p-5 flex items-center justify-between gap-4">
+
+        <div class="flex items-center gap-3">
+                    <div id="pwa-install-icon" class="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-indigo-100 text-indigo-600">
+                    <img 
+                        src="/pwa-icons/icon-192x192.png" 
+                        alt="Logo {{ config('app.name') }}" 
+                        class="w-8 h-8 shrink-0"
+                    >
+                    </div>
+
+            <div>
+                <p class="text-sm font-semibold text-indigo-900">
+                    Instala Mis presupuestos
+                </p>
+                <p class="text-xs text-indigo-700">
+                    Accede más rápido desde tu móvil.
+                </p>
+            </div>
+        </div>
+
+        <button
+            id="pwa-inline-install-btn"
+            type="button"
+            class="inline-flex items-center justify-center rounded-xl bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-700 transition"
+        >
+            Instalar
+        </button>
+
+    </div>
+</div>
+
+<script>
+let deferredPrompt = null;
+
+document.addEventListener('DOMContentLoaded', () => {
+    const banner = document.getElementById('pwa-install-banner');
+    const card = document.getElementById('pwa-install-card');
+    const title = document.getElementById('pwa-install-title');
+    const text = document.getElementById('pwa-install-text');
+    const actions = document.getElementById('pwa-install-actions');
+    const closeBtn = document.getElementById('pwa-install-close');
+
+    const inlineInstall = document.getElementById('pwa-inline-install');
+    const inlineInstallBtn = document.getElementById('pwa-inline-install-btn');
+
+    const STORAGE_KEY = 'pwa_install_banner_mode';
+
+    function isIos() {
+        return /iphone|ipad|ipod/i.test(window.navigator.userAgent);
+    }
+
+    function isAppInstalled() {
+        return window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+    }
+
+    function getBannerMode() {
+        return localStorage.getItem(STORAGE_KEY) || 'full';
+    }
+
+    function setBannerMode(mode) {
+        localStorage.setItem(STORAGE_KEY, mode);
+    }
+
+    function showBanner() {
+        if (banner) banner.classList.remove('hidden');
+    }
+
+    function hideBanner() {
+        if (banner) banner.classList.add('hidden');
+    }
+
+    function showInlineInstall() {
+        if (inlineInstall) inlineInstall.classList.remove('hidden');
+    }
+
+    function hideInlineInstall() {
+        if (inlineInstall) inlineInstall.classList.add('hidden');
+    }
+
+    function setContent({ heading, body, buttons = '' }) {
+        if (!title || !text || !actions || !card) return;
+
+        title.textContent = heading;
+        text.textContent = body;
+        actions.innerHTML = buttons;
+
+        showBanner();
+    }
+
+    function renderFullInstallCard() {
+        hideInlineInstall();
+
+        setContent({
+            heading: 'Instala Mis presupuestos',
+            body: 'Accede más rápido, abre la app desde el móvil y disfruta de una experiencia más cómoda.',
+            buttons: `
+                <button
+                    type="button"
+                    id="pwa-install-btn"
+                    class="inline-flex items-center justify-center rounded-xl bg-indigo-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-indigo-700"
+                >
+                    Instalar app
+                </button>
+
+                <button
+                    type="button"
+                    id="pwa-later-btn"
+                    class="inline-flex items-center justify-center rounded-xl border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-gray-700 transition hover:bg-gray-50"
+                >
+                    Más tarde
+                </button>
+            `
+        });
+
+        bindInstallButton();
+
+        const laterBtn = document.getElementById('pwa-later-btn');
+        if (laterBtn) {
+            laterBtn.addEventListener('click', () => {
+                setBannerMode('inline');
+                hideBanner();
+                showInlineInstall();
+            });
+        }
+    }
+
+    function renderFullIosCard() {
+        hideInlineInstall();
+
+        setContent({
+            heading: 'Añádela a tu pantalla de inicio',
+            body: 'En iPhone, pulsa en Compartir y luego en “Añadir a pantalla de inicio”.',
+            buttons: `
+                <button
+                    type="button"
+                    id="pwa-ios-later-btn"
+                    class="inline-flex items-center justify-center rounded-xl bg-gray-900 px-4 py-2 text-sm font-semibold text-white transition hover:bg-black"
+                >
+                    Más tarde
+                </button>
+            `
+        });
+
+        const btn = document.getElementById('pwa-ios-later-btn');
+        if (btn) {
+            btn.addEventListener('click', () => {
+                setBannerMode('inline');
+                hideBanner();
+                showInlineInstall();
+            });
+        }
+    }
+
+    function bindInstallButton() {
+        const installBtn = document.getElementById('pwa-install-btn');
+
+        if (!installBtn) return;
+
+        installBtn.addEventListener('click', async () => {
+            try {
+                if (!deferredPrompt) {
+                    throw new Error('La instalación no está disponible en este momento');
+                }
+
+                deferredPrompt.prompt();
+                const choice = await deferredPrompt.userChoice;
+
+                if (choice.outcome === 'accepted') {
+                    hideBanner();
+                    hideInlineInstall();
+                    localStorage.removeItem(STORAGE_KEY);
+                } else {
+                    setBannerMode('inline');
+                    hideBanner();
+                    showInlineInstall();
+                }
+
+                deferredPrompt = null;
+            } catch (err) {
+                console.error('PWA install error:', err);
+            }
+        });
+    }
+
+    if (closeBtn) {
+        closeBtn.addEventListener('click', () => {
+            setBannerMode('inline');
+            hideBanner();
+            showInlineInstall();
+        });
+    }
+
+    if (inlineInstallBtn) {
+        inlineInstallBtn.addEventListener('click', async () => {
+            try {
+                if (isIos()) {
+                    renderFullIosCard();
+                    return;
+                }
+
+                if (!deferredPrompt) {
+                    console.warn('Instalación no disponible');
+                    return;
+                }
+
+                deferredPrompt.prompt();
+                const choice = await deferredPrompt.userChoice;
+
+                if (choice.outcome === 'accepted') {
+                    hideInlineInstall();
+                    hideBanner();
+                    localStorage.removeItem(STORAGE_KEY);
+                }
+
+                deferredPrompt = null;
+            } catch (err) {
+                console.error('Error instalando PWA', err);
+            }
+        });
+    }
+
+    if (isAppInstalled()) {
+        hideBanner();
+        hideInlineInstall();
+        return;
+    }
+
+    if (getBannerMode() === 'inline') {
+        hideBanner();
+        showInlineInstall();
+        return;
+    }
+
+    if (isIos()) {
+        renderFullIosCard();
+    }
+
+    window.addEventListener('beforeinstallprompt', (e) => {
+        e.preventDefault();
+        deferredPrompt = e;
+
+        if (isAppInstalled()) {
+            hideBanner();
+            hideInlineInstall();
+            return;
+        }
+
+        if (getBannerMode() === 'inline') {
+            hideBanner();
+            showInlineInstall();
+        } else {
+            renderFullInstallCard();
+        }
+    });
+
+    window.addEventListener('appinstalled', () => {
+        deferredPrompt = null;
+        hideBanner();
+        hideInlineInstall();
+        localStorage.removeItem(STORAGE_KEY);
+    });
+});
+</script>
+
+
+
+
+
+
     {{-- Footer --}}
     <footer class="bg-white border-t border-gray-200 py-4 mt-auto">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-xs text-gray-400">
@@ -100,6 +404,13 @@ if ('serviceWorker' in navigator) {
     });
 }
 </script>
+
+
+
+
+
+
+
 @stack('scripts')
 </body>
 </html>
