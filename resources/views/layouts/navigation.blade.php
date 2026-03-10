@@ -6,10 +6,12 @@
             <div class="flex items-center gap-8">
                 {{-- Logo --}}
                 <a href="{{ route('dashboard') }}" class="flex items-center gap-2 text-indigo-600 font-bold text-lg">
-                    <svg class="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
-                    </svg>
-                    {{ config('app.name') }}
+                    <img 
+                        src="/pwa-icons/icon-192x192.png" 
+                        alt="Logo {{ config('app.name') }}" 
+                        class="w-8 h-8 shrink-0"
+                    >
+                    <span>{{ config('app.name') }}</span>
                 </a>
 
                 {{-- Desktop nav links --}}
@@ -20,7 +22,13 @@
                         <a href="{{ route('worker.dashboard') }}"
                            class="px-3 py-2 rounded-lg text-sm font-medium transition
                                   {{ request()->routeIs('worker.dashboard') ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50' }}">
-                            Mis Tareas
+                            Panel
+                        </a>
+
+                        <a href="{{ route('admin.presupuestos.index') }}"
+                           class="px-3 py-2 rounded-lg text-sm font-medium transition
+                                  {{ request()->routeIs('admin.presupuestos.*') ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50' }}">
+                            Presupuestos
                         </a>
                         {{-- Datos dropdown (worker) --}}
                         <div x-data="{ datosOpen: false }" class="relative">
@@ -46,11 +54,7 @@
                                 </a>
                             </div>
                         </div>
-                        <a href="{{ route('admin.presupuestos.index') }}"
-                           class="px-3 py-2 rounded-lg text-sm font-medium transition
-                                  {{ request()->routeIs('admin.presupuestos.*') ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50' }}">
-                            Presupuestos
-                        </a>
+
                         @endif
 
                         {{-- Admin --}}
@@ -58,7 +62,7 @@
                         <a href="{{ route('admin.dashboard') }}"
                            class="px-3 py-2 rounded-lg text-sm font-medium transition
                                   {{ request()->routeIs('admin.dashboard') ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50' }}">
-                            Panel Admin
+                            Panel
                         </a>
                         <a href="{{ route('admin.presupuestos.index') }}"
                            class="px-3 py-2 rounded-lg text-sm font-medium transition
@@ -108,7 +112,7 @@
                         <a href="{{ route('superadmin.dashboard') }}"
                            class="px-3 py-2 rounded-lg text-sm font-medium transition
                                   {{ request()->routeIs('superadmin.dashboard') ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50' }}">
-                            Panel General
+                            Panel
                         </a>
                         <a href="{{ route('superadmin.companies.index') }}"
                            class="px-3 py-2 rounded-lg text-sm font-medium transition

@@ -40,33 +40,72 @@
          ============================ --}}
 
     {{-- Step indicator --}}
-    <div class="mb-6">
-        <ol class="flex items-center w-full text-sm font-medium text-center text-gray-500">
+{{-- Step indicator --}}
+<div class="mb-8">
+    @php
+        $steps = [
+            1 => 'Empresa',
+            2 => 'Cliente',
+            3 => 'Datos generales',
+            4 => 'Líneas',
+        ];
+    @endphp
+
+    <ol class="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        @foreach($steps as $num => $label)
             @php
-                $steps = [
-                    1 => 'Empresa',
-                    2 => 'Cliente',
-                    3 => 'Datos generales',
-                    4 => 'Líneas',
-                ];
+                $completed = $step > $num;
+                $current = $step === $num;
+                $upcoming = $step < $num;
             @endphp
-            @foreach($steps as $num => $label)
-            <li class="flex {{ $num < count($steps) ? 'md:w-full' : '' }} items-center {{ $step >= $num ? 'text-indigo-600' : 'text-gray-400' }}">
-                <span class="flex items-center gap-1.5 {{ $num < count($steps) ? 'after:content-[\'/\'] md:after:content-[\'\'] after:mx-2 md:after:w-full md:after:h-px md:after:border md:after:border-gray-200 md:after:inline-block md:after:mx-4' : '' }}">
-                    <span class="inline-flex items-center justify-center w-6 h-6 rounded-full text-xs font-bold
-                        {{ $step > $num ? 'bg-indigo-600 text-white' : ($step === $num ? 'border-2 border-indigo-600 text-indigo-600' : 'border-2 border-gray-300 text-gray-400') }}">
-                        @if($step > $num)
-                            <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+
+            <li class="relative">
+                <div class="flex items-center gap-4 rounded-2xl border p-4 shadow-sm transition-all
+                    {{ $completed ? 'border-indigo-200 bg-indigo-50' : '' }}
+                    {{ $current ? 'border-indigo-500 bg-white ring-2 ring-indigo-100 shadow-md' : '' }}
+                    {{ $upcoming ? 'border-gray-200 bg-gray-50' : '' }}
+                ">
+                    {{-- línea conectora en desktop --}}
+                    @if($num < count($steps))
+                        <div class="hidden xl:block absolute top-1/2 -right-2 w-4 h-px bg-gray-200 z-0"></div>
+                    @endif
+
+                    <div class="relative z-10 flex h-10 w-10 items-center justify-center rounded-full text-sm font-bold shrink-0
+                        {{ $completed ? 'bg-indigo-600 text-white' : '' }}
+                        {{ $current ? 'border-2 border-indigo-600 text-indigo-600 bg-white' : '' }}
+                        {{ $upcoming ? 'border-2 border-gray-300 text-gray-400 bg-white' : '' }}
+                    ">
+                        @if($completed)
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                            </svg>
                         @else
                             {{ $num }}
                         @endif
-                    </span>
-                    <span class="hidden sm:inline">{{ $label }}</span>
-                </span>
+                    </div>
+
+                    <div class="min-w-0">
+                        <p class="text-xs font-semibold uppercase tracking-wide
+                            {{ $completed ? 'text-indigo-600' : '' }}
+                            {{ $current ? 'text-indigo-600' : '' }}
+                            {{ $upcoming ? 'text-gray-400' : '' }}
+                        ">
+                            Paso {{ $num }}
+                        </p>
+
+                        <p class="text-sm font-semibold
+                            {{ $completed ? 'text-gray-900' : '' }}
+                            {{ $current ? 'text-gray-900' : '' }}
+                            {{ $upcoming ? 'text-gray-500' : '' }}
+                        ">
+                            {{ $label }}
+                        </p>
+                    </div>
+                </div>
             </li>
-            @endforeach
-        </ol>
-    </div>
+        @endforeach
+    </ol>
+</div>
 
     {{-- Step 1: Datos de la empresa --}}
     @if($step === 1)

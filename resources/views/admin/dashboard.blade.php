@@ -71,31 +71,17 @@
 
         {{-- Quick actions --}}
         <div class="flex flex-wrap gap-3">
-            <a href="{{ route('admin.users.index') }}"
+            <a href="{{ route('admin.presupuestos.create') }}"
                class="inline-flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-xl text-sm font-medium text-gray-700 hover:bg-gray-50 transition shadow-sm">
-                <svg class="w-4 h-4 text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
-                Gestionar Usuarios
+                <svg class="w-4 h-4 text-violet-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                Nuevo Presupuesto
             </a>
-            @if($company->canUseTasks())
-            <a href="{{ route('admin.tasks.index') }}"
-               class="inline-flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-xl text-sm font-medium text-gray-700 hover:bg-gray-50 transition shadow-sm">
-                <svg class="w-4 h-4 text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>
-                Gestionar Tareas
-            </a>
-            @else
-            <span class="inline-flex items-center gap-2 px-4 py-2 bg-gray-50 border border-gray-200 rounded-xl text-sm font-medium text-gray-400 cursor-default"
-                  title="Actualiza tu plan para acceder a tareas">
-                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
-                Tareas (no incluido en tu plan)
-            </span>
-            @endif
         </div>
 
         {{-- Stats --}}
         <div class="grid grid-cols-2 lg:grid-cols-3 gap-4">
             @php
             $baseCards = [
-                ['label'=>'Trabajadores','value'=>$stats['total_workers'] ?? 0,'color'=>'blue','icon'=>'M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z'],
                 ['label'=>'Presupuestos totales','value'=>$stats['total_presupuestos'] ?? 0,'color'=>'violet','icon'=>'M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z'],
                 ['label'=>'Presupuestos aceptados','value'=>$stats['presupuestos_aceptados'] ?? 0,'color'=>'emerald','icon'=>'M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z'],
                 ['label'=>'Presupuestos rechazados','value'=>$stats['presupuestos_rechazados'] ?? 0,'color'=>'red','icon'=>'M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z'],
@@ -169,7 +155,7 @@
             </div>
             @endif
 
-            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+            <div class="col-span-3  bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
                 <h2 class="font-semibold text-gray-900 mb-4">Presupuestos por estado</h2>
                 @php
                 $presupuestoColors = ['borrador'=>'gray','enviado'=>'blue','visto'=>'purple','aceptado'=>'green','rechazado'=>'red'];
@@ -192,32 +178,7 @@
                 </div>
             </div>
 
-            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-                <div class="px-6 py-4 border-b border-gray-100">
-                    <h2 class="font-semibold text-gray-900">Trabajadores recientes</h2>
-                </div>
-                <div class="divide-y divide-gray-50">
-                    @forelse($recentUsers as $member)
-                    <div class="px-6 py-3 flex items-center justify-between">
-                        <div class="flex items-center gap-3">
-                            <div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-700 text-xs font-bold">
-                                {{ strtoupper(substr($member->name, 0, 1)) }}
-                            </div>
-                            <div>
-                                <p class="text-sm font-medium text-gray-800">{{ $member->name }}</p>
-                                <p class="text-xs text-gray-400">{{ $member->email }}</p>
-                            </div>
-                        </div>
-                        @if($member->roles->first())
-                        <span class="text-xs px-2 py-0.5 rounded-full bg-gray-100 text-gray-600">{{ $member->roles->first()->name }}</span>
-                        @endif
-                    </div>
-                    @empty
-                    <p class="px-6 py-4 text-sm text-gray-400">No hay usuarios en esta empresa.</p>
-                    @endforelse
-                </div>
-            </div>
-        </div>
+
 
         {{-- Recent budgets --}}
         @if($recentPresupuestos->isNotEmpty())
@@ -230,7 +191,7 @@
             'red'    => 'bg-red-100 text-red-700',
         ];
         @endphp
-        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+        <div class="col-span-3 bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
             <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
                 <h2 class="font-semibold text-gray-900">Últimos presupuestos</h2>
                 <a href="{{ route('admin.presupuestos.index') }}" class="text-xs text-indigo-600 hover:underline">Ver todos</a>
