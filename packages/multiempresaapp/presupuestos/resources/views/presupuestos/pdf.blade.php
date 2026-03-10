@@ -312,8 +312,13 @@
             <tr>
                 <td class="header-left">
                     @if($presupuesto->negocio?->logo)
-                    @php $logoPath = public_path('storage/' . $presupuesto->negocio->logo); @endphp
-                    @if(file_exists($logoPath))
+                    @php
+                        $logoRelPath = $presupuesto->negocio->logo;
+                        $logoPath = realpath(public_path('storage/' . $logoRelPath));
+                        $storageBase = realpath(public_path('storage'));
+                        $logoSafe = $logoPath && str_starts_with($logoPath, $storageBase);
+                    @endphp
+                    @if($logoSafe && file_exists($logoPath))
                     <img src="{{ 'file://' . $logoPath }}" alt="{{ $empresaNombre }}" style="max-height:60px;max-width:180px;margin-bottom:6px;object-fit:contain;">
                     @else
                     <div class="brand-name">{{ $empresaNombre }}</div>
