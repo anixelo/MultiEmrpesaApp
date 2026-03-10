@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use MultiempresaApp\Incidents\Models\Incident;
 use MultiempresaApp\Notas\Models\Nota;
 use MultiempresaApp\Presupuestos\Models\Presupuesto;
 use Illuminate\Http\Request;
@@ -21,6 +22,8 @@ class DashboardController extends Controller
                 'notasByCliente' => collect(),
                 'presupuestosByStatus' => collect(),
                 'recentNotas' => collect(),
+                'incidentStats' => ['total' => 0, 'open' => 0, 'in_progress' => 0, 'resolved' => 0],
+                'recentIncidents' => collect(),
                 'company' => null,
             ]);
         }
@@ -59,6 +62,19 @@ class DashboardController extends Controller
             ->take(5)
             ->get();
 
-        return view('admin.dashboard', compact('stats', 'recentUsers', 'presupuestosByStatus', 'recentPresupuestos', 'recentNotas', 'company'));
+        $incidentStats = [
+            'total'       => Incident::where('empresa_id', $company->id)->count(),
+            'open'        => Incident::where('empresa_id', $company->id)->where('status', 'open')->count(),
+            'in_progress' => Incident::where('empresa_id', $company->id)->whereIn('status', ['in_review', 'in_progress'])->count(),
+            'resolved'    => Incident::where('empresa_id', $company->id)->whereIn('status', ['resolved', 'closed'])->count(),
+        ];
+
+        $recentIncidents = Incident::where('empresa_id', $company->id)
+            ->with('user')
+            ->latest()
+            ->take(5)
+            ->get();
+
+        return view('admin.dashboard', compact('stats', 'recentUsers', 'presupuestosByStatus', 'recentPresupuestos', 'recentNotas', 'company', 'incidentStats', 'recentIncidents'));
     }
 }

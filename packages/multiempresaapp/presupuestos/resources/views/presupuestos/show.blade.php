@@ -266,17 +266,26 @@
                     this.pendingForm = formId;
                     this.showModal = true;
                 },
-                confirm(markSent) {
+                async confirm(markSent) {
                     this.showModal = false;
-                    if (markSent) {
-                        document.getElementById('form-marcar-enviado').submit();
-                        return;
-                    }
-                    this.$nextTick(() => {
+                    const doAction = () => {
                         if (this.pendingAction === 'whatsapp' && this.pendingUrl) window.open(this.pendingUrl, '_blank');
                         else if (this.pendingAction === 'pdf' && this.pendingUrl) window.location.href = this.pendingUrl;
                         else if (this.pendingForm) document.getElementById(this.pendingForm).submit();
-                    });
+                    };
+                    if (markSent) {
+                        const form = document.getElementById('form-marcar-enviado');
+                        const data = new FormData(form);
+                        try {
+                            const resp = await fetch(form.action, {method: 'POST', body: data, redirect: 'follow'});
+                            if (!resp.ok) { console.error('Error al marcar como enviado'); }
+                        } catch (e) {
+                            console.error('Error al marcar como enviado', e);
+                        }
+                        doAction();
+                    } else {
+                        doAction();
+                    }
                 }
             }" class="flex flex-wrap gap-3 justify-center">
 
