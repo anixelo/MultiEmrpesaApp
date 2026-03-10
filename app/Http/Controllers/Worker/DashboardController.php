@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Worker;
 
 use App\Http\Controllers\Controller;
 use MultiempresaApp\Incidents\Models\Incident;
-use MultiempresaApp\Tasks\Models\Task;
+use MultiempresaApp\Notas\Models\Nota;
 use MultiempresaApp\Presupuestos\Models\Presupuesto;
 use Illuminate\Http\Request;
 
@@ -42,59 +42,37 @@ class DashboardController extends Controller
             ->get()
             ->pluck('count', 'estado');
 
-        // Task data (only if tasks are enabled)
-        $tasksEnabled = $company && $company->canUseTasks();
-        $tasks        = collect();
-        $taskStats    = ['total' => 0, 'pendiente' => 0, 'en_progreso' => 0, 'completada' => 0];
-
-        if ($tasksEnabled) {
-            $tasks = Task::where('assigned_to', $user->id)
-                ->orderByRaw("FIELD(priority, 'urgente', 'alta', 'media', 'baja')")
-                ->orderBy('due_date')
-                ->paginate(5);
-
-            $taskStats = [
-                'total'       => Task::where('assigned_to', $user->id)->count(),
-                'pendiente'   => Task::where('assigned_to', $user->id)->where('status', 'pendiente')->count(),
-                'en_progreso' => Task::where('assigned_to', $user->id)->where('status', 'en_progreso')->count(),
-                'completada'  => Task::where('assigned_to', $user->id)->where('status', 'completada')->count(),
-            ];
-        }
-
         $recentPresupuestos = Presupuesto::where('empresa_id', $companyId)
             ->with(['cliente'])
             ->latest()
             ->take(5)
             ->get();
 
+        // Notas (only if notes are enabled)
+        $notasEnabled = $company && $company->canUseNotas();
+        $recentNotas  = collect();
+        $notaStats    = ['total' => 0, 'con_presupuesto' => 0, 'sin_presupuesto' => 0];
+
+        if ($notasEnabled) {
+            $recentNotas = Nota::where('empresa_id', $companyId)
+                ->with(['cliente'])
+                ->latest()
+                ->take(5)
+                ->get();
+
+            $notaStats = [
+                'total'           => Nota::where('empresa_id', $companyId)->count(),
+                'con_presupuesto' => Nota::where('empresa_id', $companyId)->whereNotNull('presupuesto_id')->count(),
+                'sin_presupuesto' => Nota::where('empresa_id', $companyId)->whereNull('presupuesto_id')->count(),
+            ];
+        }
+
         return view('worker.dashboard', compact(
             'user', 'company',
             'incidentStats', 'recentIncidents',
             'presupuestoStats', 'presupuestosByStatus',
             'recentPresupuestos',
-            'tasksEnabled', 'tasks', 'taskStats'
+            'notasEnabled', 'recentNotas', 'notaStats'
         ));
-    }
-
-    public function updateTaskStatus(Request $request, Task $task)
-    {
-        $user    = $request->user();
-        $company = $user->company;
-
-        if ($company && !$company->canUseTasks()) {
-            abort(403, 'Tu plan no incluye gestión de tareas.');
-        }
-
-        if ($task->assigned_to !== $user->id) {
-            abort(403);
-        }
-
-        $request->validate([
-            'status' => 'required|in:pendiente,en_progreso,completada,cancelada',
-        ]);
-
-        $task->update(['status' => $request->status]);
-
-        return back()->with('success', 'Estado de la tarea actualizado.');
     }
 }

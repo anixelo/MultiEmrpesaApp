@@ -7,10 +7,10 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 use MultiempresaApp\Clientes\Models\Cliente;
 use MultiempresaApp\Incidents\Models\Incident;
+use MultiempresaApp\Notas\Models\Nota;
 use MultiempresaApp\Plans\Models\Subscription;
 use MultiempresaApp\Presupuestos\Models\Presupuesto;
 use MultiempresaApp\Servicios\Models\Servicio;
-use MultiempresaApp\Tasks\Models\Task;
 
 class Company extends Model
 {
@@ -52,9 +52,9 @@ class Company extends Model
         return $this->hasMany(User::class);
     }
 
-    public function tasks()
+    public function notas()
     {
-        return $this->hasMany(Task::class);
+        return $this->hasMany(Nota::class, 'empresa_id');
     }
 
     public function subscription()
@@ -121,11 +121,11 @@ class Company extends Model
         return $count < $max;
     }
 
-    public function canUseTasks(): bool
+    public function canUseNotas(): bool
     {
         $plan = $this->subscription?->plan;
         if (!$plan) return false;
-        return (bool) $plan->has_tasks;
+        return (bool) ($plan->has_notes ?? false);
     }
 
     public function canCreateEmpresa(): bool

@@ -266,6 +266,28 @@
 
     {{-- Step 4: Líneas --}}
     @if($step === 4)
+
+    {{-- Nota panel (only if nota is attached) --}}
+    @if($notaId && $notaTitulo)
+    <div class="mb-4 bg-amber-50 border border-amber-200 rounded-xl overflow-hidden">
+        <div class="flex items-center justify-between px-4 py-3 border-b border-amber-200">
+            <div class="flex items-center gap-2">
+                <svg class="w-4 h-4 text-amber-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+                <span class="text-sm font-semibold text-amber-800">Nota: {{ $notaTitulo }}</span>
+            </div>
+            <button type="button" wire:click="toggleNotaPanel"
+                    class="text-xs text-amber-700 hover:text-amber-900 font-medium underline">
+                {{ $showNotaPanel ? 'Ocultar' : 'Mostrar' }}
+            </button>
+        </div>
+        @if($showNotaPanel && $notaContenido)
+        <div class="px-4 py-3">
+            <p class="text-sm text-amber-900 whitespace-pre-wrap">{{ $notaContenido }}</p>
+        </div>
+        @endif
+    </div>
+    @endif
+
     @include('presupuestos::livewire.partials.lineas-section')
     <div class="mt-4 flex items-center gap-3">
         <button type="button" wire:click="prevStep"

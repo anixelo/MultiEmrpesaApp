@@ -76,6 +76,13 @@
                 <svg class="w-4 h-4 text-violet-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
                 Nuevo Presupuesto
             </a>
+            @if($company->canUseNotas())
+            <a href="{{ route('admin.notas.create') }}"
+               class="inline-flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-xl text-sm font-medium text-gray-700 hover:bg-gray-50 transition shadow-sm">
+                <svg class="w-4 h-4 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+                Nueva Nota
+            </a>
+            @endif
         </div>
 
         {{-- Stats --}}
@@ -102,17 +109,17 @@
             @endforeach
         </div>
 
-        {{-- Task stats (only if plan has tasks enabled) --}}
-        @if($company->canUseTasks())
+        {{-- Nota stats (only if plan has notes enabled) --}}
+        @if($company->canUseNotas())
         <div class="grid grid-cols-2 lg:grid-cols-3 gap-4">
             @php
-            $taskCards = [
-                ['label'=>'Tareas totales','value'=>$stats['total_tasks'] ?? 0,'color'=>'indigo','icon'=>'M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2'],
-                ['label'=>'Pendientes','value'=>$stats['pending_tasks'] ?? 0,'color'=>'amber','icon'=>'M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z'],
-                ['label'=>'Completadas','value'=>$stats['completed_tasks'] ?? 0,'color'=>'emerald','icon'=>'M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z'],
+            $notaCards = [
+                ['label'=>'Notas totales','value'=>$stats['total_notas'] ?? 0,'color'=>'amber','icon'=>'M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z'],
+                ['label'=>'Con presupuesto','value'=>$stats['notas_con_presupuesto'] ?? 0,'color'=>'emerald','icon'=>'M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z'],
+                ['label'=>'Sin presupuesto','value'=>$stats['notas_sin_presupuesto'] ?? 0,'color'=>'orange','icon'=>'M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z'],
             ];
             @endphp
-            @foreach($taskCards as $card)
+            @foreach($notaCards as $card)
             <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 flex items-center gap-4">
                 <div class="p-3 rounded-xl bg-{{ $card['color'] }}-50">
                     <svg class="w-6 h-6 text-{{ $card['color'] }}-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
@@ -128,32 +135,8 @@
         </div>
         @endif
 
-        {{-- Tasks by status --}}
+        {{-- Charts and recent items --}}
         <div class="grid grid-cols-1 xl:grid-cols-3 gap-6">
-            @if($company->canUseTasks())
-            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-                <h2 class="font-semibold text-gray-900 mb-4">Tareas por estado</h2>
-                @php
-                $statusColors = ['pendiente'=>'yellow','en_progreso'=>'blue','completada'=>'green','cancelada'=>'red'];
-                $statusLabels = ['pendiente'=>'Pendiente','en_progreso'=>'En progreso','completada'=>'Completada','cancelada'=>'Cancelada'];
-                $total = $tasksByStatus->sum() ?: 1;
-                @endphp
-                <div class="space-y-3">
-                    @foreach($statusColors as $status => $color)
-                    @php $count = $tasksByStatus[$status] ?? 0; $pct = round(($count/$total)*100); @endphp
-                    <div>
-                        <div class="flex justify-between text-xs mb-1">
-                            <span class="text-gray-600">{{ $statusLabels[$status] }}</span>
-                            <span class="font-medium text-gray-800">{{ $count }}</span>
-                        </div>
-                        <div class="w-full bg-gray-100 rounded-full h-2">
-                            <div class="bg-{{ $color }}-500 h-2 rounded-full transition-all" style="width: {{ $pct }}%"></div>
-                        </div>
-                    </div>
-                    @endforeach
-                </div>
-            </div>
-            @endif
 
             <div class="col-span-3  bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
                 <h2 class="font-semibold text-gray-900 mb-4">Presupuestos por estado</h2>
@@ -248,6 +231,64 @@
                         <a href="{{ route('admin.presupuestos.show', $p->id) }}" class="text-xs text-indigo-600 font-medium">Ver</a>
                         <a href="{{ route('admin.presupuestos.pdf', $p->id) }}" class="text-xs text-red-600 font-medium">PDF</a>
                     </div>
+                </div>
+                @endforeach
+            </div>
+        </div>
+        @endif
+
+        {{-- Recent notas --}}
+        @if($company->canUseNotas() && isset($recentNotas) && $recentNotas->isNotEmpty())
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+            <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
+                <h2 class="font-semibold text-gray-900">Últimas notas</h2>
+                <a href="{{ route('admin.notas.index') }}" class="text-xs text-indigo-600 hover:underline">Ver todas</a>
+            </div>
+            {{-- Desktop table --}}
+            <div class="hidden sm:block overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-100">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-5 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">Título</th>
+                            <th class="px-5 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">Cliente</th>
+                            <th class="px-5 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">Presupuesto</th>
+                            <th class="px-5 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">Fecha</th>
+                            <th class="px-5 py-3 text-right text-xs font-medium uppercase tracking-wider text-gray-500">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-50 bg-white">
+                        @foreach($recentNotas as $n)
+                        <tr>
+                            <td class="px-5 py-3 text-sm font-medium text-gray-900 whitespace-nowrap">{{ $n->titulo }}</td>
+                            <td class="px-5 py-3 text-sm text-gray-600 whitespace-nowrap">{{ $n->cliente?->nombre ?? '—' }}</td>
+                            <td class="px-5 py-3 whitespace-nowrap">
+                                @if($n->presupuesto_id)
+                                    <span class="inline-flex px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-700">Con presupuesto</span>
+                                @else
+                                    <span class="inline-flex px-2 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-500">Sin presupuesto</span>
+                                @endif
+                            </td>
+                            <td class="px-5 py-3 text-sm text-gray-500 whitespace-nowrap">{{ $n->created_at->format('d/m/Y') }}</td>
+                            <td class="px-5 py-3 text-right whitespace-nowrap">
+                                <div class="flex items-center justify-end gap-2">
+                                    <a href="{{ route('admin.notas.show', $n->id) }}" class="text-xs text-indigo-600 hover:text-indigo-900 font-medium">Ver</a>
+                                    <a href="{{ route('admin.notas.edit', $n->id) }}" class="text-xs text-yellow-600 hover:text-yellow-900 font-medium">Editar</a>
+                                </div>
+                            </td>
+                        </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+            {{-- Mobile list --}}
+            <div class="sm:hidden divide-y divide-gray-50">
+                @foreach($recentNotas as $n)
+                <div class="px-5 py-4 flex items-center justify-between gap-3">
+                    <div class="flex-1 min-w-0">
+                        <p class="text-sm font-semibold text-gray-900 truncate">{{ $n->titulo }}</p>
+                        <p class="text-xs text-gray-500 mt-0.5">{{ $n->cliente?->nombre ?? '—' }} · {{ $n->created_at->format('d/m/Y') }}</p>
+                    </div>
+                    <a href="{{ route('admin.notas.show', $n->id) }}" class="text-xs text-indigo-600 font-medium shrink-0">Ver</a>
                 </div>
                 @endforeach
             </div>

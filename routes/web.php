@@ -14,7 +14,7 @@ use App\Http\Controllers\Admin\EmpresaController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\UserController as AdminUserController;
 use MultiempresaApp\Notifications\Http\Controllers\NotificationController;
-use MultiempresaApp\Tasks\Http\Controllers\Admin\TaskController as AdminTaskController;
+use MultiempresaApp\Notas\Http\Controllers\NotaController;
 use App\Http\Controllers\Worker\DashboardController as WorkerDashboardController;
 use MultiempresaApp\Incidents\Http\Controllers\Admin\IncidentController as AdminIncidentController;
 use MultiempresaApp\Incidents\Http\Controllers\SuperAdmin\IncidentController as SuperAdminIncidentController;
@@ -89,14 +89,13 @@ Route::middleware(['auth', 'two_factor'])->group(function () {
     // Worker routes
     Route::middleware(['role:trabajador|administrador|superadministrador'])->group(function () {
         Route::get('/worker/dashboard', [WorkerDashboardController::class, 'index'])->name('worker.dashboard');
-        Route::patch('/worker/tasks/{task}/status', [WorkerDashboardController::class, 'updateTaskStatus'])->name('worker.tasks.update-status');
 
         // Worker incidents
         Route::get('/worker/incidents', [WorkerIncidentController::class, 'index'])->name('worker.incidents.index');
         Route::get('/worker/incidents/create', [WorkerIncidentController::class, 'create'])->name('worker.incidents.create');
         Route::post('/worker/incidents', [WorkerIncidentController::class, 'store'])->name('worker.incidents.store');
 
-        // Clientes, Servicios, Presupuestos, Empresas - accessible by workers and admins
+        // Clientes, Servicios, Presupuestos, Empresas, Notas - accessible by workers and admins
         // Empresas
         Route::resource('admin/empresas', EmpresaController::class)->names('admin.empresas')->except(['show']);
 
@@ -116,6 +115,10 @@ Route::middleware(['auth', 'two_factor'])->group(function () {
         Route::post('admin/presupuestos/{id}/send-email', [PresupuestoController::class, 'sendEmail'])->name('admin.presupuestos.send-email');
         Route::get('admin/presupuestos-configuracion', [PresupuestoConfiguracionController::class, 'index'])->name('admin.presupuestos.configuracion');
         Route::post('admin/presupuestos-configuracion', [PresupuestoConfiguracionController::class, 'update'])->name('admin.presupuestos.configuracion.update');
+
+        // Notas
+        Route::resource('admin/notas', NotaController::class)->names('admin.notas');
+        Route::get('admin/notas/{id}/crear-presupuesto', [NotaController::class, 'crearPresupuesto'])->name('admin.notas.crear-presupuesto');
     });
 
     // Admin routes
@@ -129,9 +132,6 @@ Route::middleware(['auth', 'two_factor'])->group(function () {
         // Admin incidents
         Route::get('/admin/incidents', [AdminIncidentController::class, 'index'])->name('admin.incidents.index');
         Route::get('/admin/incidents/{incident}', [AdminIncidentController::class, 'show'])->name('admin.incidents.show');
-
-        // Admin tasks
-        Route::resource('admin/tasks', AdminTaskController::class)->names('admin.tasks')->except(['show']);
 
         // Admin users
         Route::resource('admin/users', AdminUserController::class)->names('admin.users')->except(['show']);

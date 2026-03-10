@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
-use MultiempresaApp\Tasks\Models\Task;
+use MultiempresaApp\Notas\Models\Nota;
 use MultiempresaApp\Presupuestos\Models\Presupuesto;
 use Illuminate\Http\Request;
 
@@ -18,17 +18,18 @@ class DashboardController extends Controller
             return view('admin.dashboard', [
                 'stats' => [],
                 'recentUsers' => collect(),
-                'tasksByStatus' => collect(),
+                'notasByCliente' => collect(),
                 'presupuestosByStatus' => collect(),
+                'recentNotas' => collect(),
                 'company' => null,
             ]);
         }
 
         $stats = [
             'total_workers'          => User::where('company_id', $company->id)->role('trabajador')->count(),
-            'total_tasks'            => Task::where('company_id', $company->id)->count(),
-            'pending_tasks'          => Task::where('company_id', $company->id)->where('status', 'pendiente')->count(),
-            'completed_tasks'        => Task::where('company_id', $company->id)->where('status', 'completada')->count(),
+            'total_notas'            => Nota::where('empresa_id', $company->id)->count(),
+            'notas_con_presupuesto'  => Nota::where('empresa_id', $company->id)->whereNotNull('presupuesto_id')->count(),
+            'notas_sin_presupuesto'  => Nota::where('empresa_id', $company->id)->whereNull('presupuesto_id')->count(),
             'total_presupuestos'     => Presupuesto::where('empresa_id', $company->id)->count(),
             'presupuestos_aceptados' => Presupuesto::where('empresa_id', $company->id)->where('estado', 'aceptado')->count(),
             'presupuestos_rechazados'=> Presupuesto::where('empresa_id', $company->id)->where('estado', 'rechazado')->count(),
@@ -39,12 +40,6 @@ class DashboardController extends Controller
             ->latest()
             ->take(5)
             ->get();
-
-        $tasksByStatus = Task::where('company_id', $company->id)
-            ->selectRaw('status, count(*) as count')
-            ->groupBy('status')
-            ->get()
-            ->pluck('count', 'status');
 
         $presupuestosByStatus = Presupuesto::where('empresa_id', $company->id)
             ->selectRaw('estado, count(*) as count')
@@ -58,6 +53,12 @@ class DashboardController extends Controller
             ->take(5)
             ->get();
 
-        return view('admin.dashboard', compact('stats', 'recentUsers', 'tasksByStatus', 'presupuestosByStatus', 'recentPresupuestos', 'company'));
+        $recentNotas = Nota::where('empresa_id', $company->id)
+            ->with(['cliente'])
+            ->latest()
+            ->take(5)
+            ->get();
+
+        return view('admin.dashboard', compact('stats', 'recentUsers', 'presupuestosByStatus', 'recentPresupuestos', 'recentNotas', 'company'));
     }
 }

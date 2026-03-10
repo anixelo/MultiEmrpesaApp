@@ -12,6 +12,10 @@ use MultiempresaApp\Presupuestos\Services\PresupuestoCalculator;
 class PresupuestoForm extends Component
 {
     public ?int $presupuestoId = null;
+    public ?int $notaId = null;
+    public string $notaTitulo = '';
+    public string $notaContenido = '';
+    public bool $showNotaPanel = true;
     public ?int $clienteId = null;
     public string $clienteNombre = '';
     public ?int $negocioId = null;
@@ -45,7 +49,7 @@ class PresupuestoForm extends Component
     // Wizard step (only used for create mode)
     public int $step = 1;
 
-    public function mount(?int $presupuestoId = null): void
+    public function mount(?int $presupuestoId = null, ?int $notaId = null): void
     {
         $empresaId = auth()->user()->company_id;
         $config    = PresupuestoConfiguracion::getOrCreateForEmpresa($empresaId);
@@ -67,6 +71,23 @@ class PresupuestoForm extends Component
         // Auto-select if only one empresa
         if (count($this->empresasDisponibles) === 1) {
             $this->negocioId = $this->empresasDisponibles[0]['id'];
+        }
+
+        // Pre-fill from nota if provided
+        if ($notaId) {
+            $nota = \MultiempresaApp\Notas\Models\Nota::with('cliente')
+                ->where('empresa_id', $empresaId)
+                ->find($notaId);
+
+            if ($nota) {
+                $this->notaId        = $nota->id;
+                $this->notaTitulo    = $nota->titulo;
+                $this->notaContenido = $nota->contenido ?? '';
+                $this->clienteId     = $nota->cliente_id;
+                $this->clienteNombre = $nota->cliente?->nombre ?? '';
+                // Skip to step 3 (datos generales) since client is pre-selected
+                $this->step = 3;
+            }
         }
 
         if ($presupuestoId) {
@@ -106,6 +127,11 @@ class PresupuestoForm extends Component
         if (empty($this->lineas)) {
             $this->addLinea();
         }
+    }
+
+    public function toggleNotaPanel(): void
+    {
+        $this->showNotaPanel = ! $this->showNotaPanel;
     }
 
     public function nextStep(): void
