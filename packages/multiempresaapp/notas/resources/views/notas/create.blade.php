@@ -59,17 +59,28 @@
                     selected: null,
                     selectedId: '',
                     showNew: false,
+                    showModal: false,
+                    modalSearch: '',
                     newNombre: '',
                     newEmail: '',
                     newTelefono: '',
                     saving: false,
                     clientes: @json($clientes),
                     get filtered() {
-                        if (!this.search.trim()) return this.clientes;
+                        if (!this.search.trim()) return [];
                         const q = this.search.toLowerCase();
                         return this.clientes.filter(c =>
                             c.nombre.toLowerCase().includes(q) ||
                             (c.email && c.email.toLowerCase().includes(q))
+                        );
+                    },
+                    get modalFiltered() {
+                        if (!this.modalSearch.trim()) return this.clientes;
+                        const q = this.modalSearch.toLowerCase();
+                        return this.clientes.filter(c =>
+                            c.nombre.toLowerCase().includes(q) ||
+                            (c.email && c.email.toLowerCase().includes(q)) ||
+                            (c.telefono && c.telefono.toLowerCase().includes(q))
                         );
                     },
                     select(c) {
@@ -77,11 +88,25 @@
                         this.selectedId = c.id;
                         this.search = c.nombre;
                         this.showNew = false;
+                        this.showModal = false;
                     },
                     clear() {
                         this.selected = null;
                         this.selectedId = '';
                         this.search = '';
+                    },
+                    openModal() {
+                        this.showModal = true;
+                        this.modalSearch = '';
+                        this.showNew = false;
+                    },
+                    closeModal() {
+                        this.showModal = false;
+                        this.modalSearch = '';
+                    },
+                    openInlineCreateForm() {
+                        this.showModal = false;
+                        this.showNew = true;
                     },
                     async saveNew() {
                         if (!this.newNombre.trim()) return;
@@ -125,21 +150,37 @@
 
                         <template x-if="!selected">
                             <div class="relative">
-                                <input type="text" x-model="search"
-                                       class="w-full border border-gray-300 rounded-xl px-3 py-2 text-sm focus:ring-indigo-500 focus:border-indigo-500"
-                                       placeholder="Buscar cliente por nombre o email...">
+                                <div class="flex gap-1">
+                                    <div class="relative flex-1">
+                                        <input type="text" x-model="search"
+                                               class="w-full border border-gray-300 rounded-xl px-3 py-2 text-sm focus:ring-indigo-500 focus:border-indigo-500"
+                                               placeholder="Buscar cliente por nombre o email...">
 
-                                <div x-show="search.trim().length > 0" class="absolute z-10 mt-1 w-full bg-white border border-gray-200 rounded-xl shadow-lg max-h-48 overflow-y-auto">
-                                    <template x-for="c in filtered" :key="c.id">
-                                        <button type="button" @click="select(c)"
-                                                class="w-full text-left px-4 py-2.5 text-sm hover:bg-indigo-50 transition">
-                                            <span class="font-medium text-gray-900" x-text="c.nombre"></span>
-                                            <span class="text-gray-400" x-show="c.email" x-text="' — ' + c.email"></span>
-                                        </button>
-                                    </template>
-                                    <template x-if="filtered.length === 0">
-                                        <p class="px-4 py-2.5 text-sm text-gray-400">No se encontraron clientes.</p>
-                                    </template>
+                                        <div x-show="search.trim().length > 0" class="absolute z-10 mt-1 w-full bg-white border border-gray-200 rounded-xl shadow-lg max-h-48 overflow-y-auto">
+                                            <template x-for="c in filtered" :key="c.id">
+                                                <button type="button" @click="select(c)"
+                                                        class="w-full text-left px-4 py-2.5 text-sm hover:bg-indigo-50 transition">
+                                                    <span class="font-medium text-gray-900" x-text="c.nombre"></span>
+                                                    <span class="text-gray-400" x-show="c.email" x-text="' — ' + c.email"></span>
+                                                </button>
+                                            </template>
+                                            <template x-if="search.trim().length > 0">
+                                                <div class="border-t border-gray-100">
+                                                    <button type="button" @click="openInlineCreateForm()"
+                                                            class="w-full px-4 py-2 text-left text-sm text-indigo-600 hover:bg-indigo-50">
+                                                        + Crear nuevo cliente
+                                                    </button>
+                                                </div>
+                                            </template>
+                                        </div>
+                                    </div>
+                                    <button type="button" @click="openModal()"
+                                            class="inline-flex items-center rounded-xl border border-gray-300 bg-white px-2.5 py-2 text-gray-500 hover:bg-gray-50 hover:text-indigo-600 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                            title="Buscar en lista">
+                                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 10h16M4 14h16M4 18h16"/>
+                                        </svg>
+                                    </button>
                                 </div>
                             </div>
                         </template>
@@ -156,17 +197,9 @@
                         </template>
                     </div>
 
-                    {{-- Create new client --}}
-                    <div>
-                        <button type="button" @click="showNew = !showNew"
-                                class="inline-flex items-center gap-1.5 text-sm text-indigo-600 hover:underline">
-                            <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/>
-                            </svg>
-                            Crear nuevo cliente
-                        </button>
-
-                        <div x-show="showNew" x-transition class="mt-3 rounded-xl border border-gray-200 bg-gray-50 p-4 space-y-3">
+                    {{-- Create new client inline --}}
+                    <div x-show="showNew" x-transition>
+                        <div class="rounded-xl border border-gray-200 bg-gray-50 p-4 space-y-3">
                             <p class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Nuevo cliente</p>
                             <input type="text" x-model="newNombre" placeholder="Nombre *"
                                    class="w-full border border-gray-300 rounded-xl px-3 py-2 text-sm focus:ring-indigo-500 focus:border-indigo-500">
@@ -186,6 +219,54 @@
                             </div>
                         </div>
                     </div>
+
+                    {{-- Search modal --}}
+                    <template x-if="showModal">
+                        <div class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50" @click.self="closeModal()">
+                            <div class="w-full max-w-lg rounded-lg bg-white shadow-xl">
+                                <div class="flex items-center justify-between px-6 py-4 border-b border-gray-200">
+                                    <h3 class="text-lg font-medium text-gray-900">Buscar cliente</h3>
+                                    <button type="button" @click="closeModal()" class="text-gray-400 hover:text-gray-600">
+                                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+                                    </button>
+                                </div>
+                                <div class="px-6 py-4">
+                                    <input type="text" x-model="modalSearch"
+                                           placeholder="Buscar por nombre, email o teléfono..."
+                                           class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                                </div>
+                                <div class="max-h-72 overflow-y-auto border-t border-gray-100">
+                                    <template x-if="modalFiltered.length > 0">
+                                        <ul class="divide-y divide-gray-100">
+                                            <template x-for="c in modalFiltered" :key="c.id">
+                                                <li>
+                                                    <button type="button" @click="select(c)"
+                                                            class="w-full px-6 py-3 text-left hover:bg-indigo-50 transition">
+                                                        <p class="text-sm font-medium text-gray-900" x-text="c.nombre"></p>
+                                                        <p class="text-xs text-gray-500 mt-0.5" x-text="[c.email, c.telefono].filter(Boolean).join(' · ')"></p>
+                                                    </button>
+                                                </li>
+                                            </template>
+                                        </ul>
+                                    </template>
+                                    <template x-if="modalFiltered.length === 0">
+                                        <div class="px-6 py-4 text-sm text-gray-400">No se encontraron clientes.</div>
+                                    </template>
+                                </div>
+                                <div class="px-6 py-4 border-t border-gray-200 flex items-center justify-between">
+                                    <button type="button" @click="openInlineCreateForm()"
+                                            class="inline-flex items-center gap-1.5 text-sm font-medium text-indigo-600 hover:text-indigo-700">
+                                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
+                                        Crear cliente
+                                    </button>
+                                    <button type="button" @click="closeModal()"
+                                            class="inline-flex items-center rounded-md bg-gray-100 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-200">
+                                        Cancelar
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </template>
 
                     {{-- Proceed to step 2 --}}
                     <form method="GET" action="{{ route('admin.notas.create') }}" class="pt-2 border-t border-gray-100">

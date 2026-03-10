@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 use Barryvdh\DomPDF\Facade\Pdf;
 use MultiempresaApp\Presupuestos\Models\Presupuesto;
+use MultiempresaApp\Presupuestos\Models\PresupuestoAudit;
 use MultiempresaApp\Presupuestos\Models\PresupuestoConfiguracion;
 use MultiempresaApp\Presupuestos\Models\PresupuestoLinea;
 use MultiempresaApp\Presupuestos\Services\PresupuestoCalculator;
@@ -20,6 +21,25 @@ class PresupuestoController extends Controller
     public function __construct(PresupuestoCalculator $calculator)
     {
         $this->calculator = $calculator;
+    }
+
+    protected function logAudit(Presupuesto $presupuesto, string $accion, ?string $descripcion = null, ?array $datos = null, ?int $userId = null): void
+    {
+        PresupuestoAudit::create([
+            'presupuesto_id' => $presupuesto->id,
+            'user_id'        => $userId ?? auth()->id(),
+            'accion'         => $accion,
+            'descripcion'    => $descripcion,
+            'datos'          => $datos,
+        ]);
+    }
+
+    protected function normalizeFieldValue(mixed $value): string
+    {
+        if ($value instanceof \Illuminate\Support\Carbon) {
+            return $value->toDateString();
+        }
+        return (string) ($value ?? '');
     }
 
     public function index(Request $request)
@@ -125,13 +145,15 @@ class PresupuestoController extends Controller
 
         $this->calculator->calcularTotales($presupuesto);
 
+        $this->logAudit($presupuesto, 'creado', 'Presupuesto creado con estado Borrador.');
+
         return redirect()->route('admin.presupuestos.show', $presupuesto->id)
             ->with('success', 'Presupuesto creado correctamente.');
     }
 
     public function show($id)
     {
-        $presupuesto = Presupuesto::with(['cliente', 'lineas.servicio'])->findOrFail($id);
+        $presupuesto = Presupuesto::with(['cliente', 'lineas.servicio', 'audits.usuario'])->findOrFail($id);
 
         if ($presupuesto->empresa_id !== auth()->user()->company_id) {
             abort(403);
@@ -188,6 +210,18 @@ class PresupuestoController extends Controller
             'lineas.*.descuento_valor'    => 'nullable|numeric|min:0',
         ]);
 
+        $cambios = [];
+        $camposAudit = ['cliente_id', 'negocio_id', 'fecha', 'validez_hasta', 'forma_pago', 'observaciones', 'notas'];
+        foreach ($camposAudit as $campo) {
+            $anterior = $this->normalizeFieldValue($presupuesto->$campo);
+            $nuevo    = $this->normalizeFieldValue($validated[$campo] ?? null);
+            if ($anterior !== $nuevo) {
+                $cambios[$campo] = ['antes' => $anterior ?: null, 'despues' => $nuevo ?: null];
+            }
+        }
+
+        $totalAntes = (float) $presupuesto->total;
+
         $presupuesto->update([
             'cliente_id'    => $validated['cliente_id'],
             'negocio_id'    => $validated['negocio_id'] ?? null,
@@ -220,6 +254,13 @@ class PresupuestoController extends Controller
 
         $this->calculator->calcularTotales($presupuesto);
 
+        $presupuesto->refresh();
+        if (round((float) $presupuesto->total, 2) !== round($totalAntes, 2)) {
+            $cambios['total'] = ['antes' => number_format($totalAntes, 2, '.', ''), 'despues' => number_format((float) $presupuesto->total, 2, '.', '')];
+        }
+
+        $this->logAudit($presupuesto, 'editado', 'Presupuesto editado.', $cambios ?: null);
+
         return redirect()->route('admin.presupuestos.index')
             ->with('success', 'Presupuesto actualizado correctamente.');
     }
@@ -251,6 +292,8 @@ class PresupuestoController extends Controller
         }
 
         $presupuesto->update(['estado' => 'enviado', 'enviado_en' => now()]);
+
+        $this->logAudit($presupuesto, 'enviado', 'Presupuesto marcado como enviado.');
 
         return redirect()->back()->with('success', 'Presupuesto marcado como enviado.');
     }
@@ -288,6 +331,9 @@ class PresupuestoController extends Controller
             $nuevaLinea->save();
         }
 
+        $this->logAudit($original, 'duplicado', "Presupuesto duplicado como {$nuevo->numero}.");
+        $this->logAudit($nuevo, 'creado', "Creado como duplicado del presupuesto {$original->numero}.");
+
         return redirect()->route('admin.presupuestos.edit', $nuevo->id)
             ->with('success', 'Presupuesto duplicado correctamente.');
     }
@@ -303,6 +349,7 @@ class PresupuestoController extends Controller
                 'visto_en' => now(),
                 'estado'   => $presupuesto->estado === 'enviado' ? 'visto' : $presupuesto->estado,
             ]);
+            $this->logAudit($presupuesto, 'visto', 'Presupuesto visto por el cliente.', null, null);
         }
 
         return view('presupuestos::presupuestos.public', compact('presupuesto'));
@@ -323,6 +370,7 @@ class PresupuestoController extends Controller
     {
         $presupuesto = Presupuesto::where('token_publico', $token)->firstOrFail();
         $presupuesto->update(['estado' => 'aceptado', 'aceptado_en' => now()]);
+        $this->logAudit($presupuesto, 'aceptado', 'Presupuesto aceptado por el cliente.', null, null);
 
         return redirect()->route('presupuestos.public', $token)
             ->with('success', 'Has aceptado el presupuesto.');
@@ -332,6 +380,7 @@ class PresupuestoController extends Controller
     {
         $presupuesto = Presupuesto::where('token_publico', $token)->firstOrFail();
         $presupuesto->update(['estado' => 'rechazado', 'rechazado_en' => now()]);
+        $this->logAudit($presupuesto, 'rechazado', 'Presupuesto rechazado por el cliente.', null, null);
 
         return redirect()->route('presupuestos.public', $token)
             ->with('info', 'Has rechazado el presupuesto.');
@@ -373,6 +422,8 @@ class PresupuestoController extends Controller
                         ->subject("Presupuesto {$presupuesto->numero} - {$empresaNombre}");
             }
         );
+
+        $this->logAudit($presupuesto, 'email_enviado', "Email enviado a {$presupuesto->cliente->email}.");
 
         return redirect()->back()->with('success', 'Email enviado a ' . $presupuesto->cliente->email);
     }
