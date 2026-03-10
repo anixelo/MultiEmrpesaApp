@@ -400,6 +400,108 @@
                 @endif
             </div>
 
+            {{-- Historial de auditoría --}}
+            <div class="overflow-hidden bg-white shadow sm:rounded-lg">
+                <div class="px-6 py-4 border-b border-gray-200">
+                    <h3 class="text-sm font-medium text-gray-900">Historial de cambios</h3>
+                </div>
+
+                @php
+                    $auditColors = [
+                        'gray'   => ['bg' => 'bg-gray-100', 'text' => 'text-gray-700'],
+                        'yellow' => ['bg' => 'bg-yellow-100', 'text' => 'text-yellow-700'],
+                        'blue'   => ['bg' => 'bg-blue-100', 'text' => 'text-blue-700'],
+                        'purple' => ['bg' => 'bg-purple-100', 'text' => 'text-purple-700'],
+                        'green'  => ['bg' => 'bg-green-100', 'text' => 'text-green-700'],
+                        'red'    => ['bg' => 'bg-red-100', 'text' => 'text-red-700'],
+                    ];
+                @endphp
+
+                @if ($presupuesto->audits->isEmpty())
+                    <div class="px-6 py-8 text-center text-sm text-gray-400">No hay registros de auditoría.</div>
+                @else
+                    {{-- Desktop table --}}
+                    <div class="hidden md:block overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">Fecha y hora</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">Usuario</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">Acción</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">Descripción / Cambios</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-100 bg-white">
+                                @foreach ($presupuesto->audits as $audit)
+                                @php
+                                    $colors = $auditColors[$audit->accion_color] ?? $auditColors['gray'];
+                                @endphp
+                                <tr>
+                                    <td class="whitespace-nowrap px-6 py-3 text-sm text-gray-600">
+                                        {{ $audit->created_at->format('d/m/Y H:i') }}
+                                    </td>
+                                    <td class="px-6 py-3 text-sm text-gray-700">
+                                        {{ $audit->usuario?->name ?? '—' }}
+                                    </td>
+                                    <td class="px-6 py-3">
+                                        <span class="inline-flex rounded-full px-2.5 py-0.5 text-xs font-semibold {{ $colors['bg'] }} {{ $colors['text'] }}">
+                                            {{ $audit->accion_label }}
+                                        </span>
+                                    </td>
+                                    <td class="px-6 py-3 text-sm text-gray-600">
+                                        {{ $audit->descripcion ?? '—' }}
+                                        @if ($audit->datos)
+                                            <ul class="mt-1 space-y-0.5 text-xs text-gray-500">
+                                                @foreach ($audit->datos as $campo => $vals)
+                                                    <li>
+                                                        <span class="font-medium">{{ $campo }}:</span>
+                                                        <span class="line-through text-red-400">{{ $vals['antes'] ?? '—' }}</span>
+                                                        → <span class="text-green-600">{{ $vals['despues'] ?? '—' }}</span>
+                                                    </li>
+                                                @endforeach
+                                            </ul>
+                                        @endif
+                                    </td>
+                                </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+
+                    {{-- Mobile cards (bocadillos) --}}
+                    <div class="md:hidden divide-y divide-gray-100">
+                        @foreach ($presupuesto->audits as $audit)
+                        @php
+                            $colors = $auditColors[$audit->accion_color] ?? $auditColors['gray'];
+                        @endphp
+                        <div class="p-4 space-y-1.5">
+                            <div class="flex items-center justify-between gap-2">
+                                <span class="inline-flex rounded-full px-2.5 py-0.5 text-xs font-semibold {{ $colors['bg'] }} {{ $colors['text'] }}">
+                                    {{ $audit->accion_label }}
+                                </span>
+                                <span class="text-xs text-gray-400">{{ $audit->created_at->format('d/m/Y H:i') }}</span>
+                            </div>
+                            <p class="text-xs text-gray-500">
+                                <span class="font-medium text-gray-700">{{ $audit->usuario?->name ?? 'Sistema' }}</span>
+                                @if ($audit->descripcion) — {{ $audit->descripcion }} @endif
+                            </p>
+                            @if ($audit->datos)
+                                <ul class="space-y-0.5 text-xs text-gray-500">
+                                    @foreach ($audit->datos as $campo => $vals)
+                                        <li>
+                                            <span class="font-medium">{{ $campo }}:</span>
+                                            <span class="line-through text-red-400">{{ $vals['antes'] ?? '—' }}</span>
+                                            → <span class="text-green-600">{{ $vals['despues'] ?? '—' }}</span>
+                                        </li>
+                                    @endforeach
+                                </ul>
+                            @endif
+                        </div>
+                        @endforeach
+                    </div>
+                @endif
+            </div>
+
         </div>
     </div>
 </x-app-layout>
