@@ -3,6 +3,7 @@
 use App\Http\Controllers\Auth\GoogleController;
 use App\Http\Controllers\Auth\TwoFactorController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\PageController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SuperAdmin\CompanyController;
 use App\Http\Controllers\SuperAdmin\UserController as SuperAdminUserController;
@@ -31,6 +32,12 @@ Route::get('/', function () {
     return auth()->check() ? redirect()->route('dashboard') : view('welcome');
 });
 
+// Static pages
+Route::get('/privacidad', [PageController::class, 'privacy'])->name('pages.privacy');
+Route::get('/terminos', [PageController::class, 'terms'])->name('pages.terms');
+Route::get('/contacto', [PageController::class, 'contact'])->name('pages.contact');
+Route::post('/contacto', [PageController::class, 'contactSend'])->name('pages.contact.send');
+
 // Public news detail
 Route::get('/noticias/{slug}', [NoticiaController::class, 'show'])->name('noticias.show');
 Route::get('/noticias/tag/{slug}', [NoticiaController::class, 'byTag'])->name('noticias.tag');
@@ -47,6 +54,7 @@ Route::middleware(['auth'])->group(function () {
 
 // Public presupuesto routes (no auth required)
 Route::get('/presupuestos/p/{token}', [PresupuestoController::class, 'public'])->name('presupuestos.public');
+Route::get('/presupuestos/p/{token}/pdf', [PresupuestoController::class, 'downloadPublicPdf'])->name('presupuestos.public.pdf');
 Route::post('/presupuestos/p/{token}/aceptar', [PresupuestoController::class, 'aceptar'])->name('presupuestos.aceptar');
 Route::post('/presupuestos/p/{token}/rechazar', [PresupuestoController::class, 'rechazar'])->name('presupuestos.rechazar');
 

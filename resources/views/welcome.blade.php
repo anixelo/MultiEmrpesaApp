@@ -809,6 +809,11 @@
                 <a href="#features" class="hover:text-indigo-600 transition">Funcionalidades</a>
                 <a href="#pricing" class="hover:text-indigo-600 transition">Precios</a>
                 <a href="#faq" class="hover:text-indigo-600 transition">Preguntas frecuentes</a>
+                <span class="text-gray-300 hidden sm:inline">|</span>
+                <a href="{{ route('pages.privacy') }}" class="hover:text-indigo-600 transition">Política de Privacidad</a>
+                <a href="{{ route('pages.terms') }}" class="hover:text-indigo-600 transition">Términos y Condiciones</a>
+                <a href="{{ route('pages.contact') }}" class="hover:text-indigo-600 transition">Contacto</a>
+                <span class="text-gray-300 hidden sm:inline">|</span>
                 <a href="{{ route('login') }}" class="hover:text-indigo-600 transition">Iniciar sesión</a>
                 <a href="{{ route('register') }}" class="hover:text-indigo-600 transition">Registrarse</a>
             </nav>

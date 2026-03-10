@@ -137,9 +137,9 @@
                                         <a href="{{ route('admin.presupuestos.edit', $presupuesto->id) }}"
                                            class="text-yellow-600 hover:text-yellow-900">Editar</a>
                                         {{-- Three-dot actions menu --}}
-                                        <div x-data="{ open: false }" class="relative">
-                                            <button @click="open = !open" @click.outside="open = false"
-                                                    type="button"
+                                        <div x-data="{ open: false, dy: 0, dx: 0 }" @click.outside="open = false" @scroll.window="open = false" class="relative">
+                                            <button type="button"
+                                                    @click="const r = $el.getBoundingClientRect(); const mh = 260; dy = (r.bottom + mh > window.innerHeight) ? r.top - mh : r.bottom; dx = r.right - 208; open = !open"
                                                     class="p-1 rounded text-gray-500 hover:text-gray-700 hover:bg-gray-100 focus:outline-none"
                                                     title="Más acciones">
                                                 <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
@@ -147,7 +147,8 @@
                                                 </svg>
                                             </button>
                                             <div x-show="open" x-transition
-                                                 class="absolute right-0 mt-1 w-52 bg-white rounded-xl shadow-lg border border-gray-200 py-1 z-50">
+                                                 :style="'position:fixed;top:' + dy + 'px;left:' + dx + 'px'"
+                                                 class="w-52 bg-white rounded-xl shadow-lg border border-gray-200 py-1 z-[9999]">
                                                 {{-- Descargar PDF --}}
                                                 <a href="{{ route('admin.presupuestos.pdf', $presupuesto->id) }}"
                                                    class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
@@ -254,16 +255,17 @@
                             <a href="{{ route('admin.presupuestos.edit', $presupuesto->id) }}"
                                class="inline-flex items-center px-3 py-1.5 text-xs font-medium text-yellow-700 bg-yellow-50 rounded-lg hover:bg-yellow-100 transition">Editar</a>
                             {{-- Three-dot actions --}}
-                            <div x-data="{ open: false }" class="relative ml-auto">
-                                <button @click="open = !open" @click.outside="open = false"
-                                        type="button"
+                            <div x-data="{ open: false, dy: 0, dx: 0 }" @click.outside="open = false" @scroll.window="open = false" class="relative ml-auto">
+                                <button type="button"
+                                        @click="const r = $el.getBoundingClientRect(); const mh = 260; dy = (r.bottom + mh > window.innerHeight) ? r.top - mh : r.bottom; dx = r.right - 208; open = !open"
                                         class="p-1.5 rounded-lg text-gray-500 hover:bg-gray-100 focus:outline-none">
                                     <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
                                         <circle cx="12" cy="5" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="12" cy="19" r="1.5"/>
                                     </svg>
                                 </button>
                                 <div x-show="open" x-transition
-                                     class="absolute right-0 mt-1 w-52 bg-white rounded-xl shadow-lg border border-gray-200 py-1 z-50">
+                                     :style="'position:fixed;top:' + dy + 'px;left:' + dx + 'px'"
+                                     class="w-52 bg-white rounded-xl shadow-lg border border-gray-200 py-1 z-[9999]">
                                     <a href="{{ route('admin.presupuestos.pdf', $presupuesto->id) }}"
                                        class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
                                         <svg class="w-4 h-4 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>

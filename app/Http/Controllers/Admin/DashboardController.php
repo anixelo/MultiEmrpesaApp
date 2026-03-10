@@ -52,6 +52,12 @@ class DashboardController extends Controller
             ->get()
             ->pluck('count', 'estado');
 
-        return view('admin.dashboard', compact('stats', 'recentUsers', 'tasksByStatus', 'presupuestosByStatus', 'company'));
+        $recentPresupuestos = Presupuesto::where('empresa_id', $company->id)
+            ->with(['cliente', 'negocio'])
+            ->latest()
+            ->take(5)
+            ->get();
+
+        return view('admin.dashboard', compact('stats', 'recentUsers', 'tasksByStatus', 'presupuestosByStatus', 'recentPresupuestos', 'company'));
     }
 }
