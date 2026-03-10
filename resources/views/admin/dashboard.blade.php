@@ -334,6 +334,13 @@
                     </article>
                 @endif
 
+
+                    <div class="flex items-center justify-between">
+                        <h2 class="text-base font-semibold text-gray-900">Notas</h2>
+                        
+                    </div>
+
+
                 @if($canUseNotas)
                     <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
                         @foreach($notaCards as $card)

@@ -54,7 +54,11 @@
 
                 @if($step === 1)
                 {{-- STEP 1: Select Client --}}
-                <div x-data="{
+                <div x-data="clienteSelector()" class="space-y-5">
+
+<script>
+    function clienteSelector() {
+        return {
                     search: '',
                     selected: null,
                     selectedId: '',
@@ -140,7 +144,9 @@
                             this.saving = false;
                         }
                     }
-                }" class="space-y-5">
+                }
+}
+                </script>
 
                     {{-- Client search --}}
                     <div>
