@@ -101,7 +101,7 @@ class PresupuestoController extends Controller
             'observaciones'               => 'nullable|string',
             'notas'                       => 'nullable|string',
             'lineas'                      => 'required|array|min:1',
-            'lineas.*.concepto'           => 'required|string|max:255',
+            'lineas.*.concepto'           => 'nullable|string|max:255',
             'lineas.*.cantidad'           => 'required|numeric|min:0',
             'lineas.*.precio_unitario'    => 'required|numeric|min:0',
             'lineas.*.iva_tipo'           => 'nullable|numeric',
@@ -126,6 +126,11 @@ class PresupuestoController extends Controller
         ]);
 
         foreach ($validated['lineas'] as $i => $lineaData) {
+
+            if (empty(trim($lineaData['concepto'] ?? ''))) {
+                continue;
+            }
+
             $calculated = $this->calculator->calcularLinea($lineaData, (float) $config->iva_defecto);
             PresupuestoLinea::create([
                 'presupuesto_id'  => $presupuesto->id,

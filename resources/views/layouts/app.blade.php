@@ -398,13 +398,45 @@ document.addEventListener('DOMContentLoaded', () => {
 @endif
 <script>
 if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/sw.js')
-            .catch(() => {});
+
+    window.addEventListener('load', async () => {
+
+        try {
+
+            const registration = await navigator.serviceWorker.register('/sw.js');
+
+            // Forzar revisión de actualizaciones
+            registration.update();
+
+            // Si hay un nuevo service worker esperando
+            if (registration.waiting) {
+                registration.waiting.postMessage({ type: 'SKIP_WAITING' });
+            }
+
+            // Si se instala uno nuevo
+            registration.addEventListener('updatefound', () => {
+
+                const newWorker = registration.installing;
+
+                newWorker.addEventListener('statechange', () => {
+
+                    if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                        // Recargar página para usar el nuevo SW
+                        window.location.reload();
+                    }
+
+                });
+
+            });
+
+        } catch (e) {
+            console.log('Service worker error', e);
+        }
+
     });
+
 }
 </script>
-
 
 
 

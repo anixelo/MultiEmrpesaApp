@@ -171,7 +171,7 @@
                     </a>
                 @else
                     <a href="{{ route('login') }}" class="text-sm text-gray-600 hover:text-indigo-600 transition">Iniciar sesión</a>
-                    <a href="{{ route('register') }}" class="bg-indigo-600 text-white text-sm px-4 py-2 rounded-lg hover:bg-indigo-700 transition shadow-sm">
+                    <a href="{{ route('register') }}" class="hidden sm:inline-block bg-indigo-600 text-white text-sm px-4 py-2 rounded-lg hover:bg-indigo-700 transition shadow-sm">
                         Registrarse
                     </a>
                 @endauth
@@ -182,7 +182,7 @@
             @else
                 <div class="md:hidden flex items-center gap-2">
                     <a href="{{ route('login') }}" class="text-sm text-gray-700 px-3 py-2 rounded-lg border border-gray-200">Entrar</a>
-                    <a href="{{ route('register') }}" class="bg-indigo-600 text-white text-sm px-4 py-2 rounded-lg">Registro</a>
+                    <a href="{{ route('register') }}" class="hidden sm:inline-block bg-indigo-600 text-white text-sm px-4 py-2 rounded-lg">Registro</a>
                 </div>
             @endauth
         </div>

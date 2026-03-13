@@ -2,9 +2,19 @@
 
 
 
+<x-slot name="header">
+    @php
+        $colorMap = [
+            'gray'   => 'bg-slate-100 text-slate-700',
+            'blue'   => 'bg-blue-100 text-blue-700',
+            'purple' => 'bg-violet-100 text-violet-700',
+            'green'  => 'bg-emerald-100 text-emerald-700',
+            'red'    => 'bg-rose-100 text-rose-700',
+        ];
+        $badgeClass = $colorMap[$presupuesto->estado_color] ?? 'bg-slate-100 text-slate-700';
+    @endphp
 
-    
-    <x-slot name="header">
+    <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div class="flex items-start gap-3 sm:items-center">
             <a href="{{ route('admin.presupuestos.index') }}"
                class="mt-0.5 inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl border border-slate-200 bg-white text-slate-400 shadow-sm transition hover:bg-slate-50 hover:text-slate-600 sm:mt-0">
@@ -17,24 +27,14 @@
                 <h1 class="text-2xl font-bold text-slate-900">
                     Presupuesto {{ $presupuesto->numero }}
                 </h1>
-
-                @php
-                    $colorMap = [
-                        'gray'   => 'bg-slate-100 text-slate-700',
-                        'blue'   => 'bg-blue-100 text-blue-700',
-                        'purple' => 'bg-violet-100 text-violet-700',
-                        'green'  => 'bg-emerald-100 text-emerald-700',
-                        'red'    => 'bg-rose-100 text-rose-700',
-                    ];
-                    $badgeClass = $colorMap[$presupuesto->estado_color] ?? 'bg-slate-100 text-slate-700';
-                @endphp
-
-                <span class="inline-flex rounded-full px-3 py-1 text-sm font-semibold {{ $badgeClass }}">
-                    {{ $presupuesto->estado_label }}
-                </span>
             </div>
         </div>
-    </x-slot>
+
+        <span class="inline-flex w-fit rounded-full px-3 py-1 text-sm font-semibold {{ $badgeClass }}">
+            {{ $presupuesto->estado_label }}
+        </span>
+    </div>
+</x-slot>
 
 
 

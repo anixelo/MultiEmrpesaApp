@@ -233,73 +233,209 @@
         </div>
     </div>
 
-    {{-- Mobile menu --}}
-    <div x-show="mobileOpen" x-transition class="md:hidden border-t border-gray-200 bg-white px-4 py-3 space-y-1">
-        @auth
-            @if(auth()->user()->isWorker())
-            <a href="{{ route('worker.dashboard') }}" class="block px-3 py-2 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50">Mis Tareas</a>
-            <div x-data="{ datosOpen: false }">
-                <button @click="datosOpen = !datosOpen" class="flex items-center justify-between w-full px-3 py-2 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50">
-                    Datos
-                    <svg class="w-3.5 h-3.5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
-                </button>
-                <div x-show="datosOpen" class="pl-4 space-y-1">
-                    <a href="{{ route('admin.clientes.index') }}" class="block px-3 py-2 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50">Clientes</a>
-                    <a href="{{ route('admin.servicios.index') }}" class="block px-3 py-2 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50">Conceptos</a>
-                    <a href="{{ route('admin.empresas.index') }}" class="block px-3 py-2 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50">Empresas</a>
+{{-- Mobile menu fullscreen --}}
+<div
+    x-show="mobileOpen"
+    x-transition:enter="transition ease-out duration-200"
+    x-transition:enter-start="opacity-0 translate-y-2"
+    x-transition:enter-end="opacity-100 translate-y-0"
+    x-transition:leave="transition ease-in duration-150"
+    x-transition:leave-start="opacity-100 translate-y-0"
+    x-transition:leave-end="opacity-0 translate-y-2"
+    class="fixed inset-0 z-50 md:hidden bg-slate-950/30 backdrop-blur-sm"
+>
+    <div class="flex h-full flex-col bg-white">
+        {{-- Header --}}
+        <div class="border-b border-slate-200 bg-white/95 px-4 py-4 backdrop-blur">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <div class="flex h-10 w-10 items-center justify-center rounded-2xl bg-indigo-50 ring-1 ring-indigo-100">
+                        <img src="/pwa-icons/icon-192x192.png" class="h-7 w-7" alt="Logo {{ config('app.name') }}">
+                    </div>
+
+                    <div>
+                        <p class="text-sm font-semibold text-slate-900">{{ config('app.name') }}</p>
+                        <p class="text-xs text-slate-500">Menú de navegación</p>
+                    </div>
                 </div>
-            </div>
-            <a href="{{ route('admin.presupuestos.index') }}" class="block px-3 py-2 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50">Presupuestos</a>
-            @endif
 
-            @if(auth()->user()->isAdmin())
-            <a href="{{ route('admin.dashboard') }}" class="block px-3 py-2 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50">Panel Admin</a>
-            
-            <a href="{{ route('admin.presupuestos.index') }}" class="block px-3 py-2 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50">Presupuestos</a>
-            @if(auth()->user()->company?->canUseNotas())
-            <a href="{{ route('admin.notas.index') }}" class="block px-3 py-2 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50">Notas</a>
-            @endif
-            <div x-data="{ datosOpen: false }">
-                <button @click="datosOpen = !datosOpen" class="flex items-center justify-between w-full px-3 py-2 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50">
-                    Datos
-                    <svg class="w-3.5 h-3.5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+                <button @click="mobileOpen = false"
+                        class="inline-flex h-10 w-10 items-center justify-center rounded-2xl border border-slate-200 bg-white text-slate-500 shadow-sm transition hover:bg-slate-50 hover:text-slate-700">
+                    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
                 </button>
-                <div x-show="datosOpen" class="pl-4 space-y-1">
-                    <a href="{{ route('admin.clientes.index') }}" class="block px-3 py-2 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50">Clientes</a>
-                    <a href="{{ route('admin.servicios.index') }}" class="block px-3 py-2 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50">Conceptos</a>
-                    <a href="{{ route('admin.empresas.index') }}" class="block px-3 py-2 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50">Empresas</a>
-                </div>
             </div>
-            <a href="{{ route('admin.users.index') }}" class="block px-3 py-2 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50">Usuarios</a>
-            @endif
 
-            @if(auth()->user()->isSuperAdmin())
-            <a href="{{ route('superadmin.dashboard') }}" class="block px-3 py-2 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50">Panel General</a>
-            <a href="{{ route('superadmin.companies.index') }}" class="block px-3 py-2 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50">Cuentas</a>
-            <a href="{{ route('superadmin.users.index') }}" class="block px-3 py-2 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50">Usuarios</a>
-            <a href="{{ route('superadmin.plans.index') }}" class="block px-3 py-2 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50">Planes</a>
-            <a href="{{ route('superadmin.noticias.index') }}" class="block px-3 py-2 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50">Noticias</a>
-            <a href="{{ route('superadmin.settings') }}" class="block px-3 py-2 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50">Configuración</a>
-            @endif
-
-            <div class="border-t border-gray-200 pt-2 mt-2">
-                <a href="{{ route('notifications.index') }}" class="block px-3 py-2 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50">
-                    Notificaciones
-                    @php $unreadMobile = auth()->user()->unreadNotifications->count(); @endphp
-                    @if($unreadMobile > 0)
-                    <span class="ml-1 inline-flex items-center justify-center px-1.5 py-0.5 text-xs font-bold text-white bg-red-500 rounded-full">{{ $unreadMobile }}</span>
+            @auth
+                <div class="mt-4 flex items-center gap-3 rounded-2xl border border-slate-200 bg-slate-50 px-3 py-3">
+                    @if(auth()->user()->avatar)
+                        <img src="{{ auth()->user()->avatar }}" class="h-10 w-10 rounded-full object-cover" alt="">
+                    @else
+                        <div class="flex h-10 w-10 items-center justify-center rounded-full bg-indigo-600 text-sm font-bold text-white">
+                            {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
+                        </div>
                     @endif
-                </a>
-                <a href="{{ route('profile.edit') }}" class="block px-3 py-2 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50">Mi Perfil</a>
-                <a href="{{ route('two-factor.setup') }}" class="block px-3 py-2 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50">Seguridad (2FA)</a>
-                @if(auth()->user()->isAdmin())
-                <a href="{{ route('admin.subscription') }}" class="block px-3 py-2 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50">Suscripción</a>
-                @endif
+
+                    <div class="min-w-0 flex-1">
+                        <p class="truncate text-sm font-semibold text-slate-900">{{ auth()->user()->name }}</p>
+                        <p class="truncate text-xs text-slate-500">{{ auth()->user()->email }}</p>
+                    </div>
+
+                    <span class="inline-flex items-center rounded-full px-2.5 py-1 text-[11px] font-semibold
+                        @if(auth()->user()->isSuperAdmin()) bg-purple-100 text-purple-700
+                        @elseif(auth()->user()->isAdmin()) bg-blue-100 text-blue-700
+                        @else bg-emerald-100 text-emerald-700 @endif">
+                        @if(auth()->user()->isSuperAdmin()) Superadmin
+                        @elseif(auth()->user()->isAdmin()) Admin
+                        @else Trabajador @endif
+                    </span>
+                </div>
+            @endauth
+        </div>
+
+        {{-- Content --}}
+        <div class="flex-1 overflow-y-auto px-4 py-4">
+            @auth
+                <div class="space-y-6">
+                    {{-- navegación principal --}}
+                    <section>
+                        <p class="mb-2 px-2 text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-400">
+                            Principal
+                        </p>
+
+                        <div class="space-y-1">
+                            @if(auth()->user()->isWorker())
+                                <a href="{{ route('worker.dashboard') }}"
+                                   class="flex items-center rounded-2xl px-4 py-3 text-sm font-medium text-slate-700 transition hover:bg-slate-50">
+                                    Mis tareas
+                                </a>
+
+                                <a href="{{ route('admin.presupuestos.index') }}"
+                                   class="flex items-center rounded-2xl px-4 py-3 text-sm font-medium text-slate-700 transition hover:bg-slate-50">
+                                    Presupuestos
+                                </a>
+
+                                <div x-data="{ datosOpen: false }" class="rounded-2xl border border-slate-200 bg-slate-50/70">
+                                    <button @click="datosOpen = !datosOpen"
+                                            class="flex w-full items-center justify-between px-4 py-3 text-sm font-medium text-slate-700">
+                                        <span>Datos</span>
+                                        <svg class="h-4 w-4 text-slate-400 transition" :class="{ 'rotate-180': datosOpen }" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/>
+                                        </svg>
+                                    </button>
+
+                                    <div x-show="datosOpen" x-transition class="space-y-1 px-2 pb-2">
+                                        <a href="{{ route('admin.clientes.index') }}" class="block rounded-xl px-3 py-2 text-sm text-slate-600 transition hover:bg-white hover:text-slate-900">Clientes</a>
+                                        <a href="{{ route('admin.servicios.index') }}" class="block rounded-xl px-3 py-2 text-sm text-slate-600 transition hover:bg-white hover:text-slate-900">Conceptos</a>
+                                        <a href="{{ route('admin.empresas.index') }}" class="block rounded-xl px-3 py-2 text-sm text-slate-600 transition hover:bg-white hover:text-slate-900">Empresas</a>
+                                    </div>
+                                </div>
+                            @endif
+
+                            @if(auth()->user()->isAdmin())
+                                <a href="{{ route('admin.dashboard') }}"
+                                   class="flex items-center rounded-2xl px-4 py-3 text-sm font-medium text-slate-700 transition hover:bg-slate-50">
+                                    Panel
+                                </a>
+
+                                <a href="{{ route('admin.presupuestos.index') }}"
+                                   class="flex items-center rounded-2xl px-4 py-3 text-sm font-medium text-slate-700 transition hover:bg-slate-50">
+                                    Presupuestos
+                                </a>
+
+                                @if(auth()->user()->company?->canUseNotas())
+                                    <a href="{{ route('admin.notas.index') }}"
+                                       class="flex items-center rounded-2xl px-4 py-3 text-sm font-medium text-slate-700 transition hover:bg-slate-50">
+                                        Notas
+                                    </a>
+                                @endif
+
+                                <div x-data="{ datosOpen: false }" class="rounded-2xl border border-slate-200 bg-slate-50/70">
+                                    <button @click="datosOpen = !datosOpen"
+                                            class="flex w-full items-center justify-between px-4 py-3 text-sm font-medium text-slate-700">
+                                        <span>Datos</span>
+                                        <svg class="h-4 w-4 text-slate-400 transition" :class="{ 'rotate-180': datosOpen }" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/>
+                                        </svg>
+                                    </button>
+
+                                    <div x-show="datosOpen" x-transition class="space-y-1 px-2 pb-2">
+                                        <a href="{{ route('admin.clientes.index') }}" class="block rounded-xl px-3 py-2 text-sm text-slate-600 transition hover:bg-white hover:text-slate-900">Clientes</a>
+                                        <a href="{{ route('admin.servicios.index') }}" class="block rounded-xl px-3 py-2 text-sm text-slate-600 transition hover:bg-white hover:text-slate-900">Conceptos</a>
+                                        <a href="{{ route('admin.empresas.index') }}" class="block rounded-xl px-3 py-2 text-sm text-slate-600 transition hover:bg-white hover:text-slate-900">Empresas</a>
+                                    </div>
+                                </div>
+
+                                <a href="{{ route('admin.users.index') }}"
+                                   class="flex items-center rounded-2xl px-4 py-3 text-sm font-medium text-slate-700 transition hover:bg-slate-50">
+                                    Usuarios
+                                </a>
+                            @endif
+
+                            @if(auth()->user()->isSuperAdmin())
+                                <a href="{{ route('superadmin.dashboard') }}" class="flex items-center rounded-2xl px-4 py-3 text-sm font-medium text-slate-700 transition hover:bg-slate-50">Panel general</a>
+                                <a href="{{ route('superadmin.companies.index') }}" class="flex items-center rounded-2xl px-4 py-3 text-sm font-medium text-slate-700 transition hover:bg-slate-50">Cuentas</a>
+                                <a href="{{ route('superadmin.users.index') }}" class="flex items-center rounded-2xl px-4 py-3 text-sm font-medium text-slate-700 transition hover:bg-slate-50">Usuarios</a>
+                                <a href="{{ route('superadmin.plans.index') }}" class="flex items-center rounded-2xl px-4 py-3 text-sm font-medium text-slate-700 transition hover:bg-slate-50">Planes</a>
+                                <a href="{{ route('superadmin.noticias.index') }}" class="flex items-center rounded-2xl px-4 py-3 text-sm font-medium text-slate-700 transition hover:bg-slate-50">Noticias</a>
+                                <a href="{{ route('superadmin.settings') }}" class="flex items-center rounded-2xl px-4 py-3 text-sm font-medium text-slate-700 transition hover:bg-slate-50">Configuración</a>
+                            @endif
+                        </div>
+                    </section>
+
+                    {{-- cuenta --}}
+                    <section>
+                        <p class="mb-2 px-2 text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-400">
+                            Cuenta
+                        </p>
+
+                        <div class="space-y-1">
+                            <a href="{{ route('profile.edit') }}"
+                               class="flex items-center rounded-2xl px-4 py-3 text-sm font-medium text-slate-700 transition hover:bg-slate-50">
+                                Mi perfil
+                            </a>
+
+                            <a href="{{ route('two-factor.setup') }}"
+                               class="flex items-center rounded-2xl px-4 py-3 text-sm font-medium text-slate-700 transition hover:bg-slate-50">
+                                Seguridad (2FA)
+                            </a>
+
+                            @if(auth()->user()->isAdmin())
+                                <a href="{{ route('admin.subscription') }}"
+                                   class="flex items-center rounded-2xl px-4 py-3 text-sm font-medium text-slate-700 transition hover:bg-slate-50">
+                                    Suscripción
+                                </a>
+                            @endif
+
+                            <a href="{{ route('notifications.index') }}"
+                               class="flex items-center justify-between rounded-2xl px-4 py-3 text-sm font-medium text-slate-700 transition hover:bg-slate-50">
+                                <span>Notificaciones</span>
+                                @php $unreadMobile = auth()->user()->unreadNotifications->count(); @endphp
+                                @if($unreadMobile > 0)
+                                    <span class="inline-flex min-w-5 items-center justify-center rounded-full bg-red-500 px-1.5 py-0.5 text-[11px] font-bold text-white">
+                                        {{ $unreadMobile > 9 ? '9+' : $unreadMobile }}
+                                    </span>
+                                @endif
+                            </a>
+                        </div>
+                    </section>
+                </div>
+            @endauth
+        </div>
+
+        {{-- footer --}}
+        @auth
+            <div class="border-t border-slate-200 bg-white px-4 py-4">
                 <form method="POST" action="{{ route('logout') }}">
                     @csrf
-                    <button type="submit" class="block w-full text-left px-3 py-2 rounded-lg text-sm font-medium text-red-600 hover:bg-red-50">Cerrar sesión</button>
+                    <button type="submit"
+                            class="inline-flex w-full items-center justify-center rounded-2xl bg-rose-50 px-4 py-3 text-sm font-semibold text-rose-600 transition hover:bg-rose-100">
+                        Cerrar sesión
+                    </button>
                 </form>
             </div>
         @endauth
     </div>
+</div>
 </nav>

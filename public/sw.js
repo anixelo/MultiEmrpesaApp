@@ -1,5 +1,5 @@
-const CACHE_NAME = 'mispresupuestos-v2';
-const STATIC_CACHE = 'mispresupuestos-static-v2';
+const CACHE_NAME = 'mispresupuestos-v4';
+const STATIC_CACHE = 'mispresupuestos-static-v4';
 
 const STATIC_ASSETS = [
     '/',
@@ -7,9 +7,6 @@ const STATIC_ASSETS = [
 ];
 
 const CACHEABLE_ROUTES = [
-    '/dashboard',
-    '/worker/dashboard',
-    '/admin/dashboard',
     '/worker/incidents',
 ];
 
@@ -52,31 +49,18 @@ self.addEventListener('fetch', (event) => {
         return;
     }
 
-    // For HTML pages: network first, cache fallback
-    if (request.headers.get('accept')?.includes('text/html')) {
-        event.respondWith(
-            fetch(request)
-                .then((response) => {
-                    if (response.ok) {
-                        const responseClone = response.clone();
-                        caches.open(CACHE_NAME).then((cache) => {
-                            cache.put(request, responseClone);
-                        });
-                    }
-                    return response;
-                })
-                .catch(() => {
-                    return caches.match(request).then((cached) => {
-                        if (cached) return cached;
-                        return caches.match('/offline') || new Response(
-                            '<html><body><h1>Sin conexión</h1><p>Comprueba tu conexión a internet.</p></body></html>',
-                            { headers: { 'Content-Type': 'text/html' } }
-                        );
-                    });
-                })
-        );
-        return;
-    }
+// For HTML pages: always go to network, fallback only to offline page
+if (request.headers.get('accept')?.includes('text/html')) {
+    event.respondWith(
+        fetch(request).catch(() => {
+            return caches.match('/offline') || new Response(
+                '<html><body><h1>Sin conexión</h1><p>Comprueba tu conexión a internet.</p></body></html>',
+                { headers: { 'Content-Type': 'text/html' } }
+            );
+        })
+    );
+    return;
+}
 
     // For static assets (CSS, JS, images): cache first
     if (

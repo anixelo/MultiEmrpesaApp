@@ -1,4 +1,28 @@
-<div class="relative" x-data="{ open: @entangle('showDropdown') }">
+<div
+    class="relative"
+    x-data="{
+        open: @entangle('showDropdown'),
+        top: 0,
+        left: 0,
+        width: 0,
+        updatePosition() {
+            const el = this.$refs.input;
+            if (!el) return;
+
+            const r = el.getBoundingClientRect();
+            this.top = r.bottom + 8;
+            this.left = r.left;
+            this.width = r.width;
+        }
+    }"
+    x-init="
+        $watch('open', value => {
+            if (value) updatePosition();
+        });
+        window.addEventListener('resize', () => { if (open) updatePosition() });
+        window.addEventListener('scroll', () => { if (open) updatePosition() }, true);
+    "
+>
     <label class="mb-1 block text-sm font-medium text-slate-700">Cliente</label>
 
     <input type="hidden" wire:model="selectedClienteId" name="cliente_id">
@@ -15,11 +39,18 @@
         </div>
     @else
         <div class="flex gap-2">
-            <input type="text"
-                   wire:model.live="search"
-                   placeholder="Buscar cliente..."
-                   autocomplete="off"
-                   class="block w-full rounded-2xl border-slate-300 px-4 py-2.5 text-sm shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+            <input
+                x-ref="input"
+                type="text"
+                wire:model.live="search"
+                wire:focus="$set('showDropdown', true)"
+                @focus="updatePosition()"
+                @input="updatePosition()"
+                placeholder="Buscar cliente..."
+                autocomplete="off"
+                class="block w-full rounded-2xl border-slate-300 px-4 py-2.5 text-sm shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+            >
+
             <button type="button"
                     wire:click="openSearchModal"
                     class="inline-flex items-center rounded-2xl border border-slate-300 bg-white px-3 py-2.5 text-slate-500 shadow-sm transition hover:bg-slate-50 hover:text-indigo-600 focus:outline-none focus:ring-2 focus:ring-indigo-500"
@@ -30,8 +61,13 @@
             </button>
         </div>
 
-        @if ($showDropdown)
-            <div class="absolute z-10 mt-2 w-full overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-xl">
+        <template x-teleport="body">
+            <div
+                x-show="open"
+                x-transition
+                :style="`position: fixed; top: ${top}px; left: ${left}px; width: ${width}px; z-index: 49;`"
+                class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-xl"
+            >
                 @if (count($clientes) > 0)
                     <ul class="max-h-60 overflow-auto py-1">
                         @foreach ($clientes as $cliente)
@@ -59,7 +95,7 @@
                     </button>
                 </div>
             </div>
-        @endif
+        </template>
     @endif
 
     <div class="mt-2">
