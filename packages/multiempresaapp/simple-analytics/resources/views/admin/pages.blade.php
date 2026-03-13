@@ -1,0 +1,47 @@
+<x-app-layout>
+    <x-slot name="header">
+        <div class="flex items-start justify-between gap-3 sm:items-center">
+            <div class="min-w-0 flex-1">
+                <h1 class="text-2xl font-bold text-slate-900">Analytics — Páginas</h1>
+                <p class="mt-1 text-sm text-slate-500">Páginas más visitadas de todos los tiempos</p>
+            </div>
+            <a href="{{ route('superadmin.analytics.index') }}"
+               class="inline-flex shrink-0 items-center rounded-2xl bg-white px-4 py-2.5 text-sm font-medium text-slate-700 shadow-sm ring-1 ring-slate-200 transition hover:bg-slate-50">
+                ← Dashboard
+            </a>
+        </div>
+    </x-slot>
+
+    <div class="py-6">
+        <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div class="rounded-2xl bg-white shadow-sm ring-1 ring-slate-200">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm">
+                        <thead>
+                            <tr class="border-b border-slate-100 text-left text-xs font-medium uppercase tracking-wider text-slate-500">
+                                <th class="px-6 py-4">#</th>
+                                <th class="px-6 py-4">Página (path)</th>
+                                <th class="px-6 py-4 text-right">Total visitas</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse ($pages as $i => $page)
+                                <tr class="border-b border-slate-50 last:border-0 hover:bg-slate-50">
+                                    <td class="px-6 py-3 text-slate-400">{{ $i + 1 }}</td>
+                                    <td class="px-6 py-3 font-mono text-xs text-slate-700">{{ $page->path }}</td>
+                                    <td class="px-6 py-3 text-right font-semibold text-slate-900">{{ number_format($page->total) }}</td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="3" class="px-6 py-8 text-center text-sm text-slate-400">
+                                        No hay datos de visitas todavía.
+                                    </td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</x-app-layout>

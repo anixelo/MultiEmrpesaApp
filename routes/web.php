@@ -26,6 +26,7 @@ use MultiempresaApp\Servicios\Http\Controllers\ServicioController;
 use MultiempresaApp\Presupuestos\Http\Controllers\PresupuestoController;
 use MultiempresaApp\Presupuestos\Http\Controllers\PresupuestoConfiguracionController;
 use MultiempresaApp\Noticias\Http\Controllers\NoticiaController;
+use MultiempresaApp\SimpleAnalytics\Http\Controllers\AnalyticsDashboardController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -158,6 +159,10 @@ Route::middleware(['auth', 'two_factor'])->group(function () {
         Route::get('/incidents/{incident}', [SuperAdminIncidentController::class, 'show'])->name('incidents.show');
         Route::post('/incidents/{incident}/status', [SuperAdminIncidentController::class, 'updateStatus'])->name('incidents.update-status');
         Route::post('/incidents/{incident}/comment', [SuperAdminIncidentController::class, 'comment'])->name('incidents.comment');
+        // Superadmin analytics
+        Route::get('/analytics', [AnalyticsDashboardController::class, 'index'])->name('analytics.index');
+        Route::get('/analytics/pages', [AnalyticsDashboardController::class, 'pages'])->name('analytics.pages');
+        Route::get('/analytics/visits', [AnalyticsDashboardController::class, 'visits'])->name('analytics.visits');
     });
 });
 

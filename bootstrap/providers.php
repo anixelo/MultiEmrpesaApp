@@ -10,4 +10,5 @@ return [
     MultiempresaApp\Presupuestos\Providers\PresupuestosServiceProvider::class,
     MultiempresaApp\Noticias\Providers\NoticiasServiceProvider::class,
     MultiempresaApp\Notas\Providers\NotasServiceProvider::class,
+    MultiempresaApp\SimpleAnalytics\Providers\SimpleAnalyticsServiceProvider::class,
 ];
