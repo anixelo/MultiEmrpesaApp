@@ -11,7 +11,7 @@
         <div>
             <x-input-label for="company_name" :value="__('Nombre de tu cuenta')" />
             <x-text-input id="company_name" class="block mt-1 w-full" type="text" name="company_name" :value="old('company_name')" required autofocus autocomplete="organization" />
-            <p class="mt-1 text-xs text-gray-500">{{ __('Es el nombre que se mostrará al acceder a la aplicación (puede ser el de tu empresa u organización).') }}</p>
+            <p class="mt-1 text-xs text-gray-500">{{ __('Es el nombre que se mostrará al acceder a la aplicación (puede ser el tuyo o el de tu empresa u organización).') }}</p>
             <x-input-error :messages="$errors->get('company_name')" class="mt-2" />
         </div>
 

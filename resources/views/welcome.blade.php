@@ -4,8 +4,8 @@
     @php
         $appName = config('app.name', 'Mis presupuestos');
         $appUrl = url('/');
-        $appDescription = 'Software de presupuestos para autónomos y pymes. Crea presupuestos online, guarda notas previas para preparar mejor cada propuesta, envíalos a tus clientes y descárgalos en PDF. Además, puedes usar la aplicación como PWA desde móvil, tablet o escritorio.';
-        $appTitle = $appName . ' - Software de presupuestos para autónomos y pymes';
+        $appDescription = 'Software de presupuestos para autónomos, pymes y freelancers. Crea presupuestos online, guarda notas previas para preparar mejor cada propuesta, envíalos a tus clientes y descárgalos en PDF. Además, puedes usar la aplicación como PWA desde móvil, tablet o escritorio.';
+        $appTitle = $appName . ' - Software de presupuestos para autónomos, pymes y freelancers';
         $appImage = asset('icons/icon-512x512.png');
     @endphp
 
@@ -83,7 +83,7 @@
           "name":"¿Qué es Mis presupuestos?",
           "acceptedAnswer":{
             "@type":"Answer",
-            "text":"Mis presupuestos es un software de presupuestos online para autónomos y pequeñas empresas que permite crear, enviar y descargar presupuestos profesionales en PDF."
+            "text":"Mis presupuestos es un software de presupuestos online para autónomos, freelancers y pequeñas empresas que permite crear, enviar y descargar presupuestos profesionales en PDF."
           }
         },
         {
@@ -202,7 +202,7 @@
                     <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
                         <path fill-rule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.381z" clip-rule="evenodd"/>
                     </svg>
-                    Para autónomos y pequeñas pymes
+                    Para autónomos, freelancers y pequeñas pymes
                 </span>
 
                 <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-gray-900 leading-tight mb-6">

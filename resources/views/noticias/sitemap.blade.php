@@ -17,14 +17,4 @@
         <priority>0.8</priority>
     </url>
     @endforeach
-
-    {{-- Tag pages --}}
-    @foreach($tags as $tag)
-    <url>
-        <loc>{{ route('noticias.tag', $tag->slug) }}</loc>
-        <lastmod>{{ $tag->updated_at->toAtomString() }}</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.6</priority>
-    </url>
-    @endforeach
 </urlset>
