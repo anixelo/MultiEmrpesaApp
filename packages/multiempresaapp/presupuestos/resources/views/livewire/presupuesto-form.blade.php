@@ -29,35 +29,38 @@
         @endif
     @endforeach
 
-    @if (!$presupuestoId)
+@if (!$presupuestoId)
 
-        <div class="mb-8">
-            @php
-                $steps = [
-                    1 => 'Empresa',
-                    2 => 'Cliente',
-                    3 => 'Datos generales',
-                    4 => 'Líneas',
-                ];
-            @endphp
+    <div class="mb-8">
+        @php
+            $steps = [
+                1 => 'Empresa',
+                2 => 'Cliente',
+                3 => ['desktop' => 'Datos generales', 'mobile' => 'Datos'],
+                4 => 'Líneas',
+            ];
+        @endphp
 
-            <ol class="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
-                @foreach($steps as $num => $label)
-                    @php
-                        $completed = $step > $num;
-                        $current = $step === $num;
-                        $upcoming = $step < $num;
-                    @endphp
+        <ol class="grid grid-cols-4 gap-2 sm:grid-cols-2 sm:gap-4 xl:grid-cols-4">
+            @foreach($steps as $num => $label)
+                @php
+                    $completed = $step > $num;
+                    $current = $step === $num;
+                    $upcoming = $step < $num;
+                @endphp
 
-                    <li class="relative">
-                        <div class="flex items-center gap-4 rounded-3xl border p-4 shadow-sm transition-all
-                            {{ $completed ? 'border-indigo-200 bg-indigo-50' : '' }}
-                            {{ $current ? 'border-indigo-500 bg-white ring-2 ring-indigo-100 shadow-md' : '' }}
-                            {{ $upcoming ? 'border-slate-200 bg-slate-50' : '' }}">
-                            @if($num < count($steps))
-                                <div class="absolute top-1/2 -right-2 z-0 hidden h-px w-4 bg-slate-200 xl:block"></div>
-                            @endif
+                <li class="relative">
+                    <div class="rounded-3xl border p-3 shadow-sm transition-all sm:flex sm:items-center sm:gap-4 sm:p-4
+                        {{ $completed ? 'border-indigo-200 bg-indigo-50' : '' }}
+                        {{ $current ? 'border-indigo-500 bg-white ring-2 ring-indigo-100 shadow-md' : '' }}
+                        {{ $upcoming ? 'border-slate-200 bg-slate-50' : '' }}">
 
+                        @if($num < count($steps))
+                            <div class="absolute top-1/2 -right-2 z-0 hidden h-px w-4 bg-slate-200 xl:block"></div>
+                        @endif
+
+                        {{-- móvil: número arriba y textos debajo --}}
+                        <div class="flex flex-col items-center text-center sm:hidden">
                             <div class="relative z-10 flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-sm font-bold
                                 {{ $completed ? 'bg-indigo-600 text-white' : '' }}
                                 {{ $current ? 'border-2 border-indigo-600 bg-white text-indigo-600' : '' }}
@@ -71,26 +74,62 @@
                                 @endif
                             </div>
 
-                            <div class="min-w-0">
-                                <p class="text-xs font-semibold uppercase tracking-wide
+                            <div class="mt-2 min-w-0">
+                                <p class="text-[11px] font-semibold uppercase tracking-wide
                                     {{ $completed ? 'text-indigo-600' : '' }}
                                     {{ $current ? 'text-indigo-600' : '' }}
                                     {{ $upcoming ? 'text-slate-400' : '' }}">
                                     Paso {{ $num }}
                                 </p>
 
-                                <p class="text-sm font-semibold
+                                <p class="mt-0.5 text-xs font-semibold leading-tight
                                     {{ $completed ? 'text-slate-900' : '' }}
                                     {{ $current ? 'text-slate-900' : '' }}
                                     {{ $upcoming ? 'text-slate-500' : '' }}">
-                                    {{ $label }}
+    <span class="sm:hidden">{{ $label['mobile'] ?? $label }}</span>
+    <span class="hidden sm:inline">{{ $label['desktop'] ?? $label }}</span>
                                 </p>
                             </div>
                         </div>
-                    </li>
-                @endforeach
-            </ol>
-        </div>
+
+                        {{-- ordenador: exactamente como estaba --}}
+                        <div class="relative z-10 hidden h-10 w-10 shrink-0 items-center justify-center rounded-full text-sm font-bold sm:flex
+                            {{ $completed ? 'bg-indigo-600 text-white' : '' }}
+                            {{ $current ? 'border-2 border-indigo-600 bg-white text-indigo-600' : '' }}
+                            {{ $upcoming ? 'border-2 border-slate-300 bg-white text-slate-400' : '' }}">
+                            @if($completed)
+                                <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                                </svg>
+                            @else
+                                {{ $num }}
+                            @endif
+                        </div>
+
+                        <div class="hidden min-w-0 sm:block">
+                            <p class="text-xs font-semibold uppercase tracking-wide
+                                {{ $completed ? 'text-indigo-600' : '' }}
+                                {{ $current ? 'text-indigo-600' : '' }}
+                                {{ $upcoming ? 'text-slate-400' : '' }}">
+                                Paso {{ $num }}
+                            </p>
+
+                            <p class="text-sm font-semibold
+                                {{ $completed ? 'text-slate-900' : '' }}
+                                {{ $current ? 'text-slate-900' : '' }}
+                                {{ $upcoming ? 'text-slate-500' : '' }}">
+    <span class="sm:hidden">{{ $label['mobile'] ?? $label }}</span>
+    <span class="hidden sm:inline">{{ $label['desktop'] ?? $label }}</span>
+                            </p>
+                        </div>
+                    </div>
+                </li>
+            @endforeach
+        </ol>
+    </div>
+
+ 
+
 
         @if($step === 1)
             <div class="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm">

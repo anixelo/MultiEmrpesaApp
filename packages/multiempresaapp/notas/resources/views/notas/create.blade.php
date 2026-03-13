@@ -1,6 +1,4 @@
 <x-app-layout>
-
-
     <x-slot name="header">
         <div class="flex items-start gap-3 sm:items-center">
             <a href="{{ route('admin.notas.index') }}"
@@ -11,8 +9,8 @@
             </a>
 
             <div class="min-w-0">
-                    <h1 class="text-2xl font-bold text-slate-900">Nueva nota</h1>
-                    <p class="mt-1 text-sm text-slate-500">Crea una nota y asígnala a un cliente</p>
+                <h1 class="text-2xl font-bold text-slate-900">Nueva nota</h1>
+                <p class="mt-1 text-sm text-slate-500">Crea una nota y asígnala a un cliente</p>
             </div>
         </div>
     </x-slot>
@@ -22,7 +20,7 @@
 
             {{-- Step indicator --}}
             <div class="mb-6">
-                <ol class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <ol class="grid grid-cols-2 gap-3">
                     @php
                         $steps = [1 => 'Cliente', 2 => 'Nota'];
                     @endphp
@@ -35,11 +33,11 @@
                         @endphp
 
                         <li>
-                            <div class="flex items-center gap-3 rounded-3xl border p-4 shadow-sm
+                            <div class="flex items-center gap-3 rounded-3xl border p-3 shadow-sm sm:p-4
                                 {{ $completed ? 'border-indigo-200 bg-indigo-50' : '' }}
                                 {{ $current ? 'border-indigo-500 bg-white ring-2 ring-indigo-100 shadow-md' : '' }}
                                 {{ $upcoming ? 'border-slate-200 bg-slate-50' : '' }}">
-                                <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-sm font-bold
+                                <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-sm font-bold sm:h-10 sm:w-10
                                     {{ $completed ? 'bg-indigo-600 text-white' : '' }}
                                     {{ $current ? 'border-2 border-indigo-600 bg-white text-indigo-600' : '' }}
                                     {{ $upcoming ? 'border-2 border-slate-300 bg-white text-slate-400' : '' }}">
@@ -52,8 +50,8 @@
                                     @endif
                                 </div>
 
-                                <div>
-                                    <p class="text-xs font-semibold uppercase tracking-wide {{ $upcoming ? 'text-slate-400' : 'text-indigo-600' }}">
+                                <div class="min-w-0">
+                                    <p class="text-[11px] font-semibold uppercase tracking-wide {{ $upcoming ? 'text-slate-400' : 'text-indigo-600' }}">
                                         Paso {{ $num }}
                                     </p>
                                     <p class="text-sm font-semibold {{ $upcoming ? 'text-slate-500' : 'text-slate-900' }}">
@@ -78,14 +76,15 @@
             search: '',
             selected: null,
             selectedId: '',
-            showNew: false,
             showModal: false,
+            showCreateModal: false,
             modalSearch: '',
             newNombre: '',
             newEmail: '',
             newTelefono: '',
             saving: false,
             clientes: @json($clientes),
+
             get filtered() {
                 if (!this.search.trim()) return [];
                 const q = this.search.toLowerCase();
@@ -94,6 +93,7 @@
                     (c.email && c.email.toLowerCase().includes(q))
                 );
             },
+
             get modalFiltered() {
                 if (!this.modalSearch.trim()) return this.clientes;
                 const q = this.modalSearch.toLowerCase();
@@ -103,34 +103,48 @@
                     (c.telefono && c.telefono.toLowerCase().includes(q))
                 );
             },
+
             select(c) {
                 this.selected = c;
                 this.selectedId = c.id;
                 this.search = c.nombre;
-                this.showNew = false;
                 this.showModal = false;
+                this.showCreateModal = false;
             },
+
             clear() {
                 this.selected = null;
                 this.selectedId = '';
                 this.search = '';
             },
+
             openModal() {
                 this.showModal = true;
                 this.modalSearch = '';
-                this.showNew = false;
             },
+
             closeModal() {
                 this.showModal = false;
                 this.modalSearch = '';
             },
-            openInlineCreateForm() {
+
+            openCreateModal() {
                 this.showModal = false;
-                this.showNew = true;
+                this.showCreateModal = true;
             },
+
+            closeCreateModal() {
+                this.showCreateModal = false;
+                this.newNombre = '';
+                this.newEmail = '';
+                this.newTelefono = '';
+            },
+
             async saveNew() {
                 if (!this.newNombre.trim()) return;
+
                 this.saving = true;
+
                 try {
                     const resp = await fetch('{{ route('admin.clientes.quick-store') }}', {
                         method: 'POST',
@@ -139,20 +153,24 @@
                             'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content,
                             'Accept': 'application/json'
                         },
-                        body: JSON.stringify({nombre: this.newNombre, email: this.newEmail, telefono: this.newTelefono})
+                        body: JSON.stringify({
+                            nombre: this.newNombre,
+                            email: this.newEmail,
+                            telefono: this.newTelefono
+                        })
                     });
+
                     if (!resp.ok) {
                         alert('Error al crear el cliente. Por favor, inténtalo de nuevo.');
                         return;
                     }
+
                     const data = await resp.json();
+
                     if (data && data.id && data.nombre) {
                         this.clientes.push(data);
                         this.select(data);
-                        this.showNew = false;
-                        this.newNombre = '';
-                        this.newEmail = '';
-                        this.newTelefono = '';
+                        this.closeCreateModal();
                     }
                 } catch (e) {
                     alert('Error al crear el cliente. Por favor, inténtalo de nuevo.');
@@ -178,7 +196,8 @@
                                                    class="w-full rounded-2xl border border-slate-300 px-4 py-2.5 text-sm shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
                                                    placeholder="Buscar cliente por nombre o email...">
 
-                                            <div x-show="search.trim().length > 0" class="absolute z-10 mt-2 max-h-48 w-full overflow-y-auto rounded-2xl border border-slate-200 bg-white shadow-xl">
+                                            <div x-show="search.trim().length > 0"
+                                                 class="absolute z-10 mt-2 max-h-48 w-full overflow-y-auto rounded-2xl border border-slate-200 bg-white shadow-xl">
                                                 <template x-for="c in filtered" :key="c.id">
                                                     <button type="button" @click="select(c)"
                                                             class="w-full px-4 py-2.5 text-left text-sm transition hover:bg-indigo-50">
@@ -189,7 +208,7 @@
 
                                                 <template x-if="search.trim().length > 0">
                                                     <div class="border-t border-slate-100">
-                                                        <button type="button" @click="openInlineCreateForm()"
+                                                        <button type="button" @click="openCreateModal()"
                                                                 class="w-full px-4 py-2 text-left text-sm text-indigo-600 transition hover:bg-indigo-50">
                                                             + Crear nuevo cliente
                                                         </button>
@@ -223,37 +242,16 @@
                             </template>
                         </div>
 
-                        {{-- Create new client inline --}}
-                        <div x-show="showNew" x-transition>
-                            <div class="space-y-3 rounded-2xl border border-slate-200 bg-slate-50 p-4">
-                                <p class="text-xs font-semibold uppercase tracking-wide text-slate-600">Nuevo cliente</p>
-
-                                <input type="text" x-model="newNombre" placeholder="Nombre *"
-                                       class="w-full rounded-2xl border border-slate-300 px-4 py-2.5 text-sm shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-
-                                <input type="email" x-model="newEmail" placeholder="Email"
-                                       class="w-full rounded-2xl border border-slate-300 px-4 py-2.5 text-sm shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-
-                                <input type="text" x-model="newTelefono" placeholder="Teléfono"
-                                       class="w-full rounded-2xl border border-slate-300 px-4 py-2.5 text-sm shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-
-                                <div class="flex gap-2 pt-1">
-                                    <button type="button" @click="saveNew()" :disabled="saving || !newNombre.trim()"
-                                            class="rounded-2xl bg-indigo-600 px-4 py-2.5 text-sm font-medium text-white shadow-sm transition hover:bg-indigo-700 disabled:opacity-50">
-                                        <span x-text="saving ? 'Guardando...' : 'Guardar'"></span>
-                                    </button>
-
-                                    <button type="button" @click="showNew = false"
-                                            class="rounded-2xl border border-slate-300 bg-white px-4 py-2.5 text-sm font-medium text-slate-700 shadow-sm transition hover:bg-slate-50">
-                                        Cancelar
-                                    </button>
-                                </div>
-                            </div>
+                        <div>
+                            <button type="button" @click="openCreateModal()"
+                                    class="text-sm font-medium text-indigo-600 transition hover:text-indigo-700 hover:underline">
+                                + Crear nuevo cliente
+                            </button>
                         </div>
 
                         {{-- Search modal --}}
                         <template x-if="showModal">
-                            <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50" @click.self="closeModal()">
+                            <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4" @click.self="closeModal()">
                                 <div class="w-full max-w-lg rounded-3xl bg-white shadow-2xl">
                                     <div class="flex items-center justify-between border-b border-slate-200 px-6 py-4">
                                         <h3 class="text-lg font-semibold text-slate-900">Buscar cliente</h3>
@@ -291,7 +289,7 @@
                                     </div>
 
                                     <div class="flex items-center justify-between border-t border-slate-200 px-6 py-4">
-                                        <button type="button" @click="openInlineCreateForm()"
+                                        <button type="button" @click="openCreateModal()"
                                                 class="inline-flex items-center gap-1.5 text-sm font-medium text-indigo-600 transition hover:text-indigo-700">
                                             <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/>
@@ -302,6 +300,57 @@
                                         <button type="button" @click="closeModal()"
                                                 class="inline-flex items-center rounded-2xl bg-slate-100 px-4 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-200">
                                             Cancelar
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </template>
+
+                        {{-- Create client popup --}}
+                        <template x-if="showCreateModal">
+                            <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4" @click.self="closeCreateModal()">
+                                <div class="w-full max-w-md rounded-3xl bg-white shadow-2xl">
+                                    <div class="flex items-center justify-between border-b border-slate-200 px-6 py-4">
+                                        <h3 class="text-lg font-semibold text-slate-900">Nuevo cliente</h3>
+                                        <button type="button" @click="closeCreateModal()" class="text-slate-400 transition hover:text-slate-600">
+                                            <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+                                            </svg>
+                                        </button>
+                                    </div>
+
+                                    <div class="space-y-4 px-6 py-5">
+                                        <div>
+                                            <label class="mb-1 block text-sm font-medium text-slate-700">Nombre <span class="text-rose-500">*</span></label>
+                                            <input type="text" x-model="newNombre"
+                                                   class="w-full rounded-2xl border border-slate-300 px-4 py-2.5 text-sm shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                                                   placeholder="Nombre del cliente">
+                                        </div>
+
+                                        <div>
+                                            <label class="mb-1 block text-sm font-medium text-slate-700">Email</label>
+                                            <input type="email" x-model="newEmail"
+                                                   class="w-full rounded-2xl border border-slate-300 px-4 py-2.5 text-sm shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                                                   placeholder="correo@cliente.com">
+                                        </div>
+
+                                        <div>
+                                            <label class="mb-1 block text-sm font-medium text-slate-700">Teléfono</label>
+                                            <input type="text" x-model="newTelefono"
+                                                   class="w-full rounded-2xl border border-slate-300 px-4 py-2.5 text-sm shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                                                   placeholder="Teléfono">
+                                        </div>
+                                    </div>
+
+                                    <div class="flex items-center justify-end gap-3 border-t border-slate-200 px-6 py-4">
+                                        <button type="button" @click="closeCreateModal()"
+                                                class="rounded-2xl border border-slate-300 bg-white px-4 py-2.5 text-sm font-medium text-slate-700 shadow-sm transition hover:bg-slate-50">
+                                            Cancelar
+                                        </button>
+
+                                        <button type="button" @click="saveNew()" :disabled="saving || !newNombre.trim()"
+                                                class="rounded-2xl bg-indigo-600 px-4 py-2.5 text-sm font-medium text-white shadow-sm transition hover:bg-indigo-700 disabled:opacity-50">
+                                            <span x-text="saving ? 'Guardando...' : 'Guardar cliente'"></span>
                                         </button>
                                     </div>
                                 </div>
