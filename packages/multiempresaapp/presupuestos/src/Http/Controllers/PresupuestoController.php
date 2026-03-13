@@ -4,6 +4,9 @@ namespace MultiempresaApp\Presupuestos\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Models\Empresa;
+use App\Models\User;
+use App\Notifications\PresupuestoEstadoNotification;
+use App\Notifications\PresupuestoTrabajadorNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
@@ -152,6 +155,14 @@ class PresupuestoController extends Controller
 
         $this->logAudit($presupuesto, 'creado', 'Presupuesto creado con estado Borrador.');
 
+        // If a worker creates a presupuesto, notify all company admins
+        if (auth()->user()->hasRole('trabajador')) {
+            $notification = new PresupuestoTrabajadorNotification($presupuesto->numero, $presupuesto->id, auth()->user(), 'creado');
+            User::where('company_id', $empresaId)
+                ->whereHas('roles', fn ($q) => $q->where('name', 'administrador'))
+                ->each(fn (User $admin) => $admin->notify($notification));
+        }
+
         return redirect()->route('admin.presupuestos.show', $presupuesto->id)
             ->with('success', 'Presupuesto creado correctamente.');
     }
@@ -282,7 +293,19 @@ class PresupuestoController extends Controller
             abort(403);
         }
 
+        $empresaId       = $presupuesto->empresa_id;
+        $presupuestoNumero = $presupuesto->numero;
+        $worker          = auth()->user()->hasRole('trabajador') ? auth()->user() : null;
+
         $presupuesto->delete();
+
+        // If a worker deleted the presupuesto, notify all company admins
+        if ($worker) {
+            $notification = new PresupuestoTrabajadorNotification($presupuestoNumero, null, $worker, 'eliminado');
+            User::where('company_id', $empresaId)
+                ->whereHas('roles', fn ($q) => $q->where('name', 'administrador'))
+                ->each(fn (User $admin) => $admin->notify($notification));
+        }
 
         return redirect()->route('admin.presupuestos.index')
             ->with('success', 'Presupuesto eliminado correctamente.');
@@ -377,6 +400,8 @@ class PresupuestoController extends Controller
         $presupuesto->update(['estado' => 'aceptado', 'aceptado_en' => now()]);
         $this->logAudit($presupuesto, 'aceptado', 'Presupuesto aceptado por el cliente.', null, null);
 
+        $this->notifyPresupuestoEstado($presupuesto);
+
         return redirect()->route('presupuestos.public', $token)
             ->with('success', 'Has aceptado el presupuesto.');
     }
@@ -387,8 +412,28 @@ class PresupuestoController extends Controller
         $presupuesto->update(['estado' => 'rechazado', 'rechazado_en' => now()]);
         $this->logAudit($presupuesto, 'rechazado', 'Presupuesto rechazado por el cliente.', null, null);
 
+        $this->notifyPresupuestoEstado($presupuesto);
+
         return redirect()->route('presupuestos.public', $token)
             ->with('info', 'Has rechazado el presupuesto.');
+    }
+
+    private function notifyPresupuestoEstado(Presupuesto $presupuesto): void
+    {
+        $notification = new PresupuestoEstadoNotification($presupuesto);
+        $notified     = collect();
+
+        User::where('company_id', $presupuesto->empresa_id)
+            ->whereHas('roles', fn ($q) => $q->where('name', 'administrador'))
+            ->each(function (User $admin) use ($notification, &$notified) {
+                $admin->notify($notification);
+                $notified->push($admin->id);
+            });
+
+        if ($presupuesto->created_by && ! $notified->contains($presupuesto->created_by)) {
+            $creator = User::find($presupuesto->created_by);
+            $creator?->notify($notification);
+        }
     }
 
     public function downloadPdf($id)

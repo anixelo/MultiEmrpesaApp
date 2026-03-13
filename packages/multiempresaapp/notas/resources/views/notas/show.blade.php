@@ -111,7 +111,7 @@
                 <h3 class="mb-3 text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">Contenido</h3>
 
                 @if($nota->contenido)
-                    <div class="prose prose-sm max-w-none whitespace-pre-wrap text-slate-700">{{ $nota->contenido }}</div>
+                    <div class="prose prose-sm max-w-none text-slate-700">{!! $nota->contenido !!}</div>
                 @else
                     <p class="text-sm italic text-slate-400">Sin contenido</p>
                 @endif

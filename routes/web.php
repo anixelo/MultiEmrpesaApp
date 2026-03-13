@@ -41,6 +41,7 @@ Route::post('/contacto', [PageController::class, 'contactSend'])->name('pages.co
 // Public news detail
 Route::get('/noticias/{slug}', [NoticiaController::class, 'show'])->name('noticias.show');
 Route::get('/noticias/tag/{slug}', [NoticiaController::class, 'byTag'])->name('noticias.tag');
+Route::get('/sitemap.xml', [NoticiaController::class, 'sitemap'])->name('sitemap');
 
 // Google OAuth
 Route::get('/auth/google',          [GoogleController::class, 'redirect'])->name('auth.google');

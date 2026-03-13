@@ -3,7 +3,7 @@
 namespace MultiempresaApp\Noticias\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Str;
+use Illuminate\Http\Response;
 use MultiempresaApp\Noticias\Models\Noticia;
 use MultiempresaApp\Noticias\Models\Tag;
 
@@ -48,5 +48,15 @@ class NoticiaController extends Controller
             ->paginate(12);
 
         return view('noticias.tag', compact('tag', 'noticias'));
+    }
+
+    public function sitemap(): Response
+    {
+        $noticias = Noticia::publicadas()->latest('publicado_en')->get(['slug', 'updated_at']);
+        $tags     = Tag::whereHas('noticias', fn ($q) => $q->where('publicado', true))->get(['slug', 'updated_at']);
+
+        $content = view('noticias.sitemap', compact('noticias', 'tags'))->render();
+
+        return response($content, 200, ['Content-Type' => 'application/xml']);
     }
 }

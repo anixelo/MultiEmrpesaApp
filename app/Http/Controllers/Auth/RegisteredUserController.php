@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Models\AppSetting;
 use App\Models\Company;
+use App\Notifications\NuevaCuentaNotification;
 use MultiempresaApp\Plans\Models\Plan;
 use MultiempresaApp\Plans\Models\Subscription;
 use App\Models\User;
@@ -104,6 +105,11 @@ class RegisteredUserController extends Controller
         $user->assignRole('administrador');
 
         event(new Registered($user));
+
+        // Notify all superadmins about the new account
+        $notification = new NuevaCuentaNotification($company);
+        User::whereHas('roles', fn ($q) => $q->where('name', 'superadministrador'))
+            ->each(fn (User $superAdmin) => $superAdmin->notify($notification));
 
         Auth::login($user);
 
