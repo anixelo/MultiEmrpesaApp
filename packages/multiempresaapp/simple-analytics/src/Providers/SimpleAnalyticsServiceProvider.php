@@ -45,8 +45,8 @@ class SimpleAnalyticsServiceProvider extends ServiceProvider
         $router->pushMiddlewareToGroup('web', TrackPageVisit::class);
 
         // Default Gate — allows superadministrador role (overridable by the app)
-        Gate::define('viewAnalytics', function ($user) {
-            return $user->hasRole('superadministrador');
+        Gate::define('viewAnalytics', function ($user = null) {
+            return $user && $user->hasRole('superadministrador');
         });
     }
 }
