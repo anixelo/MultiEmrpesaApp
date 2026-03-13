@@ -4,8 +4,8 @@
     @php
         $appName = config('app.name', 'Mis presupuestos');
         $appUrl = url('/');
-        $appDescription = 'Software de presupuestos para autónomos y pymes. Crea presupuestos online, envíalos a tus clientes y descárgalos en PDF en segundos.';
-        $appTitle = $appName . ' — Software de presupuestos para autónomos y pymes';
+        $appDescription = 'Software de presupuestos para autónomos y pymes. Crea presupuestos online, guarda notas previas para preparar mejor cada propuesta, envíalos a tus clientes y descárgalos en PDF. Además, puedes usar la aplicación como PWA desde móvil, tablet o escritorio.';
+        $appTitle = $appName . ' - Software de presupuestos para autónomos y pymes';
         $appImage = asset('icons/icon-512x512.png');
     @endphp
 
@@ -14,16 +14,20 @@
 
     <title>{{ $appTitle }}</title>
     <meta name="description" content="{{ $appDescription }}">
-    <meta name="robots" content="index,follow">
+    <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
+    <meta name="author" content="Anixelo">
+    <meta name="keywords" content="software de presupuestos, presupuestos online, hacer presupuestos, programa de presupuestos, presupuestos para autónomos, presupuestos para pymes, presupuesto pdf, app de presupuestos, pwa presupuestos">
     <link rel="canonical" href="{{ $appUrl }}">
 
     {{-- Open Graph --}}
+    <meta property="og:locale" content="es_ES">
     <meta property="og:type" content="website">
     <meta property="og:site_name" content="{{ $appName }}">
     <meta property="og:title" content="{{ $appTitle }}">
     <meta property="og:description" content="{{ $appDescription }}">
     <meta property="og:url" content="{{ $appUrl }}">
     <meta property="og:image" content="{{ $appImage }}">
+    <meta property="og:image:alt" content="Vista de {{ $appName }}, software de presupuestos para autónomos y pymes">
 
     {{-- Twitter --}}
     <meta name="twitter:card" content="summary_large_image">
@@ -50,8 +54,10 @@
       "@type":"SoftwareApplication",
       "name":"{{ $appName }}",
       "applicationCategory":"BusinessApplication",
-      "operatingSystem":"Web",
+      "applicationSubCategory":"Estimating software",
+      "operatingSystem":"Web, iOS, Android, Windows, macOS",
       "url":"{{ $appUrl }}",
+      "image":"{{ $appImage }}",
       "description":"{{ $appDescription }}",
       "offers":{
         "@type":"Offer",
@@ -98,6 +104,22 @@
         },
         {
           "@type":"Question",
+          "name":"¿Puedo tomar notas antes de hacer un presupuesto?",
+          "acceptedAnswer":{
+            "@type":"Answer",
+            "text":"Sí. Puedes guardar notas previas antes de preparar el presupuesto para reunir ideas, requisitos y detalles que después te ayuden a elaborarlo con más rapidez y precisión."
+          }
+        },
+        {
+          "@type":"Question",
+          "name":"¿Puedo usar la aplicación como PWA?",
+          "acceptedAnswer":{
+            "@type":"Answer",
+            "text":"Sí. La aplicación puede instalarse como PWA para acceder de forma rápida desde móvil, tablet o escritorio y trabajar de manera más cómoda."
+          }
+        },
+        {
+          "@type":"Question",
           "name":"¿Sirve para varias empresas?",
           "acceptedAnswer":{
             "@type":"Answer",
@@ -107,6 +129,17 @@
       ]
     }
     </script>
+
+    {{-- Structured data: Organization --}}
+    <script type="application/ld+json">
+    {
+      "@context":"https://schema.org",
+      "@type":"Organization",
+      "name":"Anixelo",
+      "url":"https://anixelo.com",
+      "logo":"{{ $appImage }}"
+    }
+    </script>
 </head>
 <body class="font-sans antialiased bg-white text-gray-900 selection:bg-indigo-100 selection:text-indigo-900">
 
@@ -114,18 +147,17 @@
     Saltar al contenido
 </a>
 
-{{-- Navigation --}}
 <header class="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-gray-100 shadow-sm">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between items-center h-16">
-<a href="/" class="flex items-center gap-3 text-indigo-600 font-extrabold text-xl" aria-label="Ir a inicio">
-    <img 
-        src="/pwa-icons/icon-192x192.png" 
-        alt="Logo {{ config('app.name') }}" 
-        class="w-8 h-8 shrink-0"
-    >
-    <span>{{ config('app.name') }}</span>
-</a>
+            <a href="/" class="flex items-center gap-3 text-indigo-600 font-extrabold text-xl" aria-label="Ir a inicio">
+                <img
+                    src="/pwa-icons/icon-192x192.png"
+                    alt="Logo {{ config('app.name') }}"
+                    class="w-8 h-8 shrink-0"
+                >
+                <span>{{ config('app.name') }}</span>
+            </a>
 
             <nav class="hidden md:flex items-center gap-6" aria-label="Navegación principal">
                 <a href="#features" class="text-sm text-gray-600 hover:text-indigo-600 transition">Funcionalidades</a>
@@ -158,8 +190,6 @@
 </header>
 
 <main id="main-content">
-
-    {{-- Hero --}}
     <section class="relative bg-gradient-to-br from-indigo-50 via-white to-purple-50 py-20 sm:py-24 overflow-hidden">
         <div class="absolute inset-0 pointer-events-none" aria-hidden="true">
             <div class="absolute -top-40 -right-40 w-96 h-96 bg-indigo-100 rounded-full opacity-40 blur-3xl"></div>
@@ -180,7 +210,7 @@
                 </h1>
 
                 <p class="text-lg sm:text-xl text-gray-600 max-w-3xl mx-auto mb-10">
-                    Crea presupuestos online en segundos, envíalos a tus clientes con un enlace único y descárgalos en PDF sin usar Excel, Word ni plantillas complicadas.
+                    Crea presupuestos online en segundos, guarda notas previas para preparar mejor cada propuesta, envíalos a tus clientes con un enlace único y descárgalos en PDF sin usar Excel, Word ni plantillas complicadas.
                 </p>
 
                 <div class="flex flex-col sm:flex-row gap-4 justify-center mb-8">
@@ -201,12 +231,13 @@
                 <div class="flex flex-wrap justify-center gap-3 text-sm text-gray-500">
                     <span class="inline-flex items-center gap-2 bg-white/80 border border-gray-200 rounded-full px-3 py-1.5">Sin tarjeta de crédito</span>
                     <span class="inline-flex items-center gap-2 bg-white/80 border border-gray-200 rounded-full px-3 py-1.5">PDF profesional</span>
+                    <span class="inline-flex items-center gap-2 bg-white/80 border border-gray-200 rounded-full px-3 py-1.5">Notas previas</span>
+                    <span class="inline-flex items-center gap-2 bg-white/80 border border-gray-200 rounded-full px-3 py-1.5">PWA instalable</span>
                     <span class="inline-flex items-center gap-2 bg-white/80 border border-gray-200 rounded-full px-3 py-1.5">Multiempresa</span>
                     <span class="inline-flex items-center gap-2 bg-white/80 border border-gray-200 rounded-full px-3 py-1.5">Trabajo en equipo</span>
                 </div>
             </div>
 
-            {{-- Preview block --}}
             <div class="mt-16 max-w-5xl mx-auto">
                 <div class="rounded-3xl border border-gray-200 bg-white shadow-2xl shadow-indigo-100/50 overflow-hidden">
                     <div class="flex items-center gap-2 px-5 py-4 border-b border-gray-100 bg-gray-50">
@@ -217,11 +248,20 @@
                     </div>
                     <div class="grid lg:grid-cols-2">
                         <div class="p-8 border-b lg:border-b-0 lg:border-r border-gray-100">
-                            <p class="text-sm font-semibold text-indigo-600 mb-3">Editor rápido</p>
-                            <h2 class="text-2xl font-bold text-gray-900 mb-3">Crea tu presupuesto en menos de un minuto</h2>
+                            <p class="text-sm font-semibold text-indigo-600 mb-3">Preparación y edición</p>
+                            <h2 class="text-2xl font-bold text-gray-900 mb-3">Toma notas previas y crea tu presupuesto más rápido</h2>
                             <p class="text-gray-600 mb-6">
-                                Añade cliente, conceptos, impuestos y totales desde una interfaz clara y rápida. Todo preparado para ahorrar tiempo en tu día a día.
+                                Guarda ideas, requisitos, observaciones y detalles antes de elaborar el presupuesto. Después añade cliente, conceptos, impuestos y totales desde una interfaz clara y rápida.
                             </p>
+
+                            <div class="rounded-2xl border border-amber-200 bg-amber-50 p-4 mb-6">
+                                <p class="text-xs font-semibold text-amber-700 mb-2">Notas previas</p>
+                                <ul class="space-y-1 text-sm text-gray-700">
+                                    <li>• Cliente quiere renovar la web corporativa</li>
+                                    <li>• Necesita formulario de contacto y blog</li>
+                                    <li>• Posible mantenimiento mensual tras la entrega</li>
+                                </ul>
+                            </div>
 
                             <div class="space-y-3">
                                 <div class="flex items-center justify-between rounded-xl border border-gray-200 px-4 py-3">
@@ -251,9 +291,9 @@
 
                         <div class="p-8 bg-gradient-to-br from-gray-50 to-white">
                             <p class="text-sm font-semibold text-indigo-600 mb-3">Resultado final</p>
-                            <h2 class="text-2xl font-bold text-gray-900 mb-3">Comparte y descarga en PDF</h2>
+                            <h2 class="text-2xl font-bold text-gray-900 mb-3">Comparte, descarga y accede como app</h2>
                             <p class="text-gray-600 mb-6">
-                                Envía el presupuesto a tu cliente mediante un enlace único o descárgalo en PDF con una presentación limpia y profesional.
+                                Envía el presupuesto a tu cliente mediante un enlace único, descárgalo en PDF con una presentación limpia y profesional y accede a la plataforma como PWA desde tus dispositivos.
                             </p>
 
                             <div class="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
@@ -278,6 +318,10 @@
                                         <span>Seguimiento</span>
                                         <span class="text-indigo-600 font-medium">Enviado</span>
                                     </div>
+                                    <div class="flex justify-between">
+                                        <span>Acceso desde PWA</span>
+                                        <span class="text-indigo-600 font-medium">Disponible</span>
+                                    </div>
                                 </div>
 
                                 <div class="flex flex-col sm:flex-row gap-3">
@@ -296,16 +340,14 @@
         </div>
     </section>
 
-    {{-- Logos / proof --}}
-    <section class="py-8 bg-white border-y border-gray-100">
+    <section class="py-8 bg-white border-y border-gray-100" aria-label="Propuesta de valor">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <p class="text-center text-sm text-gray-500">
-                Diseñado para profesionales que necesitan crear presupuestos rápidos, claros y profesionales.
+                Diseñado para profesionales que necesitan crear presupuestos rápidos, claros y profesionales, con notas previas y acceso como aplicación PWA.
             </p>
         </div>
     </section>
 
-    {{-- Features --}}
     <section id="features" class="py-24 bg-white">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center mb-16 max-w-3xl mx-auto">
@@ -316,7 +358,7 @@
                     Todo lo que necesitas para crear presupuestos profesionales
                 </h2>
                 <p class="text-gray-600">
-                    Una herramienta simple para autónomos y pequeñas empresas que quieren crear presupuestos online, enviarlos fácilmente y mantener el control de su actividad comercial.
+                    Una herramienta simple para autónomos y pequeñas empresas que quieren crear presupuestos online, enviarlos fácilmente, preparar mejor cada propuesta y mantener el control de su actividad comercial.
                 </p>
             </div>
 
@@ -327,6 +369,12 @@
                     'title' => 'Presupuestos profesionales',
                     'desc' => 'Crea presupuestos claros y profesionales en segundos con cálculo automático de totales, descuentos e IVA.',
                     'color' => 'blue'
+                ],
+                [
+                    'icon' => 'M4 5h16M4 9h10M4 13h16M4 17h10',
+                    'title' => 'Notas previas al presupuesto',
+                    'desc' => 'Guarda ideas, requisitos, observaciones y contexto antes de elaborar cada presupuesto para trabajar con más claridad y no dejarte nada importante.',
+                    'color' => 'amber'
                 ],
                 [
                     'icon' => 'M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2M7 20H2v-2a3 3 0 015.356-1.857M15 7a3 3 0 11-6 0 3 3 0 016 0z',
@@ -351,6 +399,12 @@
                     'title' => 'Enlace para clientes',
                     'desc' => 'Envía presupuestos mediante un enlace único para que el cliente pueda verlo desde cualquier dispositivo.',
                     'color' => 'yellow'
+                ],
+                [
+                    'icon' => 'M7 4h10M5 8h14M4 12h16M7 16h10M9 20h6',
+                    'title' => 'PWA instalable',
+                    'desc' => 'Instala la aplicación en móvil, tablet o escritorio y accede más rápido a tus presupuestos como si fuera una app.',
+                    'color' => 'cyan'
                 ],
                 [
                     'icon' => 'M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2M7 20H2v-2a3 3 0 015.356-1.857M15 7a3 3 0 11-6 0 3 3 0 016 0z',
@@ -395,7 +449,6 @@
         </div>
     </section>
 
-    {{-- How it works --}}
     <section id="how-it-works" class="py-24 bg-gray-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center mb-16 max-w-3xl mx-auto">
@@ -406,39 +459,38 @@
                     Crea tu primer presupuesto en tres pasos
                 </h2>
                 <p class="text-gray-600">
-                    Empieza en minutos y olvídate de las plantillas complicadas. Todo está pensado para que puedas enviar presupuestos rápidos y profesionales desde el primer día.
+                    Empieza en minutos y olvídate de las plantillas complicadas. Todo está pensado para que puedas preparar y enviar presupuestos rápidos y profesionales desde el primer día.
                 </p>
             </div>
 
             <div class="grid md:grid-cols-3 gap-8">
                 <article class="bg-white rounded-2xl p-8 border border-gray-200 shadow-sm">
                     <div class="w-12 h-12 rounded-xl bg-indigo-600 text-white flex items-center justify-center font-bold text-lg mb-5">1</div>
-                    <h3 class="text-xl font-bold text-gray-900 mb-3">Crea tu cliente</h3>
+                    <h3 class="text-xl font-bold text-gray-900 mb-3">Guarda notas previas</h3>
                     <p class="text-gray-600">
-                        Guarda los datos de tus clientes y reutilízalos cada vez que necesites generar un nuevo presupuesto.
+                        Anota requisitos, ideas, observaciones y detalles importantes antes de empezar para preparar mejor la propuesta.
                     </p>
                 </article>
 
                 <article class="bg-white rounded-2xl p-8 border border-gray-200 shadow-sm">
                     <div class="w-12 h-12 rounded-xl bg-indigo-600 text-white flex items-center justify-center font-bold text-lg mb-5">2</div>
-                    <h3 class="text-xl font-bold text-gray-900 mb-3">Añade conceptos y totales</h3>
+                    <h3 class="text-xl font-bold text-gray-900 mb-3">Crea el presupuesto</h3>
                     <p class="text-gray-600">
-                        Inserta tus servicios o productos habituales, aplica IVA, descuentos y deja el presupuesto listo en pocos clics.
+                        Añade cliente, conceptos, impuestos y totales usando toda la información recogida en tus notas previas.
                     </p>
                 </article>
 
                 <article class="bg-white rounded-2xl p-8 border border-gray-200 shadow-sm">
                     <div class="w-12 h-12 rounded-xl bg-indigo-600 text-white flex items-center justify-center font-bold text-lg mb-5">3</div>
-                    <h3 class="text-xl font-bold text-gray-900 mb-3">Envía o descarga en PDF</h3>
+                    <h3 class="text-xl font-bold text-gray-900 mb-3">Envíalo o úsalo desde la app</h3>
                     <p class="text-gray-600">
-                        Comparte el presupuesto con tu cliente mediante un enlace único o descárgalo en PDF para enviarlo por correo o imprimirlo.
+                        Comparte el presupuesto con tu cliente mediante un enlace único, descárgalo en PDF o accede rápidamente como PWA desde cualquier dispositivo.
                     </p>
                 </article>
             </div>
         </div>
     </section>
 
-    {{-- For who --}}
     <section class="py-24 bg-white">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="rounded-3xl bg-gradient-to-br from-indigo-600 to-purple-600 p-8 sm:p-12 text-white shadow-2xl">
@@ -469,12 +521,11 @@
         </div>
     </section>
 
-    {{-- CTA mid --}}
     <section class="py-16 bg-white">
         <div class="max-w-4xl mx-auto px-4 text-center">
-            <h2 class="text-3xl font-bold text-gray-900 mb-4">Empieza gratis y crea tu primer presupuesto hoy</h2>
+            <h2 class="text-3xl font-bold text-gray-900 mb-4">Empieza gratis y prepara mejor cada presupuesto</h2>
             <p class="text-gray-600 mb-8 text-lg">
-                Regístrate en minutos y descubre una forma más rápida de trabajar con tus clientes.
+                Regístrate en minutos, toma notas previas, crea propuestas más claras y accede también desde la app instalada como PWA.
             </p>
             <a href="{{ route('register') }}" class="inline-flex items-center justify-center bg-indigo-600 text-white px-8 py-3.5 rounded-xl font-bold hover:bg-indigo-700 transition shadow-lg shadow-indigo-200">
                 Crear cuenta gratis →
@@ -482,7 +533,6 @@
         </div>
     </section>
 
-    {{-- Pricing --}}
     <section id="pricing" class="py-24 bg-gray-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
@@ -653,7 +703,6 @@
         </div>
     </section>
 
-    {{-- Noticias --}}
     @php
     $noticias = \MultiempresaApp\Noticias\Models\Noticia::publicadas()
         ->latest('publicado_en')
@@ -728,7 +777,6 @@
         </section>
     @endif
 
-    {{-- FAQ --}}
     <section id="faq" class="py-24 bg-gray-50">
         <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center mb-12">
@@ -751,11 +799,15 @@
                     ],
                     [
                         'q' => '¿Necesito instalar algo?',
-                        'a' => 'No. Funciona directamente desde el navegador, así que puedes empezar a trabajar sin instalaciones complicadas.'
+                        'a' => 'No. Funciona directamente desde el navegador, aunque también puedes instalarlo como PWA para acceder más rápido desde móvil, tablet o escritorio.'
                     ],
                     [
                         'q' => '¿Puedo descargar los presupuestos en PDF?',
                         'a' => 'Sí. Todos los presupuestos pueden descargarse en PDF con un formato profesional listo para enviar o imprimir.'
+                    ],
+                    [
+                        'q' => '¿Puedo tomar notas antes de hacer un presupuesto?',
+                        'a' => 'Sí. Puedes guardar notas previas con ideas, necesidades del cliente, observaciones o requisitos para usarlas como apoyo al elaborar el presupuesto.'
                     ],
                     [
                         'q' => '¿Puedo gestionar varias empresas?',
@@ -780,14 +832,13 @@
         </div>
     </section>
 
-    {{-- Final CTA --}}
     <section class="py-24 bg-indigo-600">
         <div class="max-w-3xl mx-auto px-4 text-center">
             <h2 class="text-3xl sm:text-4xl font-bold text-white mb-4">
                 Empieza a enviar presupuestos hoy mismo
             </h2>
             <p class="text-indigo-100 mb-8 text-lg">
-                Crea tu cuenta gratuita y empieza a trabajar con presupuestos profesionales en minutos.
+                Crea tu cuenta gratuita, guarda notas previas para elaborar mejor cada propuesta y accede a la plataforma también como PWA.
             </p>
             <div class="flex flex-col sm:flex-row gap-4 justify-center">
                 <a href="{{ route('register') }}" class="bg-white text-indigo-700 px-8 py-3.5 rounded-xl font-bold hover:bg-indigo-50 transition shadow-lg">
@@ -801,19 +852,18 @@
     </section>
 </main>
 
-{{-- Footer --}}
 <footer class="bg-white border-t border-gray-200 py-10">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-gray-500">
-            <p>© {{ date('Y') }} {{ config('app.name') }} — Un producto de anixelo.com</p>
+            <p>© {{ date('Y') }} {{ config('app.name') }} - Un producto de anixelo.com</p>
 
             <nav class="flex flex-wrap items-center justify-center gap-4" aria-label="Enlaces del pie">
                 <a href="#features" class="hover:text-indigo-600 transition">Funcionalidades</a>
                 <a href="#pricing" class="hover:text-indigo-600 transition">Precios</a>
                 <a href="#faq" class="hover:text-indigo-600 transition">Preguntas frecuentes</a>
                 <span class="text-gray-300 hidden sm:inline">|</span>
-                <a href="{{ route('pages.privacy') }}" class="hover:text-indigo-600 transition">Política de Privacidad</a>
-                <a href="{{ route('pages.terms') }}" class="hover:text-indigo-600 transition">Términos y Condiciones</a>
+                <a href="{{ route('pages.privacy') }}" class="hover:text-indigo-600 transition">Política de privacidad</a>
+                <a href="{{ route('pages.terms') }}" class="hover:text-indigo-600 transition">Términos y condiciones</a>
                 <a href="{{ route('pages.contact') }}" class="hover:text-indigo-600 transition">Contacto</a>
                 <span class="text-gray-300 hidden sm:inline">|</span>
                 <a href="{{ route('login') }}" class="hover:text-indigo-600 transition">Iniciar sesión</a>
@@ -831,8 +881,5 @@ if ('serviceWorker' in navigator) {
 }
 </script>
 
-
-
 </body>
-
 </html>

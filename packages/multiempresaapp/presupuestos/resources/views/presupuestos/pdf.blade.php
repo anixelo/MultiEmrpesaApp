@@ -11,7 +11,7 @@
         body {
             font-family: DejaVu Sans, sans-serif;
             font-size: 12px;
-            color: #111827;
+            color: #0f172a;
             margin: 0;
             padding: 0;
             background: #ffffff;
@@ -27,7 +27,7 @@
 
         .header {
             width: 100%;
-            border-bottom: 2px solid #4F46E5;
+            border-bottom: 2px solid #4f46e5;
             padding-bottom: 18px;
             margin-bottom: 24px;
         }
@@ -55,34 +55,34 @@
         .brand-name {
             font-size: 24px;
             font-weight: bold;
-            color: #4F46E5;
+            color: #4f46e5;
             line-height: 1.2;
             margin-bottom: 6px;
         }
 
         .brand-subtitle {
             font-size: 11px;
-            color: #6B7280;
+            color: #64748b;
         }
 
         .doc-title {
             font-size: 11px;
             text-transform: uppercase;
             letter-spacing: 0.08em;
-            color: #6B7280;
+            color: #64748b;
             margin-bottom: 4px;
         }
 
         .doc-number {
             font-size: 22px;
             font-weight: bold;
-            color: #111827;
+            color: #0f172a;
             margin-bottom: 8px;
         }
 
         .meta-line {
             font-size: 11px;
-            color: #4B5563;
+            color: #475569;
             line-height: 1.5;
         }
 
@@ -95,11 +95,11 @@
             margin-top: 8px;
         }
 
-        .badge-gray { background: #F3F4F6; color: #4B5563; }
-        .badge-blue { background: #DBEAFE; color: #1D4ED8; }
-        .badge-purple { background: #EDE9FE; color: #7C3AED; }
-        .badge-green { background: #D1FAE5; color: #065F46; }
-        .badge-red { background: #FEE2E2; color: #991B1B; }
+        .badge-gray { background: #f1f5f9; color: #475569; }
+        .badge-blue { background: #dbeafe; color: #1d4ed8; }
+        .badge-purple { background: #ede9fe; color: #7c3aed; }
+        .badge-green { background: #d1fae5; color: #065f46; }
+        .badge-red { background: #ffe4e6; color: #be123c; }
 
         .info-table {
             width: 100%;
@@ -116,8 +116,8 @@
         }
 
         .info-box {
-            border: 1px solid #E5E7EB;
-            background: #F9FAFB;
+            border: 1px solid #e2e8f0;
+            background: #f8fafc;
             border-radius: 8px;
             padding: 14px 16px;
             min-height: 110px;
@@ -135,7 +135,7 @@
             font-size: 10px;
             text-transform: uppercase;
             letter-spacing: 0.08em;
-            color: #6B7280;
+            color: #64748b;
             margin-bottom: 10px;
             font-weight: bold;
         }
@@ -143,13 +143,13 @@
         .info-name {
             font-size: 14px;
             font-weight: bold;
-            color: #111827;
+            color: #0f172a;
             margin-bottom: 6px;
         }
 
         .info-text {
             font-size: 11px;
-            color: #374151;
+            color: #334155;
             line-height: 1.55;
         }
 
@@ -164,26 +164,26 @@
         }
 
         .lineas-table thead th {
-            background: #EEF2FF;
-            color: #4338CA;
+            background: #eef2ff;
+            color: #4338ca;
             text-align: left;
             padding: 10px 8px;
             font-size: 10px;
             text-transform: uppercase;
             letter-spacing: 0.05em;
-            border-top: 1px solid #C7D2FE;
-            border-bottom: 1px solid #C7D2FE;
+            border-top: 1px solid #c7d2fe;
+            border-bottom: 1px solid #c7d2fe;
         }
 
         .lineas-table tbody td {
             padding: 10px 8px;
-            border-bottom: 1px solid #E5E7EB;
+            border-bottom: 1px solid #e2e8f0;
             font-size: 11px;
             vertical-align: top;
         }
 
         .lineas-table tbody tr:nth-child(even) {
-            background: #FAFAFA;
+            background: #f8fafc;
         }
 
         .text-right {
@@ -196,13 +196,13 @@
 
         .concepto {
             font-weight: 600;
-            color: #111827;
+            color: #0f172a;
             margin-bottom: 2px;
         }
 
         .concepto-extra {
             font-size: 10px;
-            color: #6B7280;
+            color: #64748b;
         }
 
         .totals-wrapper {
@@ -215,7 +215,7 @@
             width: 300px;
             margin-left: auto;
             border-collapse: collapse;
-            border: 1px solid #E5E7EB;
+            border: 1px solid #e2e8f0;
             border-radius: 8px;
             overflow: hidden;
         }
@@ -223,7 +223,7 @@
         .totals-table td {
             padding: 9px 12px;
             font-size: 11px;
-            border-bottom: 1px solid #E5E7EB;
+            border-bottom: 1px solid #e2e8f0;
         }
 
         .totals-table tr:last-child td {
@@ -231,25 +231,25 @@
         }
 
         .totals-table .label-cell {
-            background: #F9FAFB;
-            color: #374151;
+            background: #f8fafc;
+            color: #334155;
         }
 
         .totals-table .value-cell {
             text-align: right;
             font-weight: 600;
-            color: #111827;
+            color: #0f172a;
             background: #ffffff;
         }
 
         .totals-table .discount-row .label-cell,
         .totals-table .discount-row .value-cell {
-            color: #DC2626;
+            color: #dc2626;
         }
 
         .totals-table .total-row .label-cell,
         .totals-table .total-row .value-cell {
-            background: #4F46E5;
+            background: #4f46e5;
             color: #ffffff;
             font-size: 13px;
             font-weight: bold;
@@ -260,21 +260,21 @@
         }
 
         .extra-box {
-            border: 1px solid #E5E7EB;
-            background: #F9FAFB;
+            border: 1px solid #e2e8f0;
+            background: #f8fafc;
             border-radius: 8px;
             padding: 12px 14px;
             font-size: 11px;
-            color: #374151;
+            color: #334155;
             line-height: 1.6;
         }
 
         .footer-note {
             margin-top: 28px;
             padding-top: 14px;
-            border-top: 1px solid #E5E7EB;
+            border-top: 1px solid #e2e8f0;
             font-size: 10px;
-            color: #6B7280;
+            color: #64748b;
             text-align: center;
             line-height: 1.5;
         }
@@ -312,19 +312,19 @@
             <tr>
                 <td class="header-left">
                     @if($presupuesto->negocio?->logo)
-                    @php
-                        $logoRelPath = $presupuesto->negocio->logo;
-                        $logoPath = realpath(public_path('storage/' . $logoRelPath));
-                        $storageBase = realpath(public_path('storage'));
-                        $logoSafe = $logoPath && str_starts_with($logoPath, $storageBase);
-                    @endphp
-                    @if($logoSafe && file_exists($logoPath))
-                    <img src="{{ 'file://' . $logoPath }}" alt="{{ $empresaNombre }}" style="max-height:60px;max-width:180px;margin-bottom:6px;object-fit:contain;">
+                        @php
+                            $logoRelPath = $presupuesto->negocio->logo;
+                            $logoPath = realpath(public_path('storage/' . $logoRelPath));
+                            $storageBase = realpath(public_path('storage'));
+                            $logoSafe = $logoPath && str_starts_with($logoPath, $storageBase);
+                        @endphp
+                        @if($logoSafe && file_exists($logoPath))
+                            <img src="{{ 'file://' . $logoPath }}" alt="{{ $empresaNombre }}" style="max-height:60px;max-width:180px;margin-bottom:6px;object-fit:contain;">
+                        @else
+                            <div class="brand-name">{{ $empresaNombre }}</div>
+                        @endif
                     @else
-                    <div class="brand-name">{{ $empresaNombre }}</div>
-                    @endif
-                    @else
-                    <div class="brand-name">{{ $empresaNombre }}</div>
+                        <div class="brand-name">{{ $empresaNombre }}</div>
                     @endif
                     <div class="brand-subtitle">Documento de presupuesto</div>
                 </td>

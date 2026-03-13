@@ -378,7 +378,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 @endif
             </div>
             @endauth
-            © {{ date('Y') }} {{ config('app.name') }} — Sistema Multi-Empresa
+            © {{ date('Y') }} {{ config('app.name') }} — By Anixelo
         </div>
     </footer>
 </div>

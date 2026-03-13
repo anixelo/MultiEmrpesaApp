@@ -90,7 +90,7 @@
     <footer class="bg-gray-50 border-t border-gray-200 py-8 mt-12">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-gray-500">
-                <p>© {{ date('Y') }} {{ config('app.name') }} — Un producto de anixelo.com</p>
+                <p>© {{ date('Y') }} {{ config('app.name') }} — By Anixelo</p>
                 <nav class="flex flex-wrap items-center justify-center gap-4">
                     <a href="{{ url('/') }}" class="hover:text-indigo-600 transition">Inicio</a>
                     <a href="{{ route('pages.privacy') }}" class="hover:text-indigo-600 transition">Política de Privacidad</a>
