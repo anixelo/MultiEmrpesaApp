@@ -397,6 +397,7 @@ document.addEventListener('DOMContentLoaded', () => {
 </div>
 @endif
 <script>
+    console.log('Service Worker version:');
 if ('serviceWorker' in navigator) {
 
     window.addEventListener('load', async () => {

@@ -1,8 +1,7 @@
-const CACHE_NAME = 'mispresupuestos-v4';
-const STATIC_CACHE = 'mispresupuestos-static-v4';
+const CACHE_NAME = 'mispresupuestos-v5';
+const STATIC_CACHE = 'mispresupuestos-static-v5';
 
 const STATIC_ASSETS = [
-    '/',
     '/offline',
 ];
 
