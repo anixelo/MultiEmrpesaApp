@@ -135,6 +135,16 @@
                                   {{ request()->routeIs('superadmin.noticias.*') ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50' }}">
                             Noticias
                         </a>
+                        <a href="{{ route('superadmin.incidents.index') }}"
+                           class="px-3 py-2 rounded-lg text-sm font-medium transition
+                                  {{ request()->routeIs('superadmin.incidents.*') ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50' }}">
+                            Incidencias
+                        </a>
+                        <a href="{{ route('superadmin.analytics.index') }}"
+                           class="px-3 py-2 rounded-lg text-sm font-medium transition
+                                  {{ request()->routeIs('superadmin.analytics.*') ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50' }}">
+                            Analíticas
+                        </a>
                         <a href="{{ route('superadmin.settings') }}"
                            class="px-3 py-2 rounded-lg text-sm font-medium transition
                                   {{ request()->routeIs('superadmin.settings*') ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50' }}">
@@ -379,6 +389,8 @@
                                 <a href="{{ route('superadmin.users.index') }}" class="flex items-center rounded-2xl px-4 py-3 text-sm font-medium text-slate-700 transition hover:bg-slate-50">Usuarios</a>
                                 <a href="{{ route('superadmin.plans.index') }}" class="flex items-center rounded-2xl px-4 py-3 text-sm font-medium text-slate-700 transition hover:bg-slate-50">Planes</a>
                                 <a href="{{ route('superadmin.noticias.index') }}" class="flex items-center rounded-2xl px-4 py-3 text-sm font-medium text-slate-700 transition hover:bg-slate-50">Noticias</a>
+                                <a href="{{ route('superadmin.incidents.index') }}" class="flex items-center rounded-2xl px-4 py-3 text-sm font-medium text-slate-700 transition hover:bg-slate-50">Incidencias</a>
+                                <a href="{{ route('superadmin.analytics.index') }}" class="flex items-center rounded-2xl px-4 py-3 text-sm font-medium text-slate-700 transition hover:bg-slate-50">Analíticas</a>
                                 <a href="{{ route('superadmin.settings') }}" class="flex items-center rounded-2xl px-4 py-3 text-sm font-medium text-slate-700 transition hover:bg-slate-50">Configuración</a>
                             @endif
                         </div>
