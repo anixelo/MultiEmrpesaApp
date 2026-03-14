@@ -25,7 +25,7 @@ class AnalyticsDashboardController extends Controller
         for ($i = 29; $i >= 0; $i--) {
             $date   = now()->subDays($i)->format('Y-m-d');
             $label  = now()->subDays($i)->format('d M');
-            $record = $visitsByDayRaw->firstWhere('date', $date);
+            $record = $visitsByDayRaw->first(fn ($r) => $r->date->toDateString() === $date);
 
             $labels->push($label);
             $dataPoints->push($record ? $record->total : 0);

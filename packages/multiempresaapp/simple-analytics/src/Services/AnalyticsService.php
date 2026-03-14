@@ -31,6 +31,7 @@ class AnalyticsService
             'user_agent' => $request->userAgent(),
             'referer'    => $request->headers->get('referer'),
             'method'     => $request->method(),
+            'user_id'    => auth()->id(),
             'date'       => $today,
         ]);
     }
@@ -118,7 +119,8 @@ class AnalyticsService
      */
     public function latestVisits(int $limit = 20)
     {
-        return PageVisit::orderByDesc('created_at')
+        return PageVisit::with('user')
+            ->orderByDesc('created_at')
             ->limit($limit)
             ->get();
     }

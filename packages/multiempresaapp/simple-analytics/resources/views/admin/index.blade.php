@@ -44,7 +44,9 @@
             {{-- Chart: visits by day --}}
             <div class="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-slate-200">
                 <h2 class="mb-4 text-base font-semibold text-slate-800">Visitas últimos 30 días</h2>
-                <canvas id="visitsChart" height="80"></canvas>
+                <div style="position:relative; height:220px;">
+                    <canvas id="visitsChart"></canvas>
+                </div>
             </div>
 
             <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
@@ -92,6 +94,7 @@
                                     <th class="px-6 py-3">Fecha</th>
                                     <th class="px-6 py-3">Página</th>
                                     <th class="px-6 py-3">IP</th>
+                                    <th class="px-6 py-3">Usuario</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -104,10 +107,13 @@
                                             {{ $visit->path }}
                                         </td>
                                         <td class="px-6 py-3 text-xs text-slate-500">{{ $visit->ip }}</td>
+                                        <td class="px-6 py-3 text-xs text-slate-500">
+                                            {{ $visit->user?->name ?? '—' }}
+                                        </td>
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="3" class="px-6 py-4 text-center text-sm text-slate-400">Sin datos</td>
+                                        <td colspan="4" class="px-6 py-4 text-center text-sm text-slate-400">Sin datos</td>
                                     </tr>
                                 @endforelse
                             </tbody>
@@ -138,6 +144,7 @@
             },
             options: {
                 responsive: true,
+                maintainAspectRatio: false,
                 plugins: {
                     legend: { display: false },
                 },

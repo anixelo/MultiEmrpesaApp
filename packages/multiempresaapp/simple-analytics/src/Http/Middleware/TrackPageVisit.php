@@ -33,6 +33,16 @@ class TrackPageVisit
             return false;
         }
 
+        // Skip super-administrators
+        if (auth()->check() && auth()->user()->isSuperAdmin()) {
+            return false;
+        }
+
+        // Skip when someone is impersonating another user
+        if (session()->has('impersonating_original_id')) {
+            return false;
+        }
+
         // Skip authenticated users if configured
         if (auth()->check() && ! config('simple-analytics.track_authenticated_users', true)) {
             return false;

@@ -10,6 +10,9 @@
 
     <input type="hidden" name="cliente_id" value="{{ $clienteId }}">
     <input type="hidden" name="negocio_id" value="{{ $negocioId }}">
+    @if($notaId)
+        <input type="hidden" name="nota_id" value="{{ $notaId }}">
+    @endif
 
     <input type="hidden" name="fecha" value="{{ $fecha }}">
     <input type="hidden" name="validez_hasta" value="{{ $validezHasta }}">
