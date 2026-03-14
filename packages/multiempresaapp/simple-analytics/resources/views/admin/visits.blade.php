@@ -22,6 +22,7 @@
                                 <th class="px-6 py-4 whitespace-nowrap">Fecha / Hora</th>
                                 <th class="px-6 py-4">Página (path)</th>
                                 <th class="px-6 py-4">IP</th>
+                                <th class="px-6 py-4">Usuario</th>
                                 <th class="px-6 py-4">Referer</th>
                                 <th class="px-6 py-4">User Agent</th>
                             </tr>
@@ -36,6 +37,9 @@
                                         {{ $visit->path }}
                                     </td>
                                     <td class="px-6 py-3 text-xs text-slate-600">{{ $visit->ip }}</td>
+                                    <td class="px-6 py-3 text-xs text-slate-600">
+                                        {{ $visit->user?->name ?? '—' }}
+                                    </td>
                                     <td class="px-6 py-3 text-xs text-slate-500 max-w-[160px] truncate"
                                         title="{{ $visit->referer }}">
                                         {{ $visit->referer ?: '—' }}
@@ -47,7 +51,7 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="5" class="px-6 py-8 text-center text-sm text-slate-400">
+                                    <td colspan="6" class="px-6 py-8 text-center text-sm text-slate-400">
                                         No hay datos de visitas todavía.
                                     </td>
                                 </tr>

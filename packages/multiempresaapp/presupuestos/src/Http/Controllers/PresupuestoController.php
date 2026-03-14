@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 use Barryvdh\DomPDF\Facade\Pdf;
+use MultiempresaApp\Notas\Models\Nota;
 use MultiempresaApp\Presupuestos\Models\Presupuesto;
 use MultiempresaApp\Presupuestos\Models\PresupuestoAudit;
 use MultiempresaApp\Presupuestos\Models\PresupuestoConfiguracion;
@@ -154,6 +155,17 @@ class PresupuestoController extends Controller
         $this->calculator->calcularTotales($presupuesto);
 
         $this->logAudit($presupuesto, 'creado', 'Presupuesto creado con estado Borrador.');
+
+        // Link nota to this presupuesto if created from one
+        if ($notaId = $request->input('nota_id')) {
+            $nota = Nota::where('id', $notaId)
+                ->where('empresa_id', $empresaId)
+                ->first();
+
+            if ($nota) {
+                $nota->update(['presupuesto_id' => $presupuesto->id]);
+            }
+        }
 
         // If a worker creates a presupuesto, notify all company admins
         if (auth()->user()->hasRole('trabajador')) {
