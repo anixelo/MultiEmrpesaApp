@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Facade;
  * @method static \Illuminate\Support\Collection visitsByDay(int $days = 30)
  * @method static \Illuminate\Support\Collection visitsByPage(string $path)
  * @method static \Illuminate\Support\Collection latestVisits(int $limit = 20)
+ * @method static void  forgetTodayByIp(string $ip)
  *
  * @see \MultiempresaApp\SimpleAnalytics\Services\AnalyticsService
  */

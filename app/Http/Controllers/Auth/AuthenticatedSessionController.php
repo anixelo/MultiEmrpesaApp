@@ -8,6 +8,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
+use MultiempresaApp\SimpleAnalytics\Services\AnalyticsService;
 
 class AuthenticatedSessionController extends Controller
 {
@@ -27,6 +28,10 @@ class AuthenticatedSessionController extends Controller
         $request->authenticate();
 
         $request->session()->regenerate();
+
+        if (Auth::user()->isSuperAdmin()) {
+            app(AnalyticsService::class)->forgetTodayByIp($request->ip());
+        }
 
         return redirect()->intended(route('dashboard', absolute: false));
     }
