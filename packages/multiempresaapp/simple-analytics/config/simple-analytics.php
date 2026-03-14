@@ -18,13 +18,16 @@ return [
     /*
     |--------------------------------------------------------------------------
     | Paths to ignore (supports wildcards with fnmatch)
+
+        'login',
+        'register',
+
+
     |--------------------------------------------------------------------------
     */
     'ignore_paths' => [
         'admin/*',
         'superadmin/*',
-        'login',
-        'register',
         'logout',
         'api/*',
         'up',
