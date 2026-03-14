@@ -124,4 +124,14 @@ class AnalyticsService
             ->limit($limit)
             ->get();
     }
+
+    /**
+     * Delete all page visit records for today for the given IP address.
+     */
+    public function forgetTodayByIp(string $ip): void
+    {
+        PageVisit::where('ip', $ip)
+            ->where('date', Carbon::today()->toDateString())
+            ->delete();
+    }
 }
