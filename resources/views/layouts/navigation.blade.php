@@ -30,6 +30,11 @@
                                   {{ request()->routeIs('admin.presupuestos.*') ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50' }}">
                             Presupuestos
                         </a>
+                        <a href="{{ route('admin.plantillas-presupuesto.index') }}"
+                           class="px-3 py-2 rounded-lg text-sm font-medium transition
+                                  {{ request()->routeIs('admin.plantillas-presupuesto.*') ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50' }}">
+                            Plantillas
+                        </a>
                         {{-- Datos dropdown (worker) --}}
                         <div x-data="{ datosOpen: false }" class="relative">
                             <button @click="datosOpen = !datosOpen" @click.outside="datosOpen = false"
@@ -76,6 +81,11 @@
                              Notas
                         </a>
                         @endif
+                        <a href="{{ route('admin.plantillas-presupuesto.index') }}"
+                           class="px-3 py-2 rounded-lg text-sm font-medium transition
+                                  {{ request()->routeIs('admin.plantillas-presupuesto.*') ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50' }}">
+                             Plantillas
+                        </a>
                         {{-- Datos dropdown (admin) --}}
                         <div x-data="{ datosOpen: false }" class="relative">
                             <button @click="datosOpen = !datosOpen" @click.outside="datosOpen = false"
@@ -346,6 +356,11 @@
                                     Presupuestos
                                 </a>
 
+                                <a href="{{ route('admin.plantillas-presupuesto.index') }}"
+                                   class="flex items-center rounded-2xl px-4 py-3 text-sm font-medium text-slate-700 transition hover:bg-slate-50">
+                                    Plantillas
+                                </a>
+
                                 <div x-data="{ datosOpen: false }" class="rounded-2xl border border-slate-200 bg-slate-50/70">
                                     <button @click="datosOpen = !datosOpen"
                                             class="flex w-full items-center justify-between px-4 py-3 text-sm font-medium text-slate-700">
@@ -380,6 +395,11 @@
                                         Notas
                                     </a>
                                 @endif
+
+                                <a href="{{ route('admin.plantillas-presupuesto.index') }}"
+                                   class="flex items-center rounded-2xl px-4 py-3 text-sm font-medium text-slate-700 transition hover:bg-slate-50">
+                                    Plantillas
+                                </a>
 
                                 <div x-data="{ datosOpen: false }" class="rounded-2xl border border-slate-200 bg-slate-50/70">
                                     <button @click="datosOpen = !datosOpen"

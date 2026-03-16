@@ -15,6 +15,7 @@ use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\UserController as AdminUserController;
 use MultiempresaApp\Notifications\Http\Controllers\NotificationController;
 use MultiempresaApp\Notas\Http\Controllers\NotaController;
+use MultiempresaApp\PlantillasPresupuesto\Http\Controllers\PlantillaPresupuestoController;
 use App\Http\Controllers\Worker\DashboardController as WorkerDashboardController;
 use MultiempresaApp\Incidents\Http\Controllers\Admin\IncidentController as AdminIncidentController;
 use MultiempresaApp\Incidents\Http\Controllers\SuperAdmin\IncidentController as SuperAdminIncidentController;
@@ -121,6 +122,12 @@ Route::middleware(['auth', 'two_factor'])->group(function () {
         // Notas
         Route::resource('admin/notas', NotaController::class)->names('admin.notas');
         Route::get('admin/notas/{id}/crear-presupuesto', [NotaController::class, 'crearPresupuesto'])->name('admin.notas.crear-presupuesto');
+
+        // Plantillas de presupuesto
+        Route::get('admin/plantillas-presupuesto', [PlantillaPresupuestoController::class, 'index'])->name('admin.plantillas-presupuesto.index');
+        Route::get('admin/plantillas-presupuesto/{id}', [PlantillaPresupuestoController::class, 'show'])->name('admin.plantillas-presupuesto.show');
+        Route::delete('admin/plantillas-presupuesto/{id}', [PlantillaPresupuestoController::class, 'destroy'])->name('admin.plantillas-presupuesto.destroy');
+        Route::post('admin/plantillas-presupuesto/{id}/usar', [PlantillaPresupuestoController::class, 'usar'])->name('admin.plantillas-presupuesto.usar');
     });
 
     // Admin routes

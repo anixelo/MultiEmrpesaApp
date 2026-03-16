@@ -39,7 +39,8 @@
             "MultiempresaApp\\Presupuestos\\": "packages/multiempresaapp/presupuestos/src/",
             "MultiempresaApp\\Noticias\\": "packages/multiempresaapp/noticias/src/",
             "MultiempresaApp\\Notas\\": "packages/multiempresaapp/notas/src/",
-            "MultiempresaApp\\SimpleAnalytics\\": "packages/multiempresaapp/simple-analytics/src/"
+            "MultiempresaApp\\SimpleAnalytics\\": "packages/multiempresaapp/simple-analytics/src/",
+            "MultiempresaApp\\PlantillasPresupuesto\\": "packages/multiempresaapp/plantillas-presupuesto/src/"
         },
         "files": [
             "app/Helpers/QrHelper.php"

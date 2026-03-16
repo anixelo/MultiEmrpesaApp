@@ -8,6 +8,8 @@ use App\Models\Empresa;
 use MultiempresaApp\Presupuestos\Models\Presupuesto;
 use MultiempresaApp\Presupuestos\Models\PresupuestoConfiguracion;
 use MultiempresaApp\Presupuestos\Services\PresupuestoCalculator;
+use MultiempresaApp\PlantillasPresupuesto\Models\PlantillaPresupuesto;
+use MultiempresaApp\PlantillasPresupuesto\Models\PlantillaPresupuestoLinea;
 
 class PresupuestoForm extends Component
 {
@@ -46,10 +48,15 @@ class PresupuestoForm extends Component
     public string $servicioSearchModalQuery = '';
     public array $servicioSearchModalResults = [];
 
+    // Plantilla modal
+    public bool $showPlantillaModal = false;
+    public string $plantillaNombre = '';
+    public string $plantillaSuccess = '';
+
     // Wizard step (only used for create mode)
     public int $step = 1;
 
-    public function mount(?int $presupuestoId = null, ?int $notaId = null): void
+    public function mount(?int $presupuestoId = null, ?int $notaId = null, ?int $plantillaId = null): void
     {
         $empresaId = auth()->user()->company_id;
         $config    = PresupuestoConfiguracion::getOrCreateForEmpresa($empresaId);
@@ -87,6 +94,45 @@ class PresupuestoForm extends Component
                 $this->clienteNombre = $nota->cliente?->nombre ?? '';
                 // Skip to step 3 (datos generales) since client is pre-selected
                 $this->step = 3;
+            }
+        }
+
+        // Pre-fill from plantilla if provided
+        if ($plantillaId) {
+            $plantilla = PlantillaPresupuesto::with('lineas')
+                ->where('empresa_id', $empresaId)
+                ->find($plantillaId);
+
+            if ($plantilla) {
+                if ($plantilla->negocio_id) {
+                    $this->negocioId = $plantilla->negocio_id;
+                }
+                $this->formaPago    = $plantilla->forma_pago ?? '';
+                $this->observaciones = $plantilla->observaciones ?? '';
+
+                foreach ($plantilla->lineas as $idx => $linea) {
+                    $this->lineas[] = [
+                        'concepto'        => $linea->concepto,
+                        'cantidad'        => (float) $linea->cantidad,
+                        'precio_unitario' => (float) $linea->precio_unitario,
+                        'descuento_tipo'  => $linea->descuento_tipo ?? '',
+                        'descuento_valor' => (float) ($linea->descuento_valor ?? 0),
+                        'iva_tipo'        => (float) $linea->iva_tipo,
+                        'servicio_id'     => null,
+                        'base_imponible'  => 0,
+                        'iva_cuota'       => 0,
+                        'total'           => 0,
+                    ];
+                    $this->lineaSearch[$idx] = $linea->concepto;
+                    $this->lineaDropdownVisible[$idx] = false;
+                    $this->lineaSearchResults[$idx] = [];
+                }
+
+                $this->recalcularTotales();
+                // Go to step 2 (cliente) since empresa is already selected
+                if ($this->negocioId) {
+                    $this->step = 2;
+                }
             }
         }
 
@@ -388,6 +434,59 @@ class PresupuestoForm extends Component
         $this->totalBaseImponible = round($totalBaseImponible, 2);
         $this->totalIva           = round($totalIva, 2);
         $this->total              = round($totalBaseImponible + $totalIva, 2);
+    }
+
+    public function openPlantillaModal(): void
+    {
+        $this->plantillaNombre = '';
+        $this->plantillaSuccess = '';
+        $this->showPlantillaModal = true;
+    }
+
+    public function closePlantillaModal(): void
+    {
+        $this->showPlantillaModal = false;
+        $this->plantillaNombre = '';
+    }
+
+    public function saveAsPlantilla(): void
+    {
+        $this->validate([
+            'plantillaNombre' => 'required|string|max:255',
+        ], [
+            'plantillaNombre.required' => 'El nombre de la plantilla es obligatorio.',
+        ]);
+
+        $empresaId = auth()->user()->company_id;
+
+        $plantilla = PlantillaPresupuesto::create([
+            'empresa_id'   => $empresaId,
+            'negocio_id'   => $this->negocioId,
+            'nombre'       => $this->plantillaNombre,
+            'forma_pago'   => $this->formaPago ?: null,
+            'observaciones' => $this->observaciones ?: null,
+            'created_by'   => auth()->id(),
+        ]);
+
+        foreach ($this->lineas as $orden => $linea) {
+            if (empty($linea['concepto'])) {
+                continue;
+            }
+            PlantillaPresupuestoLinea::create([
+                'plantilla_id'    => $plantilla->id,
+                'orden'           => $orden,
+                'concepto'        => $linea['concepto'],
+                'cantidad'        => $linea['cantidad'],
+                'precio_unitario' => $linea['precio_unitario'],
+                'descuento_tipo'  => $linea['descuento_tipo'] ?: null,
+                'descuento_valor' => $linea['descuento_tipo'] ? $linea['descuento_valor'] : null,
+                'iva_tipo'        => $linea['iva_tipo'],
+            ]);
+        }
+
+        $this->showPlantillaModal = false;
+        $this->plantillaNombre = '';
+        $this->plantillaSuccess = 'Plantilla guardada correctamente.';
     }
 
     public function render()

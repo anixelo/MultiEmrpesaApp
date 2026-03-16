@@ -1,4 +1,11 @@
 <div>
+    @if($plantillaSuccess)
+        <div class="mb-4 rounded-2xl border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-700 shadow-sm">
+            {{ $plantillaSuccess }}
+            <a href="{{ route('admin.plantillas-presupuesto.index') }}" class="ml-2 font-medium underline hover:no-underline">Ver plantillas</a>
+        </div>
+    @endif
+
     @if ($presupuestoId)
         <form method="POST" action="{{ route('admin.presupuestos.update', $presupuestoId) }}">
             @csrf
@@ -342,6 +349,14 @@
                     Crear presupuesto
                 </button>
 
+                <button type="button" wire:click="openPlantillaModal"
+                        class="inline-flex items-center gap-1.5 rounded-2xl border border-slate-300 bg-white px-4 py-2.5 text-sm font-medium text-slate-700 shadow-sm transition hover:bg-slate-50">
+                    <svg class="h-4 w-4 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"/>
+                    </svg>
+                    Guardar como plantilla
+                </button>
+
                 <a href="{{ route('admin.presupuestos.index') }}"
                    class="inline-flex items-center rounded-2xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-medium text-slate-700 shadow-sm transition hover:bg-slate-50">
                     Cancelar
@@ -472,6 +487,14 @@
                     Actualizar presupuesto
                 </button>
 
+                <button type="button" wire:click="openPlantillaModal"
+                        class="inline-flex items-center gap-1.5 rounded-2xl border border-slate-300 bg-white px-4 py-2.5 text-sm font-medium text-slate-700 shadow-sm transition hover:bg-slate-50">
+                    <svg class="h-4 w-4 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"/>
+                    </svg>
+                    Guardar como plantilla
+                </button>
+
                 <a href="{{ route('admin.presupuestos.index') }}"
                    class="inline-flex items-center rounded-2xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-medium text-slate-700 shadow-sm transition hover:bg-slate-50">
                     Cancelar
@@ -583,6 +606,47 @@
                     <button type="button" wire:click="quickCreateServicio"
                             class="inline-flex items-center rounded-2xl bg-indigo-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-indigo-700">
                         Crear
+                    </button>
+                </div>
+            </div>
+        </div>
+    @endif
+
+    {{-- Plantilla modal --}}
+    @if($showPlantillaModal)
+        <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4">
+            <div class="w-full max-w-md rounded-3xl border border-slate-200 bg-white shadow-2xl">
+                <div class="flex items-center justify-between border-b border-slate-100 px-6 py-4">
+                    <h3 class="text-lg font-semibold text-slate-900">Guardar como plantilla</h3>
+                    <button type="button" wire:click="closePlantillaModal" class="text-slate-400 transition hover:text-slate-600">
+                        <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+                        </svg>
+                    </button>
+                </div>
+
+                <div class="px-6 py-5">
+                    <label class="block text-sm font-medium text-slate-700">
+                        Nombre de la plantilla <span class="text-rose-500">*</span>
+                    </label>
+                    <input type="text"
+                           wire:model="plantillaNombre"
+                           wire:keydown.enter.prevent="saveAsPlantilla"
+                           placeholder="Ej: Plantilla mantenimiento mensual"
+                           class="mt-1.5 block w-full rounded-2xl border border-slate-300 bg-white px-4 py-2.5 text-sm text-slate-700 shadow-sm focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100">
+                    @error('plantillaNombre')
+                        <p class="mt-1 text-xs text-rose-600">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <div class="flex justify-end gap-3 border-t border-slate-100 px-6 py-4">
+                    <button type="button" wire:click="closePlantillaModal"
+                            class="inline-flex items-center rounded-2xl bg-slate-100 px-4 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-200">
+                        Cancelar
+                    </button>
+                    <button type="button" wire:click="saveAsPlantilla"
+                            class="inline-flex items-center rounded-2xl bg-indigo-600 px-5 py-2 text-sm font-medium text-white transition hover:bg-indigo-700">
+                        Guardar plantilla
                     </button>
                 </div>
             </div>
