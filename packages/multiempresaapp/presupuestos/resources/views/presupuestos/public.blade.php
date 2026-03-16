@@ -339,7 +339,7 @@
                             <h3 class="mb-3 text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">
                                 Observaciones
                             </h3>
-                            <p class="whitespace-pre-line text-sm leading-6 text-slate-700">{{ $presupuesto->observaciones }}</p>
+                            <p class="prose prose-sm max-w-none text-sm leading-6 text-slate-700">{!! $presupuesto->observaciones !!}</p>
                         </div>
                     @endif
 

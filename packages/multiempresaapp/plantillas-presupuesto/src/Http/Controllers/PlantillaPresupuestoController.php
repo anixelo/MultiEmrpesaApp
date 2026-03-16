@@ -11,6 +11,11 @@ class PlantillaPresupuestoController extends Controller
     public function index(Request $request)
     {
         $empresaId = auth()->user()->company_id;
+        $company   = auth()->user()->company;
+
+        if ($company && ! $company->canUsePlantillas()) {
+            return redirect()->route('admin.dashboard')->with('error', 'Tu plan actual no incluye gestión de plantillas.');
+        }
 
         $query = PlantillaPresupuesto::with(['negocio', 'lineas'])
             ->deEmpresa($empresaId);
@@ -26,6 +31,12 @@ class PlantillaPresupuestoController extends Controller
 
     public function show($id)
     {
+        $company = auth()->user()->company;
+
+        if ($company && ! $company->canUsePlantillas()) {
+            return redirect()->route('admin.dashboard')->with('error', 'Tu plan actual no incluye gestión de plantillas.');
+        }
+
         $plantilla = PlantillaPresupuesto::with(['negocio', 'lineas', 'creador'])
             ->findOrFail($id);
 
@@ -38,6 +49,12 @@ class PlantillaPresupuestoController extends Controller
 
     public function destroy($id)
     {
+        $company = auth()->user()->company;
+
+        if ($company && ! $company->canUsePlantillas()) {
+            return redirect()->route('admin.dashboard')->with('error', 'Tu plan actual no incluye gestión de plantillas.');
+        }
+
         $plantilla = PlantillaPresupuesto::findOrFail($id);
 
         if ($plantilla->empresa_id !== auth()->user()->company_id) {
@@ -52,6 +69,12 @@ class PlantillaPresupuestoController extends Controller
 
     public function usar($id)
     {
+        $company = auth()->user()->company;
+
+        if ($company && ! $company->canUsePlantillas()) {
+            return redirect()->route('admin.dashboard')->with('error', 'Tu plan actual no incluye gestión de plantillas.');
+        }
+
         $plantilla = PlantillaPresupuesto::findOrFail($id);
 
         if ($plantilla->empresa_id !== auth()->user()->company_id) {

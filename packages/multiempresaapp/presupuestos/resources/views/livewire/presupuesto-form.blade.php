@@ -271,20 +271,43 @@
                         </select>
                     </div>
 
-                    <div>
-                        <label class="block text-sm font-medium text-slate-700">Observaciones (para el cliente)</label>
-                        <textarea wire:model="observaciones"
-                                  name="observaciones"
-                                  rows="2"
-                                  class="mt-1 block w-full rounded-2xl border border-slate-300 bg-white px-4 py-2.5 text-sm text-slate-700 shadow-sm focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100">{{ $observaciones }}</textarea>
-                    </div>
-
                     <div class="sm:col-span-2">
                         <label class="block text-sm font-medium text-slate-700">Notas internas</label>
                         <textarea wire:model="notas"
                                   name="notas"
                                   rows="2"
                                   class="mt-1 block w-full rounded-2xl border border-slate-300 bg-white px-4 py-2.5 text-sm text-slate-700 shadow-sm focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100">{{ $notas }}</textarea>
+                    </div>
+
+                    <div class="sm:col-span-2"
+                         x-data="presupuestoObsEditor(@js($observaciones))"
+                         x-init="init()"
+                         wire:ignore>
+                        <label class="block text-sm font-medium text-slate-700">Observaciones (para el cliente)</label>
+
+                        <input type="hidden" name="observaciones" x-model="content" id="observaciones-hidden-create">
+
+                        {{-- Toolbar --}}
+                        <div class="mt-1 flex flex-wrap items-center gap-0.5 rounded-t-2xl border border-slate-300 bg-slate-50 px-2 py-1.5">
+                            <button type="button" @click="exec('bold')" title="Negrita"
+                                    class="flex h-7 w-7 items-center justify-center rounded p-1 text-sm font-bold text-slate-700 transition hover:bg-slate-200"><b>B</b></button>
+                            <button type="button" @click="exec('italic')" title="Cursiva"
+                                    class="flex h-7 w-7 items-center justify-center rounded p-1 text-sm italic text-slate-700 transition hover:bg-slate-200"><i>I</i></button>
+                            <button type="button" @click="exec('underline')" title="Subrayado"
+                                    class="flex h-7 w-7 items-center justify-center rounded p-1 text-sm underline text-slate-700 transition hover:bg-slate-200"><u>U</u></button>
+                            <div class="mx-1 h-5 w-px bg-slate-300"></div>
+                            <button type="button" @click="exec('insertUnorderedList')" title="Lista"
+                                    class="flex h-7 w-7 items-center justify-center rounded p-1 text-slate-700 transition hover:bg-slate-200">
+                                <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>
+                            </button>
+                        </div>
+
+                        {{-- Editor area --}}
+                        <div x-ref="editor"
+                             contenteditable="true"
+                             @input="onInput()"
+                             @blur="syncToWire()"
+                             class="min-h-[4rem] rounded-b-2xl border border-t-0 border-slate-300 bg-white px-4 py-2.5 text-sm text-slate-700 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-100 [&_ul]:list-disc [&_ul]:pl-4 [&_ol]:list-decimal [&_ol]:pl-4"></div>
                     </div>
                 </div>
 
@@ -349,6 +372,7 @@
                     Crear presupuesto
                 </button>
 
+                @if($canUsePlantillas)
                 <button type="button" wire:click="openPlantillaModal"
                         class="inline-flex items-center gap-1.5 rounded-2xl border border-slate-300 bg-white px-4 py-2.5 text-sm font-medium text-slate-700 shadow-sm transition hover:bg-slate-50">
                     <svg class="h-4 w-4 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -356,6 +380,7 @@
                     </svg>
                     Guardar como plantilla
                 </button>
+                @endif
 
                 <a href="{{ route('admin.presupuestos.index') }}"
                    class="inline-flex items-center rounded-2xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-medium text-slate-700 shadow-sm transition hover:bg-slate-50">
@@ -461,14 +486,6 @@
                         </select>
                     </div>
 
-                    <div>
-                        <label class="block text-sm font-medium text-slate-700">Observaciones (para el cliente)</label>
-                        <textarea wire:model="observaciones"
-                                  name="observaciones"
-                                  rows="2"
-                                  class="mt-1 block w-full rounded-2xl border border-slate-300 bg-white px-4 py-2.5 text-sm text-slate-700 shadow-sm focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100">{{ $observaciones }}</textarea>
-                    </div>
-
                     <div class="sm:col-span-2">
                         <label class="block text-sm font-medium text-slate-700">Notas internas</label>
                         <textarea wire:model="notas"
@@ -476,8 +493,63 @@
                                   rows="2"
                                   class="mt-1 block w-full rounded-2xl border border-slate-300 bg-white px-4 py-2.5 text-sm text-slate-700 shadow-sm focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100">{{ $notas }}</textarea>
                     </div>
+
+                    <div class="sm:col-span-2"
+                         x-data="presupuestoObsEditor(@js($observaciones))"
+                         x-init="init()"
+                         wire:ignore>
+                        <label class="block text-sm font-medium text-slate-700">Observaciones (para el cliente)</label>
+
+                        <input type="hidden" name="observaciones" x-model="content" id="observaciones-hidden-edit">
+
+                        {{-- Toolbar --}}
+                        <div class="mt-1 flex flex-wrap items-center gap-0.5 rounded-t-2xl border border-slate-300 bg-slate-50 px-2 py-1.5">
+                            <button type="button" @click="exec('bold')" title="Negrita"
+                                    class="flex h-7 w-7 items-center justify-center rounded p-1 text-sm font-bold text-slate-700 transition hover:bg-slate-200"><b>B</b></button>
+                            <button type="button" @click="exec('italic')" title="Cursiva"
+                                    class="flex h-7 w-7 items-center justify-center rounded p-1 text-sm italic text-slate-700 transition hover:bg-slate-200"><i>I</i></button>
+                            <button type="button" @click="exec('underline')" title="Subrayado"
+                                    class="flex h-7 w-7 items-center justify-center rounded p-1 text-sm underline text-slate-700 transition hover:bg-slate-200"><u>U</u></button>
+                            <div class="mx-1 h-5 w-px bg-slate-300"></div>
+                            <button type="button" @click="exec('insertUnorderedList')" title="Lista"
+                                    class="flex h-7 w-7 items-center justify-center rounded p-1 text-slate-700 transition hover:bg-slate-200">
+                                <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>
+                            </button>
+                        </div>
+
+                        {{-- Editor area --}}
+                        <div x-ref="editor"
+                             contenteditable="true"
+                             @input="onInput()"
+                             @blur="syncToWire()"
+                             class="min-h-[4rem] rounded-b-2xl border border-t-0 border-slate-300 bg-white px-4 py-2.5 text-sm text-slate-700 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-100 [&_ul]:list-disc [&_ul]:pl-4 [&_ol]:list-decimal [&_ol]:pl-4"></div>
+                    </div>
                 </div>
             </div>
+
+            @if($notaId && $notaTitulo)
+                <div class="overflow-hidden rounded-2xl border border-amber-200 bg-amber-50">
+                    <div class="flex items-center justify-between border-b border-amber-200 px-4 py-3">
+                        <div class="flex items-center gap-2">
+                            <svg class="h-4 w-4 text-amber-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                            </svg>
+                            <span class="text-sm font-semibold text-amber-800">Nota: {{ $notaTitulo }}</span>
+                        </div>
+
+                        <button type="button" wire:click="toggleNotaPanel"
+                                class="text-xs font-medium text-amber-700 underline transition hover:text-amber-900">
+                            {{ $showNotaPanel ? 'Ocultar' : 'Mostrar' }}
+                        </button>
+                    </div>
+
+                    @if($showNotaPanel && $notaContenido)
+                        <div class="px-4 py-3">
+                            <div class="prose prose-sm max-w-none text-amber-900">{!! $notaContenido !!}</div>
+                        </div>
+                    @endif
+                </div>
+            @endif
 
             @include('presupuestos::livewire.partials.lineas-section')
 
@@ -487,6 +559,7 @@
                     Actualizar presupuesto
                 </button>
 
+                @if($canUsePlantillas)
                 <button type="button" wire:click="openPlantillaModal"
                         class="inline-flex items-center gap-1.5 rounded-2xl border border-slate-300 bg-white px-4 py-2.5 text-sm font-medium text-slate-700 shadow-sm transition hover:bg-slate-50">
                     <svg class="h-4 w-4 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -494,6 +567,7 @@
                     </svg>
                     Guardar como plantilla
                 </button>
+                @endif
 
                 <a href="{{ route('admin.presupuestos.index') }}"
                    class="inline-flex items-center rounded-2xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-medium text-slate-700 shadow-sm transition hover:bg-slate-50">
@@ -653,3 +727,31 @@
         </div>
     @endif
 </div>
+
+<script>
+function presupuestoObsEditor(initial) {
+    return {
+        content: initial || '',
+        _timer: null,
+        init() {
+            this.$refs.editor.innerHTML = this.content;
+        },
+        onInput() {
+            this.content = this.$refs.editor.innerHTML;
+            clearTimeout(this._timer);
+            this._timer = setTimeout(() => {
+                this.$wire.set('observaciones', this.content);
+            }, 400);
+        },
+        syncToWire() {
+            clearTimeout(this._timer);
+            this.$wire.set('observaciones', this.content);
+        },
+        exec(cmd, value = null) {
+            document.execCommand(cmd, false, value);
+            this.$refs.editor.focus();
+            this.onInput();
+        },
+    };
+}
+</script>
