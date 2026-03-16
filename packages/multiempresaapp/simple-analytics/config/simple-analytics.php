@@ -21,13 +21,13 @@ return [
 
         'login',
         'register',
-
+        'admin/*',
+        'superadmin/*',
 
     |--------------------------------------------------------------------------
     */
     'ignore_paths' => [
-        'admin/*',
-        'superadmin/*',
+
         'logout',
         'api/*',
         'up',

@@ -2,7 +2,7 @@
     <x-slot name="header">
         <div class="flex items-start justify-between gap-3 sm:items-center">
             <div class="min-w-0 flex-1">
-                <h1 class="text-2xl font-bold text-slate-900">Analytics — Páginas</h1>
+                <h1 class="text-2xl font-bold text-slate-900">Analytics</h1>
                 <p class="mt-1 text-sm text-slate-500">Páginas más visitadas de todos los tiempos</p>
             </div>
             <a href="{{ route('superadmin.analytics.index') }}"
