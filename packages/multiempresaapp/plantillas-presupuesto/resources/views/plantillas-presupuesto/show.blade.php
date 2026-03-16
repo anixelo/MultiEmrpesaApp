@@ -70,7 +70,7 @@
                     @if($plantilla->observaciones)
                         <div class="sm:col-span-2">
                             <dt class="text-xs font-medium text-slate-400">Observaciones para el cliente</dt>
-                            <dd class="mt-1 text-sm text-slate-700">{{ $plantilla->observaciones }}</dd>
+                            <dd class="prose prose-sm mt-1 max-w-none text-slate-700">{!! $plantilla->observaciones !!}</dd>
                         </div>
                     @endif
 

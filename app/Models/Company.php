@@ -128,6 +128,13 @@ class Company extends Model
         return (bool) ($plan->has_notes ?? false);
     }
 
+    public function canUsePlantillas(): bool
+    {
+        $plan = $this->subscription?->plan;
+        if (!$plan) return false;
+        return (bool) ($plan->has_plantillas ?? false);
+    }
+
     public function canCreateEmpresa(): bool
     {
         $plan = $this->subscription?->plan;

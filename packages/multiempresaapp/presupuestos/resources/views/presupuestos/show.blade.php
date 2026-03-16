@@ -136,7 +136,7 @@
                     @if ($presupuesto->observaciones)
                         <div class="col-span-2 sm:col-span-4">
                             <dt class="text-xs font-medium uppercase tracking-wider text-slate-500">Observaciones</dt>
-                            <dd class="mt-1 whitespace-pre-line text-sm text-slate-700">{{ $presupuesto->observaciones }}</dd>
+                            <dd class="prose prose-sm mt-1 max-w-none text-slate-700">{!! $presupuesto->observaciones !!}</dd>
                         </div>
                     @endif
 

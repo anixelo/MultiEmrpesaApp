@@ -52,6 +52,7 @@ class PresupuestoForm extends Component
     public bool $showPlantillaModal = false;
     public string $plantillaNombre = '';
     public string $plantillaSuccess = '';
+    public bool $canUsePlantillas = false;
 
     // Wizard step (only used for create mode)
     public int $step = 1;
@@ -70,6 +71,10 @@ class PresupuestoForm extends Component
 
         $this->formaPago    = $config->forma_pago_defecto ?? '';
         $this->observaciones = $config->observaciones_defecto ?? '';
+
+        // Check plan permissions
+        $company = auth()->user()->company;
+        $this->canUsePlantillas = $company ? $company->canUsePlantillas() : false;
 
         // Load available empresas for this company
         $empresas = Empresa::where('company_id', $empresaId)->where('active', true)->orderBy('name')->get();
@@ -148,6 +153,18 @@ class PresupuestoForm extends Component
             $this->formaPago    = $presupuesto->forma_pago ?? '';
             $this->observaciones = $presupuesto->observaciones ?? '';
             $this->notas        = $presupuesto->notas ?? '';
+
+            // Load nota linked to this presupuesto (if created from a nota)
+            $nota = \MultiempresaApp\Notas\Models\Nota::where('presupuesto_id', $presupuestoId)
+                ->where('empresa_id', $empresaId)
+                ->first();
+
+            if ($nota) {
+                $this->notaId        = $nota->id;
+                $this->notaTitulo    = $nota->titulo;
+                $this->notaContenido = $nota->contenido ?? '';
+                $this->showNotaPanel = false; // collapsed by default when editing
+            }
 
             foreach ($presupuesto->lineas as $idx => $linea) {
                 $this->lineas[] = [

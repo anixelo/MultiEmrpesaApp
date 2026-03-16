@@ -35,12 +35,14 @@ class PlanController extends Controller
             'features'         => 'nullable|string',
             'has_tasks'        => 'boolean',
             'has_notes'        => 'boolean',
+            'has_plantillas'   => 'boolean',
             'active'           => 'boolean',
         ]);
 
         $validated['active'] = $request->boolean('active', true);
         $validated['has_tasks'] = $request->boolean('has_tasks', false);
         $validated['has_notes'] = $request->boolean('has_notes', false);
+        $validated['has_plantillas'] = $request->boolean('has_plantillas', false);
         $validated['features'] = $request->features
             ? array_filter(array_map('trim', explode("\n", $request->features)))
             : [];
@@ -69,12 +71,14 @@ class PlanController extends Controller
             'features'         => 'nullable|string',
             'has_tasks'        => 'boolean',
             'has_notes'        => 'boolean',
+            'has_plantillas'   => 'boolean',
             'active'           => 'boolean',
         ]);
 
         $validated['active'] = $request->boolean('active');
         $validated['has_tasks'] = $request->boolean('has_tasks');
         $validated['has_notes'] = $request->boolean('has_notes');
+        $validated['has_plantillas'] = $request->boolean('has_plantillas');
         $validated['features'] = $request->features
             ? array_filter(array_map('trim', explode("\n", $request->features)))
             : [];
