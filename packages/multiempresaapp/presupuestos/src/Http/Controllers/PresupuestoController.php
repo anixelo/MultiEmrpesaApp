@@ -79,11 +79,12 @@ class PresupuestoController extends Controller
 
     public function create(Request $request)
     {
-        $empresaId = auth()->user()->company_id;
-        $config    = PresupuestoConfiguracion::getOrCreateForEmpresa($empresaId);
-        $notaId    = $request->query('nota_id');
+        $empresaId  = auth()->user()->company_id;
+        $config     = PresupuestoConfiguracion::getOrCreateForEmpresa($empresaId);
+        $notaId     = $request->query('nota_id');
+        $plantillaId = $request->query('plantilla_id');
 
-        return view('presupuestos::presupuestos.create', compact('config', 'notaId'));
+        return view('presupuestos::presupuestos.create', compact('config', 'notaId', 'plantillaId'));
     }
 
     public function store(Request $request)
