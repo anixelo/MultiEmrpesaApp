@@ -84,7 +84,7 @@
                                             {{ $plantilla->created_at->format('d/m/Y') }}
                                         </td>
 
-                                        <td class="rounded-r-2xl px-4 py-4 text-right whitespace-nowrap">
+                                        <td class="rounded-r-2xl whitespace-nowrap px-4 py-4 text-right">
                                             <div class="flex items-center justify-end gap-2">
                                                 <form method="POST" action="{{ route('admin.plantillas-presupuesto.usar', $plantilla->id) }}">
                                                     @csrf
