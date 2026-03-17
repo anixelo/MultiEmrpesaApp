@@ -59,6 +59,7 @@ class PresupuestoForm extends Component
     public string $selectPlantillaQuery = '';
     public array $selectPlantillaResults = [];
     public ?int $plantillaIdAplicada = null;
+    public string $plantillaNombreAplicada = '';
 
     // Wizard step (only used for create mode)
     public int $step = 1;
@@ -116,6 +117,7 @@ class PresupuestoForm extends Component
 
             if ($plantilla) {
                 $this->plantillaIdAplicada = $plantilla->id;
+                $this->plantillaNombreAplicada = $plantilla->nombre;
                 if ($plantilla->negocio_id) {
                     $this->negocioId = $plantilla->negocio_id;
                 }
@@ -523,6 +525,7 @@ class PresupuestoForm extends Component
         }
 
         $this->plantillaIdAplicada = $plantilla->id;
+        $this->plantillaNombreAplicada = $plantilla->nombre;
 
         if ($plantilla->negocio_id) {
             $this->negocioId = $plantilla->negocio_id;
