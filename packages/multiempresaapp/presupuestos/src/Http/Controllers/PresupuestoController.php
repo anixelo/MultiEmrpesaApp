@@ -73,8 +73,9 @@ class PresupuestoController extends Controller
         $currentMonthCount = $company ? $company->presupuestos()
             ->whereBetween('created_at', [now()->startOfMonth(), now()->endOfMonth()])
             ->count() : 0;
+        $canUseEnvioEnlace = $company ? $company->canUseEnvioEnlace() : false;
 
-        return view('presupuestos::presupuestos.index', compact('presupuestos', 'hasEmpresa', 'maxPresupuestos', 'currentMonthCount'));
+        return view('presupuestos::presupuestos.index', compact('presupuestos', 'hasEmpresa', 'maxPresupuestos', 'currentMonthCount', 'canUseEnvioEnlace'));
     }
 
     public function create(Request $request)

@@ -25,6 +25,7 @@ class DashboardController extends Controller
                 'incidentStats' => ['total' => 0, 'open' => 0, 'in_progress' => 0, 'resolved' => 0],
                 'recentIncidents' => collect(),
                 'company' => null,
+                'canUseEnvioEnlace' => false,
             ]);
         }
 
@@ -75,6 +76,8 @@ class DashboardController extends Controller
             ->take(5)
             ->get();
 
-        return view('admin.dashboard', compact('stats', 'recentUsers', 'presupuestosByStatus', 'recentPresupuestos', 'recentNotas', 'company', 'incidentStats', 'recentIncidents'));
+        $canUseEnvioEnlace = $company ? $company->canUseEnvioEnlace() : false;
+
+        return view('admin.dashboard', compact('stats', 'recentUsers', 'presupuestosByStatus', 'recentPresupuestos', 'recentNotas', 'company', 'incidentStats', 'recentIncidents', 'canUseEnvioEnlace'));
     }
 }

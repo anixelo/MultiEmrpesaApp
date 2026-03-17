@@ -67,12 +67,15 @@ class DashboardController extends Controller
             ];
         }
 
+        $canUseEnvioEnlace = $company ? $company->canUseEnvioEnlace() : false;
+
         return view('worker.dashboard', compact(
             'user', 'company',
             'incidentStats', 'recentIncidents',
             'presupuestoStats', 'presupuestosByStatus',
             'recentPresupuestos',
-            'notasEnabled', 'recentNotas', 'notaStats'
+            'notasEnabled', 'recentNotas', 'notaStats',
+            'canUseEnvioEnlace'
         ));
     }
 }
