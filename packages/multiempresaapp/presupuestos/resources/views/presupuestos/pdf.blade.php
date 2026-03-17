@@ -27,9 +27,9 @@
 
         .header {
             width: 100%;
-            border-bottom: 2px solid #4f46e5;
-            padding-bottom: 18px;
-            margin-bottom: 24px;
+            border-bottom: 1px solid #dbe2ea;
+            padding-bottom: 20px;
+            margin-bottom: 26px;
         }
 
         .header-table {
@@ -45,6 +45,7 @@
 
         .header-left {
             width: 58%;
+            padding-right: 18px;
         }
 
         .header-right {
@@ -52,38 +53,61 @@
             text-align: right;
         }
 
-        .brand-name {
-            font-size: 24px;
+        .eyebrow {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.16em;
+            color: #94a3b8;
+            margin-bottom: 8px;
             font-weight: bold;
-            color: #4f46e5;
-            line-height: 1.2;
+        }
+
+        .brand-name {
+            font-size: 26px;
+            font-weight: bold;
+            color: #0f172a;
+            line-height: 1.15;
             margin-bottom: 6px;
         }
 
         .brand-subtitle {
             font-size: 11px;
             color: #64748b;
+            line-height: 1.5;
+            max-width: 320px;
+        }
+
+        .doc-box {
+            display: inline-block;
+            min-width: 240px;
+            text-align: left;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 14px 16px;
         }
 
         .doc-title {
-            font-size: 11px;
+            font-size: 10px;
             text-transform: uppercase;
-            letter-spacing: 0.08em;
-            color: #64748b;
+            letter-spacing: 0.14em;
+            color: #94a3b8;
             margin-bottom: 4px;
+            font-weight: bold;
         }
 
         .doc-number {
-            font-size: 22px;
+            font-size: 24px;
             font-weight: bold;
             color: #0f172a;
-            margin-bottom: 8px;
+            margin-bottom: 10px;
+            line-height: 1.2;
         }
 
         .meta-line {
             font-size: 11px;
             color: #475569;
-            line-height: 1.5;
+            line-height: 1.55;
         }
 
         .badge {
@@ -92,13 +116,13 @@
             border-radius: 999px;
             font-size: 10px;
             font-weight: bold;
-            margin-top: 8px;
+            margin-top: 10px;
         }
 
         .badge-gray { background: #f1f5f9; color: #475569; }
         .badge-blue { background: #dbeafe; color: #1d4ed8; }
         .badge-purple { background: #ede9fe; color: #7c3aed; }
-        .badge-green { background: #d1fae5; color: #065f46; }
+        .badge-green { background: #dcfce7; color: #166534; }
         .badge-red { background: #ffe4e6; color: #be123c; }
 
         .info-table {
@@ -164,15 +188,15 @@
         }
 
         .lineas-table thead th {
-            background: #eef2ff;
-            color: #4338ca;
+            background: #f8fafc;
+            color: #334155;
             text-align: left;
             padding: 10px 8px;
             font-size: 10px;
             text-transform: uppercase;
             letter-spacing: 0.05em;
-            border-top: 1px solid #c7d2fe;
-            border-bottom: 1px solid #c7d2fe;
+            border-top: 1px solid #e2e8f0;
+            border-bottom: 1px solid #e2e8f0;
         }
 
         .lineas-table tbody td {
@@ -203,6 +227,7 @@
         .concepto-extra {
             font-size: 10px;
             color: #64748b;
+            line-height: 1.45;
         }
 
         .totals-wrapper {
@@ -249,7 +274,7 @@
 
         .totals-table .total-row .label-cell,
         .totals-table .total-row .value-cell {
-            background: #4f46e5;
+            background: #0f172a;
             color: #ffffff;
             font-size: 13px;
             font-weight: bold;
@@ -311,6 +336,8 @@
         <table class="header-table">
             <tr>
                 <td class="header-left">
+                    <div class="eyebrow">Presupuesto</div>
+
                     @if($presupuesto->negocio?->logo)
                         @php
                             $logoRelPath = $presupuesto->negocio->logo;
@@ -318,27 +345,50 @@
                             $storageBase = realpath(public_path('storage'));
                             $logoSafe = $logoPath && str_starts_with($logoPath, $storageBase);
                         @endphp
+
                         @if($logoSafe && file_exists($logoPath))
-                            <img src="{{ 'file://' . $logoPath }}" alt="{{ $empresaNombre }}" style="max-height:60px;max-width:180px;margin-bottom:6px;object-fit:contain;">
+                            <img
+                                src="{{ 'file://' . $logoPath }}"
+                                alt="{{ $empresaNombre }}"
+                                style="max-height:58px; max-width:190px; margin-bottom:10px; object-fit:contain;"
+                            >
+                            <div class="brand-subtitle">
+                                Documento preparado para su revisión.
+                            </div>
                         @else
                             <div class="brand-name">{{ $empresaNombre }}</div>
+                            <div class="brand-subtitle">
+                                Documento preparado para su revisión.
+                            </div>
                         @endif
                     @else
                         <div class="brand-name">{{ $empresaNombre }}</div>
+                        <div class="brand-subtitle">
+                            Documento preparado para su revisión.
+                        </div>
                     @endif
-                    <div class="brand-subtitle">Documento de presupuesto</div>
                 </td>
+
                 <td class="header-right">
-                    <div class="doc-title">Presupuesto</div>
-                    <div class="doc-number">{{ $presupuesto->numero }}</div>
-                    <div class="meta-line">Fecha: {{ $presupuesto->fecha->format('d/m/Y') }}</div>
-                    @if($presupuesto->validez_hasta)
-                        <div class="meta-line">Válido hasta: {{ $presupuesto->validez_hasta->format('d/m/Y') }}</div>
-                    @endif
-                    <div>
-                        <span class="badge {{ $badgeClass }}">
-                            {{ $estadoLabels[$presupuesto->estado] ?? $presupuesto->estado }}
-                        </span>
+                    <div class="doc-box">
+                        <div class="doc-title">Número de presupuesto</div>
+                        <div class="doc-number">{{ $presupuesto->numero }}</div>
+
+                        <div class="meta-line">
+                            <strong>Fecha:</strong> {{ $presupuesto->fecha->format('d/m/Y') }}
+                        </div>
+
+                        @if($presupuesto->validez_hasta)
+                            <div class="meta-line">
+                                <strong>Válido hasta:</strong> {{ $presupuesto->validez_hasta->format('d/m/Y') }}
+                            </div>
+                        @endif
+
+                        <div>
+                            <span class="badge {{ $badgeClass }}">
+                                {{ $estadoLabels[$presupuesto->estado] ?? $presupuesto->estado }}
+                            </span>
+                        </div>
                     </div>
                 </td>
             </tr>

@@ -1,4 +1,25 @@
 <x-guest-layout>
+
+
+@php
+    $promoSettings = [
+        'plan_id' => \App\Models\AppSetting::get('promo_plan_id'),
+        'months'  => (int) \App\Models\AppSetting::get('promo_months', 0),
+    ];
+    $promoPlan = $promoSettings['plan_id'] ? \MultiempresaApp\Plans\Models\Plan::find($promoSettings['plan_id']) : null;
+@endphp
+
+@if($promoPlan && $promoSettings['months'] > 0)
+    <div class="mb-6 rounded-2xl border border-indigo-200 bg-indigo-50 p-4 text-sm text-indigo-900">
+        <p class="font-semibold">Oferta de lanzamiento</p>
+        <p class="mt-1">
+            Regístrate ahora y consigue <strong>{{ $promoSettings['months'] }} {{ $promoSettings['months'] == 1 ? 'mes' : 'meses' }} gratis</strong>
+            del plan <strong>{{ $promoPlan->name }}</strong>. Sin tarjeta de crédito.
+        </p>
+    </div>
+@endif
+
+
     <form method="POST" action="{{ route('register') }}">
         @csrf
 

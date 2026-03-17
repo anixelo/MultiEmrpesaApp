@@ -74,10 +74,6 @@
                         </div>
                     @endif
 
-                    <div>
-                        <dt class="text-xs font-medium text-slate-400">Creada por</dt>
-                        <dd class="mt-1 text-sm font-medium text-slate-900">{{ $plantilla->creador?->name ?? '—' }}</dd>
-                    </div>
                 </dl>
             </div>
 

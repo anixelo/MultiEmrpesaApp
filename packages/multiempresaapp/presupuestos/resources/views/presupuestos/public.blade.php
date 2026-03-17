@@ -6,7 +6,7 @@
     <title>Presupuesto {{ $presupuesto->numero }}</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="min-h-screen bg-gradient-to-br from-slate-50 via-gray-50 to-indigo-50 px-4 py-6 text-slate-900 sm:py-10">
+<body class="min-h-screen bg-slate-100 px-4 py-6 text-slate-900 sm:py-10">
 
     @php
         $empresaNombre = $presupuesto->negocio?->name ?? $presupuesto->empresa?->name ?? config('app.name');
@@ -56,71 +56,72 @@
             </div>
         @endif
 
-        <div class="overflow-hidden rounded-3xl border border-white/60 bg-white shadow-2xl shadow-slate-200/70">
-            {{-- Header --}}
-            <div class="relative overflow-hidden border-b border-slate-100 bg-gradient-to-r from-indigo-600 via-indigo-600 to-violet-600 px-6 py-8 sm:px-8 sm:py-10">
-                <div class="pointer-events-none absolute inset-0">
-                    <div class="absolute -right-16 -top-16 h-40 w-40 rounded-full bg-white/10 blur-2xl"></div>
-                    <div class="absolute -bottom-16 -left-16 h-40 w-40 rounded-full bg-white/10 blur-2xl"></div>
+        <div class="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-xl shadow-slate-200/40">
+ 
+            
+{{-- Header elegante --}}
+<div class="border-b border-slate-200 bg-white px-6 py-8 sm:px-8 sm:py-10">
+    <div class="flex flex-col gap-8 lg:flex-row lg:items-start lg:justify-between">
+        <div class="max-w-2xl">
+            @if($presupuesto->negocio?->logo)
+                <div class="mb-5">
+                    <img
+                        src="{{ Storage::url($presupuesto->negocio->logo) }}"
+                        alt="{{ $empresaNombre }}"
+                        class="h-14 w-auto object-contain"
+                    >
+                </div>
+            @endif
+
+            <p class="text-xs font-semibold tracking-[0.22em] text-slate-400 uppercase">
+                Presupuesto
+            </p>
+
+            <h1 class="mt-2 text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">
+                {{ $empresaNombre }}
+            </h1>
+
+            <p class="mt-3 max-w-xl text-sm leading-6 text-slate-500 sm:text-base">
+                Documento preparado para su revisión con el detalle económico y las condiciones indicadas.
+            </p>
+        </div>
+
+        <div class="w-full max-w-md rounded-2xl border border-slate-200 bg-slate-50 p-6 shadow-sm">
+            <div class="flex items-start justify-between gap-4 border-b border-slate-200 pb-4">
+                <div>
+                    <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-400">
+                        Número
+                    </p>
+                    <p class="mt-1 text-2xl font-bold text-slate-900">
+                        {{ $presupuesto->numero }}
+                    </p>
                 </div>
 
-                <div class="relative flex flex-col gap-8 lg:flex-row lg:items-start lg:justify-between">
-                    <div class="text-white">
-                        @if($presupuesto->negocio?->logo)
-                            <div class="mb-4">
-                                <img src="{{ Storage::url($presupuesto->negocio->logo) }}" alt="{{ $empresaNombre }}" class="h-14 w-auto rounded-lg bg-white/90 px-2 py-1 object-contain">
-                            </div>
-                        @else
-                            <div class="mb-3 inline-flex items-center gap-2 rounded-full bg-white/15 px-3 py-1 text-xs font-semibold tracking-wide text-white/90">
-                                Presupuesto profesional
-                            </div>
-                        @endif
-
-                        <h1 class="text-2xl font-bold sm:text-3xl">
-                            {{ $empresaNombre }}
-                        </h1>
-
-                        <p class="mt-2 text-sm text-indigo-100 sm:text-base">
-                            Documento de presupuesto preparado para su revisión.
-                        </p>
-                    </div>
-
-                    <div class="rounded-2xl bg-white/95 p-5 shadow-lg backdrop-blur sm:min-w-[300px]">
-                        <div class="flex items-start justify-between gap-4">
-                            <div>
-                                <p class="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">
-                                    Número
-                                </p>
-                                <p class="mt-1 text-2xl font-bold text-slate-900">
-                                    {{ $presupuesto->numero }}
-                                </p>
-                            </div>
-
-                            <span class="inline-flex rounded-full px-3 py-1 text-xs font-semibold {{ $badgeClass }}">
-                                {{ $estadoLabel }}
-                            </span>
-                        </div>
-
-                        <div class="mt-5 grid gap-3 sm:grid-cols-2">
-                            <div class="rounded-xl bg-slate-50 px-4 py-3">
-                                <p class="text-[11px] font-semibold uppercase tracking-wider text-slate-400">Fecha</p>
-                                <p class="mt-1 text-sm font-medium text-slate-800">
-                                    {{ $presupuesto->fecha->format('d/m/Y') }}
-                                </p>
-                            </div>
-
-                            @if ($presupuesto->validez_hasta)
-                                <div class="rounded-xl bg-slate-50 px-4 py-3">
-                                    <p class="text-[11px] font-semibold uppercase tracking-wider text-slate-400">Válido hasta</p>
-                                    <p class="mt-1 text-sm font-medium text-slate-800">
-                                        {{ $presupuesto->validez_hasta->format('d/m/Y') }}
-                                    </p>
-                                </div>
-                            @endif
-                        </div>
-                    </div>
-                </div>
+                <span class="inline-flex rounded-full px-3 py-1 text-xs font-semibold {{ $badgeClass }}">
+                    {{ $estadoLabel }}
+                </span>
             </div>
+
+            <dl class="mt-4 space-y-3 text-sm">
+                <div class="flex items-center justify-between gap-4">
+                    <dt class="text-slate-500">Fecha</dt>
+                    <dd class="font-medium text-slate-900">
+                        {{ $presupuesto->fecha->format('d/m/Y') }}
+                    </dd>
+                </div>
+
+                @if ($presupuesto->validez_hasta)
+                    <div class="flex items-center justify-between gap-4">
+                        <dt class="text-slate-500">Válido hasta</dt>
+                        <dd class="font-medium text-slate-900">
+                            {{ $presupuesto->validez_hasta->format('d/m/Y') }}
+                        </dd>
+                    </div>
+                @endif
+            </dl>
+        </div>
+    </div>
+</div>
 
             {{-- Datos principales --}}
             <div class="grid gap-6 border-b border-slate-100 px-6 py-6 sm:px-8 lg:grid-cols-2">
@@ -321,7 +322,7 @@
                             </div>
 
                             <div class="border-t border-slate-200 pt-4">
-                                <div class="flex items-center justify-between rounded-2xl bg-indigo-600 px-4 py-4 text-white shadow-lg shadow-indigo-200">
+                                <div class="flex items-center justify-between rounded-2xl bg-slate-900 px-4 py-4 text-white shadow-lg">
                                     <span class="text-sm font-semibold uppercase tracking-wider">Total</span>
                                     <span class="text-xl font-bold">{{ number_format($presupuesto->total, 2, ',', '.') }} €</span>
                                 </div>
