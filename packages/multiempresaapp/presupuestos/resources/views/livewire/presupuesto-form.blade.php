@@ -20,6 +20,9 @@
     @if($notaId)
         <input type="hidden" name="nota_id" value="{{ $notaId }}">
     @endif
+    @if($plantillaIdAplicada)
+        <input type="hidden" name="plantilla_id" value="{{ $plantillaIdAplicada }}">
+    @endif
 
     <input type="hidden" name="fecha" value="{{ $fecha }}">
     <input type="hidden" name="validez_hasta" value="{{ $validezHasta }}">
@@ -173,6 +176,15 @@
                 </div>
 
                 <div class="flex justify-end px-6 pb-5">
+                    @if($canUsePlantillas)
+                    <button type="button" wire:click="openSelectPlantillaModal"
+                            class="mr-auto inline-flex items-center gap-2 rounded-2xl border border-violet-300 bg-violet-50 px-4 py-2.5 text-sm font-medium text-violet-700 shadow-sm transition hover:bg-violet-100">
+                        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                        </svg>
+                        Usar plantilla
+                    </button>
+                    @endif
                     <button type="button" wire:click="nextStep"
                             class="inline-flex items-center gap-2 rounded-2xl bg-indigo-600 px-5 py-2.5 text-sm font-medium text-white shadow-sm transition hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
                         Siguiente
@@ -721,6 +733,66 @@
                     <button type="button" wire:click="saveAsPlantilla"
                             class="inline-flex items-center rounded-2xl bg-indigo-600 px-5 py-2 text-sm font-medium text-white transition hover:bg-indigo-700">
                         Guardar plantilla
+                    </button>
+                </div>
+            </div>
+        </div>
+    @endif
+
+    {{-- Select-plantilla modal (step 1) --}}
+    @if($showSelectPlantillaModal)
+        <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4"
+             wire:keydown.escape="closeSelectPlantillaModal">
+            <div class="w-full max-w-lg rounded-3xl border border-slate-200 bg-white shadow-2xl">
+                <div class="flex items-center justify-between border-b border-slate-100 px-6 py-4">
+                    <h3 class="text-lg font-semibold text-slate-900">Seleccionar plantilla</h3>
+                    <button type="button" wire:click="closeSelectPlantillaModal" class="text-slate-400 transition hover:text-slate-600">
+                        <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+                        </svg>
+                    </button>
+                </div>
+
+                <div class="px-6 py-4">
+                    <input type="text"
+                           wire:model.live="selectPlantillaQuery"
+                           placeholder="Filtrar por nombre..."
+                           autofocus
+                           class="block w-full rounded-2xl border border-slate-300 bg-white px-4 py-2.5 text-sm text-slate-700 shadow-sm focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100">
+                </div>
+
+                <div class="max-h-80 overflow-y-auto border-t border-slate-100">
+                    @if(count($selectPlantillaResults) > 0)
+                        <ul class="divide-y divide-slate-100">
+                            @foreach($selectPlantillaResults as $pt)
+                                <li>
+                                    <button type="button"
+                                            wire:click="applyPlantillaFromModal({{ $pt['id'] }})"
+                                            class="w-full px-6 py-3 text-left transition hover:bg-violet-50">
+                                        <p class="text-sm font-medium text-slate-900">{{ $pt['nombre'] }}</p>
+                                        <p class="mt-0.5 text-xs text-slate-500">
+                                            {{ $pt['lineas'] }} línea{{ $pt['lineas'] !== 1 ? 's' : '' }}
+                                            @if($pt['forma_pago']) · {{ $pt['forma_pago'] }} @endif
+                                        </p>
+                                    </button>
+                                </li>
+                            @endforeach
+                        </ul>
+                    @else
+                        <div class="px-6 py-8 text-center text-sm text-slate-400">
+                            @if($selectPlantillaQuery !== '')
+                                No se encontraron plantillas con "{{ $selectPlantillaQuery }}".
+                            @else
+                                No hay plantillas disponibles.
+                            @endif
+                        </div>
+                    @endif
+                </div>
+
+                <div class="flex justify-end border-t border-slate-100 px-6 py-4">
+                    <button type="button" wire:click="closeSelectPlantillaModal"
+                            class="inline-flex items-center rounded-2xl bg-slate-100 px-4 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-200">
+                        Cancelar
                     </button>
                 </div>
             </div>

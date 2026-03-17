@@ -358,7 +358,7 @@
                 </button>
 
                 {{-- Enviar por WhatsApp --}}
-                @if ($presupuesto->cliente?->telefono)
+                @if ($canUseEnvioEnlace && $presupuesto->cliente?->telefono)
                     @php
                         $phone = preg_replace('/[^0-9]/', '', $presupuesto->cliente->telefono);
                         if (strlen($phone) === 9) $phone = '34' . $phone;
@@ -376,7 +376,7 @@
                 @endif
 
                 {{-- Enviar por Email --}}
-                @if ($presupuesto->cliente?->email)
+                @if ($canUseEnvioEnlace && $presupuesto->cliente?->email)
                     <form id="form-send-email" method="POST" action="{{ route('admin.presupuestos.send-email', $presupuesto->id) }}">
                         @csrf
                     </form>
@@ -390,11 +390,13 @@
                     </button>
                 @endif
 
+                @if ($canUseEnvioEnlace)
                 <a href="{{ route('presupuestos.public', $presupuesto->token_publico) }}"
                    target="_blank"
                    class="inline-flex items-center rounded-2xl bg-indigo-100 px-4 py-2.5 text-sm font-medium text-indigo-700 shadow-sm transition hover:bg-indigo-200">
                     Ver enlace público
                 </a>
+                @endif
 
                 <a href="{{ route('admin.presupuestos.index') }}"
                    class="inline-flex items-center rounded-2xl border border-slate-300 bg-white px-4 py-2.5 text-sm font-medium text-slate-700 shadow-sm transition hover:bg-slate-50">
@@ -435,6 +437,7 @@
             </div>
 
             {{-- Historial de auditoría --}}
+            @if ($canUseHistorialCambios)
             <div class="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm">
                 <div class="border-b border-slate-100 px-6 py-4">
                     <h3 class="text-sm font-semibold text-slate-900">Historial de cambios</h3>
@@ -539,6 +542,7 @@
                     </div>
                 @endif
             </div>
+            @endif
 
         </div>
     </div>

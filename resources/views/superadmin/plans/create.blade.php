@@ -166,6 +166,22 @@
 
                     <div class="flex items-center gap-3">
                         <label class="relative inline-flex cursor-pointer items-center">
+                            <input type="checkbox" name="has_envio_enlace" value="1" {{ old('has_envio_enlace') ? 'checked' : '' }} class="peer sr-only">
+                            <div class="h-6 w-10 rounded-full bg-slate-200 transition peer-checked:bg-indigo-600 peer-focus:ring-2 peer-focus:ring-indigo-200 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-slate-300 after:bg-white after:transition-all after:content-[''] peer-checked:after:translate-x-full peer-checked:after:border-white"></div>
+                        </label>
+                        <span class="text-sm font-medium text-slate-700">Envío de presupuesto por enlace (enlace público, email y WhatsApp)</span>
+                    </div>
+
+                    <div class="flex items-center gap-3">
+                        <label class="relative inline-flex cursor-pointer items-center">
+                            <input type="checkbox" name="has_historial_cambios" value="1" {{ old('has_historial_cambios') ? 'checked' : '' }} class="peer sr-only">
+                            <div class="h-6 w-10 rounded-full bg-slate-200 transition peer-checked:bg-indigo-600 peer-focus:ring-2 peer-focus:ring-indigo-200 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-slate-300 after:bg-white after:transition-all after:content-[''] peer-checked:after:translate-x-full peer-checked:after:border-white"></div>
+                        </label>
+                        <span class="text-sm font-medium text-slate-700">Historial de cambios del presupuesto</span>
+                    </div>
+
+                    <div class="flex items-center gap-3">
+                        <label class="relative inline-flex cursor-pointer items-center">
                             <input type="checkbox" name="active" value="1" {{ old('active', true) ? 'checked' : '' }} class="peer sr-only">
                             <div class="h-6 w-10 rounded-full bg-slate-200 transition peer-checked:bg-indigo-600 peer-focus:ring-2 peer-focus:ring-indigo-200 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-slate-300 after:bg-white after:transition-all after:content-[''] peer-checked:after:translate-x-full peer-checked:after:border-white"></div>
                         </label>

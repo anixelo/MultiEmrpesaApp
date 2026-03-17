@@ -36,6 +36,8 @@ class PlanController extends Controller
             'has_tasks'        => 'boolean',
             'has_notes'        => 'boolean',
             'has_plantillas'   => 'boolean',
+            'has_envio_enlace' => 'boolean',
+            'has_historial_cambios' => 'boolean',
             'active'           => 'boolean',
         ]);
 
@@ -43,6 +45,8 @@ class PlanController extends Controller
         $validated['has_tasks'] = $request->boolean('has_tasks', false);
         $validated['has_notes'] = $request->boolean('has_notes', false);
         $validated['has_plantillas'] = $request->boolean('has_plantillas', false);
+        $validated['has_envio_enlace'] = $request->boolean('has_envio_enlace', false);
+        $validated['has_historial_cambios'] = $request->boolean('has_historial_cambios', false);
         $validated['features'] = $request->features
             ? array_filter(array_map('trim', explode("\n", $request->features)))
             : [];
@@ -72,6 +76,8 @@ class PlanController extends Controller
             'has_tasks'        => 'boolean',
             'has_notes'        => 'boolean',
             'has_plantillas'   => 'boolean',
+            'has_envio_enlace' => 'boolean',
+            'has_historial_cambios' => 'boolean',
             'active'           => 'boolean',
         ]);
 
@@ -79,6 +85,8 @@ class PlanController extends Controller
         $validated['has_tasks'] = $request->boolean('has_tasks');
         $validated['has_notes'] = $request->boolean('has_notes');
         $validated['has_plantillas'] = $request->boolean('has_plantillas');
+        $validated['has_envio_enlace'] = $request->boolean('has_envio_enlace');
+        $validated['has_historial_cambios'] = $request->boolean('has_historial_cambios');
         $validated['features'] = $request->features
             ? array_filter(array_map('trim', explode("\n", $request->features)))
             : [];

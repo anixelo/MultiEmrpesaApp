@@ -54,6 +54,12 @@ class PresupuestoForm extends Component
     public string $plantillaSuccess = '';
     public bool $canUsePlantillas = false;
 
+    // Select-plantilla modal (step 1)
+    public bool $showSelectPlantillaModal = false;
+    public string $selectPlantillaQuery = '';
+    public array $selectPlantillaResults = [];
+    public ?int $plantillaIdAplicada = null;
+
     // Wizard step (only used for create mode)
     public int $step = 1;
 
@@ -109,6 +115,7 @@ class PresupuestoForm extends Component
                 ->find($plantillaId);
 
             if ($plantilla) {
+                $this->plantillaIdAplicada = $plantilla->id;
                 if ($plantilla->negocio_id) {
                     $this->negocioId = $plantilla->negocio_id;
                 }
@@ -464,6 +471,100 @@ class PresupuestoForm extends Component
     {
         $this->showPlantillaModal = false;
         $this->plantillaNombre = '';
+    }
+
+    public function openSelectPlantillaModal(): void
+    {
+        $this->selectPlantillaQuery = '';
+        $this->selectPlantillaResults = [];
+        $this->showSelectPlantillaModal = true;
+        $this->updatedSelectPlantillaQuery();
+    }
+
+    public function closeSelectPlantillaModal(): void
+    {
+        $this->showSelectPlantillaModal = false;
+        $this->selectPlantillaQuery = '';
+        $this->selectPlantillaResults = [];
+    }
+
+    public function updatedSelectPlantillaQuery(): void
+    {
+        $empresaId = auth()->user()->company_id;
+        $query = PlantillaPresupuesto::with('lineas')
+            ->where('empresa_id', $empresaId)
+            ->orderBy('nombre');
+
+        if ($this->selectPlantillaQuery !== '') {
+            $query->where('nombre', 'like', '%' . $this->selectPlantillaQuery . '%');
+        }
+
+        $this->selectPlantillaResults = $query->limit(50)->get()
+            ->map(fn ($p) => [
+                'id'        => $p->id,
+                'nombre'    => $p->nombre,
+                'lineas'    => $p->lineas->count(),
+                'forma_pago' => $p->forma_pago,
+            ])
+            ->toArray();
+    }
+
+    public function applyPlantillaFromModal(int $plantillaId): void
+    {
+        $empresaId = auth()->user()->company_id;
+
+        $plantilla = PlantillaPresupuesto::with('lineas')
+            ->where('empresa_id', $empresaId)
+            ->find($plantillaId);
+
+        if (! $plantilla) {
+            $this->closeSelectPlantillaModal();
+            return;
+        }
+
+        $this->plantillaIdAplicada = $plantilla->id;
+
+        if ($plantilla->negocio_id) {
+            $this->negocioId = $plantilla->negocio_id;
+        }
+        $this->formaPago     = $plantilla->forma_pago ?? '';
+        $this->observaciones = $plantilla->observaciones ?? '';
+
+        // Replace lines with plantilla lines
+        $this->lineas = [];
+        $this->lineaSearch = [];
+        $this->lineaDropdownVisible = [];
+        $this->lineaSearchResults = [];
+
+        foreach ($plantilla->lineas as $idx => $linea) {
+            $this->lineas[] = [
+                'concepto'        => $linea->concepto,
+                'cantidad'        => (float) $linea->cantidad,
+                'precio_unitario' => (float) $linea->precio_unitario,
+                'descuento_tipo'  => $linea->descuento_tipo ?? '',
+                'descuento_valor' => (float) ($linea->descuento_valor ?? 0),
+                'iva_tipo'        => (float) $linea->iva_tipo,
+                'servicio_id'     => null,
+                'base_imponible'  => 0,
+                'iva_cuota'       => 0,
+                'total'           => 0,
+            ];
+            $this->lineaSearch[$idx] = $linea->concepto;
+            $this->lineaDropdownVisible[$idx] = false;
+            $this->lineaSearchResults[$idx] = [];
+        }
+
+        if (empty($this->lineas)) {
+            $this->addLinea();
+        }
+
+        $this->recalcularTotales();
+        $this->closeSelectPlantillaModal();
+
+        // Advance past step 1 if empresa is selected
+        if ($this->step === 1 && $this->negocioId) {
+            $this->step = 2;
+        }
     }
 
     public function saveAsPlantilla(): void
