@@ -135,6 +135,20 @@ class Company extends Model
         return (bool) ($plan->has_plantillas ?? false);
     }
 
+    public function canUseEnvioEnlace(): bool
+    {
+        $plan = $this->subscription?->plan;
+        if (!$plan) return false;
+        return (bool) ($plan->has_envio_enlace ?? false);
+    }
+
+    public function canUseHistorialCambios(): bool
+    {
+        $plan = $this->subscription?->plan;
+        if (!$plan) return false;
+        return (bool) ($plan->has_historial_cambios ?? false);
+    }
+
     public function canCreateEmpresa(): bool
     {
         $plan = $this->subscription?->plan;

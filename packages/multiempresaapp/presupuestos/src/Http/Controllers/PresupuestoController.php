@@ -165,6 +165,18 @@ class PresupuestoController extends Controller
 
             if ($nota) {
                 $nota->update(['presupuesto_id' => $presupuesto->id]);
+                $this->logAudit($presupuesto, 'nota_aplicada', "Creado a partir de la nota: {$nota->titulo}");
+            }
+        }
+
+        // Log plantilla usage if created from a template
+        if ($plantillaId = $request->input('plantilla_id')) {
+            $plantilla = \MultiempresaApp\PlantillasPresupuesto\Models\PlantillaPresupuesto::where('id', $plantillaId)
+                ->where('empresa_id', $empresaId)
+                ->first();
+
+            if ($plantilla) {
+                $this->logAudit($presupuesto, 'plantilla_aplicada', "Creado usando la plantilla: {$plantilla->nombre}");
             }
         }
 
@@ -188,7 +200,11 @@ class PresupuestoController extends Controller
             abort(403);
         }
 
-        return view('presupuestos::presupuestos.show', compact('presupuesto'));
+        $company = auth()->user()->company;
+        $canUseEnvioEnlace    = $company ? $company->canUseEnvioEnlace() : false;
+        $canUseHistorialCambios = $company ? $company->canUseHistorialCambios() : false;
+
+        return view('presupuestos::presupuestos.show', compact('presupuesto', 'canUseEnvioEnlace', 'canUseHistorialCambios'));
     }
 
     public function edit($id)
