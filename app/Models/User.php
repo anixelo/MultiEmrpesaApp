@@ -23,6 +23,7 @@ class User extends Authenticatable
         'two_factor_secret',
         'two_factor_enabled',
         'two_factor_confirmed_at',
+        'revisar_presupuestos',
     ];
 
     protected $hidden = [
@@ -38,6 +39,7 @@ class User extends Authenticatable
             'password' => 'hashed',
             'two_factor_enabled' => 'boolean',
             'two_factor_confirmed_at' => 'datetime',
+            'revisar_presupuestos' => 'boolean',
         ];
     }
 

@@ -69,11 +69,12 @@ class UserController extends Controller
         ]);
 
         $user = User::create([
-            'name'              => $validated['name'],
-            'email'             => $validated['email'],
-            'password'          => Hash::make($validated['password']),
-            'company_id'        => $company->id,
-            'email_verified_at' => now(),
+            'name'                  => $validated['name'],
+            'email'                 => $validated['email'],
+            'password'              => Hash::make($validated['password']),
+            'company_id'            => $company->id,
+            'email_verified_at'     => now(),
+            'revisar_presupuestos'  => $request->boolean('revisar_presupuestos'),
         ]);
 
         $user->assignRole($validated['role']);
@@ -110,8 +111,9 @@ class UserController extends Controller
         ]);
 
         $user->update([
-            'name'  => $validated['name'],
-            'email' => $validated['email'],
+            'name'                  => $validated['name'],
+            'email'                 => $validated['email'],
+            'revisar_presupuestos'  => $request->boolean('revisar_presupuestos'),
         ]);
 
         if (!empty($validated['password'])) {

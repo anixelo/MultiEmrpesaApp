@@ -12,19 +12,23 @@
         $empresaNombre = $presupuesto->negocio?->name ?? $presupuesto->empresa?->name ?? config('app.name');
 
         $estadoStyles = [
-            'borrador'  => 'bg-slate-100 text-slate-700 ring-1 ring-slate-200',
-            'enviado'   => 'bg-blue-50 text-blue-700 ring-1 ring-blue-200',
-            'visto'     => 'bg-violet-50 text-violet-700 ring-1 ring-violet-200',
-            'aceptado'  => 'bg-emerald-50 text-emerald-700 ring-1 ring-emerald-200',
-            'rechazado' => 'bg-rose-50 text-rose-700 ring-1 ring-rose-200',
+            'borrador'           => 'bg-slate-100 text-slate-700 ring-1 ring-slate-200',
+            'pendiente_revision' => 'bg-orange-50 text-orange-700 ring-1 ring-orange-200',
+            'validado'           => 'bg-teal-50 text-teal-700 ring-1 ring-teal-200',
+            'enviado'            => 'bg-blue-50 text-blue-700 ring-1 ring-blue-200',
+            'visto'              => 'bg-violet-50 text-violet-700 ring-1 ring-violet-200',
+            'aceptado'           => 'bg-emerald-50 text-emerald-700 ring-1 ring-emerald-200',
+            'rechazado'          => 'bg-rose-50 text-rose-700 ring-1 ring-rose-200',
         ];
 
         $estadoLabels = [
-            'borrador'  => 'Borrador',
-            'enviado'   => 'Enviado',
-            'visto'     => 'Visto',
-            'aceptado'  => 'Aceptado',
-            'rechazado' => 'Rechazado',
+            'borrador'           => 'Borrador',
+            'pendiente_revision' => 'Pendiente de revisión',
+            'validado'           => 'Validado',
+            'enviado'            => 'Enviado',
+            'visto'              => 'Visto',
+            'aceptado'           => 'Aceptado',
+            'rechazado'          => 'Rechazado',
         ];
 
         $badgeClass = $estadoStyles[$presupuesto->estado] ?? 'bg-slate-100 text-slate-700 ring-1 ring-slate-200';

@@ -31,9 +31,10 @@ class DashboardController extends Controller
 
         // Presupuesto stats for this company
         $presupuestoStats = [
-            'total'      => Presupuesto::where('empresa_id', $companyId)->count(),
-            'aceptados'  => Presupuesto::where('empresa_id', $companyId)->where('estado', 'aceptado')->count(),
-            'rechazados' => Presupuesto::where('empresa_id', $companyId)->where('estado', 'rechazado')->count(),
+            'total'                  => Presupuesto::where('empresa_id', $companyId)->count(),
+            'aceptados'              => Presupuesto::where('empresa_id', $companyId)->where('estado', 'aceptado')->count(),
+            'rechazados'             => Presupuesto::where('empresa_id', $companyId)->where('estado', 'rechazado')->count(),
+            'pendiente_revision'     => Presupuesto::where('empresa_id', $companyId)->where('estado', 'pendiente_revision')->count(),
         ];
 
         $presupuestosByStatus = Presupuesto::where('empresa_id', $companyId)

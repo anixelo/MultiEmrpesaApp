@@ -312,19 +312,23 @@
 <body>
 @php
     $badgeClass = match($presupuesto->estado) {
-        'enviado' => 'badge-blue',
-        'visto' => 'badge-purple',
-        'aceptado' => 'badge-green',
+        'pendiente_revision' => 'badge-orange',
+        'validado'  => 'badge-teal',
+        'enviado'   => 'badge-blue',
+        'visto'     => 'badge-purple',
+        'aceptado'  => 'badge-green',
         'rechazado' => 'badge-red',
-        default => 'badge-gray'
+        default     => 'badge-gray'
     };
 
     $estadoLabels = [
-        'borrador' => 'Borrador',
-        'enviado' => 'Enviado',
-        'visto' => 'Visto',
-        'aceptado' => 'Aceptado',
-        'rechazado' => 'Rechazado',
+        'borrador'           => 'Borrador',
+        'pendiente_revision' => 'Pendiente de revisión',
+        'validado'           => 'Validado',
+        'enviado'            => 'Enviado',
+        'visto'              => 'Visto',
+        'aceptado'           => 'Aceptado',
+        'rechazado'          => 'Rechazado',
     ];
 
     $empresaNombre = $presupuesto->negocio?->name ?? $presupuesto->empresa?->name ?? config('app.name');
