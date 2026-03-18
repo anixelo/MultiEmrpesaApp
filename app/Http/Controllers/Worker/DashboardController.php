@@ -69,6 +69,7 @@ class DashboardController extends Controller
         }
 
         $canUseEnvioEnlace = $company ? $company->canUseEnvioEnlace() : false;
+        $revisarPresupuestos = $user->revisar_presupuestos;
 
         return view('worker.dashboard', compact(
             'user', 'company',
@@ -76,7 +77,7 @@ class DashboardController extends Controller
             'presupuestoStats', 'presupuestosByStatus',
             'recentPresupuestos',
             'notasEnabled', 'recentNotas', 'notaStats',
-            'canUseEnvioEnlace'
+            'canUseEnvioEnlace', 'revisarPresupuestos'
         ));
     }
 }

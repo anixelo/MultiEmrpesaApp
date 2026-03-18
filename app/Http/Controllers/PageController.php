@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ContactMessage;
+use App\Models\User;
+use App\Notifications\NuevoMensajeContactoNotification;
 use Illuminate\Http\Request;
 
 class PageController extends Controller
@@ -30,10 +33,17 @@ class PageController extends Controller
             'message' => 'required|string|min:10|max:2000',
         ]);
 
-        // Log the contact form submission (no PII in logs)
-        \Illuminate\Support\Facades\Log::info('Contact form submission received', [
+        $contactMessage = ContactMessage::create([
+            'name'    => $request->name,
+            'email'   => $request->email,
             'subject' => $request->subject,
+            'message' => $request->message,
         ]);
+
+        // Notify all superadmins
+        $notification = new NuevoMensajeContactoNotification($contactMessage);
+        User::whereHas('roles', fn ($q) => $q->where('name', 'superadministrador'))
+            ->each(fn (User $superAdmin) => $superAdmin->notify($notification));
 
         return redirect()->route('pages.contact')
             ->with('contact_success', 'Tu mensaje ha sido enviado correctamente. Te responderemos en breve.');

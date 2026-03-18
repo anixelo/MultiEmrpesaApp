@@ -510,7 +510,7 @@
                     </button>
                 @endif
 
-                @if ($canUseEnvioEnlace)
+                @if ($canUseEnvioEnlace && $workerCanSend)
                 <a href="{{ route('presupuestos.public', $presupuesto->token_publico) }}"
                    target="_blank"
                    class="inline-flex items-center rounded-2xl bg-indigo-100 px-4 py-2.5 text-sm font-medium text-indigo-700 shadow-sm transition hover:bg-indigo-200">
