@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\Empresa;
 use App\Models\User;
 use App\Notifications\PresupuestoEstadoNotification;
+use App\Notifications\PresupuestoPendienteRevisionNotification;
+use App\Notifications\PresupuestoRevisionResultadoNotification;
 use App\Notifications\PresupuestoTrabajadorNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
@@ -204,8 +206,11 @@ class PresupuestoController extends Controller
         $company = auth()->user()->company;
         $canUseEnvioEnlace    = $company ? $company->canUseEnvioEnlace() : false;
         $canUseHistorialCambios = $company ? $company->canUseHistorialCambios() : false;
+        $isAdmin = auth()->user()->hasRole('administrador');
+        $isWorker = auth()->user()->hasRole('trabajador');
+        $revisarPresupuestos = auth()->user()->revisar_presupuestos;
 
-        return view('presupuestos::presupuestos.show', compact('presupuesto', 'canUseEnvioEnlace', 'canUseHistorialCambios'));
+        return view('presupuestos::presupuestos.show', compact('presupuesto', 'canUseEnvioEnlace', 'canUseHistorialCambios', 'isAdmin', 'isWorker', 'revisarPresupuestos'));
     }
 
     public function edit($id)
@@ -218,6 +223,18 @@ class PresupuestoController extends Controller
 
         if (auth()->user()->hasRole('trabajador') && $presupuesto->created_by !== auth()->id()) {
             abort(403);
+        }
+
+        // Workers cannot edit a validated presupuesto
+        if (auth()->user()->hasRole('trabajador') && $presupuesto->estado === 'validado') {
+            return redirect()->route('admin.presupuestos.show', $id)
+                ->with('error', 'No puedes editar un presupuesto validado.');
+        }
+
+        // Workers cannot edit a presupuesto in pendiente_revision state
+        if (auth()->user()->hasRole('trabajador') && $presupuesto->estado === 'pendiente_revision') {
+            return redirect()->route('admin.presupuestos.show', $id)
+                ->with('error', 'No puedes editar un presupuesto pendiente de revisión.');
         }
 
         $config = PresupuestoConfiguracion::getOrCreateForEmpresa(auth()->user()->company_id);
@@ -235,6 +252,18 @@ class PresupuestoController extends Controller
 
         if (auth()->user()->hasRole('trabajador') && $presupuesto->created_by !== auth()->id()) {
             abort(403);
+        }
+
+        // Workers cannot update a validated presupuesto
+        if (auth()->user()->hasRole('trabajador') && $presupuesto->estado === 'validado') {
+            return redirect()->route('admin.presupuestos.show', $id)
+                ->with('error', 'No puedes editar un presupuesto validado.');
+        }
+
+        // Workers cannot update a presupuesto in pendiente_revision state
+        if (auth()->user()->hasRole('trabajador') && $presupuesto->estado === 'pendiente_revision') {
+            return redirect()->route('admin.presupuestos.show', $id)
+                ->with('error', 'No puedes editar un presupuesto pendiente de revisión.');
         }
 
         $config = PresupuestoConfiguracion::getOrCreateForEmpresa(auth()->user()->company_id);
@@ -446,6 +475,174 @@ class PresupuestoController extends Controller
 
         return redirect()->route('presupuestos.public', $token)
             ->with('info', 'Has rechazado el presupuesto.');
+    }
+
+    public function solicitarRevision($id)
+    {
+        $presupuesto = Presupuesto::findOrFail($id);
+
+        if ($presupuesto->empresa_id !== auth()->user()->company_id) {
+            abort(403);
+        }
+
+        if (! auth()->user()->hasRole('trabajador')) {
+            abort(403);
+        }
+
+        if ($presupuesto->estado !== 'borrador') {
+            return redirect()->back()->with('error', 'Solo se puede solicitar revisión de presupuestos en borrador.');
+        }
+
+        $presupuesto->update([
+            'estado'                => 'pendiente_revision',
+            'pendiente_revision_en' => now(),
+            'nota_revision'         => null,
+            'revisado_por'          => null,
+        ]);
+
+        $this->logAudit($presupuesto, 'pendiente_revision', 'El trabajador ha solicitado revisión del presupuesto.');
+
+        // Notify all company admins
+        $worker = auth()->user();
+        $notification = new PresupuestoPendienteRevisionNotification($presupuesto, $worker);
+        User::where('company_id', $presupuesto->empresa_id)
+            ->whereHas('roles', fn ($q) => $q->where('name', 'administrador'))
+            ->each(fn (User $admin) => $admin->notify($notification));
+
+        return redirect()->route('admin.presupuestos.show', $presupuesto->id)
+            ->with('success', 'Revisión solicitada. Los administradores han sido notificados.');
+    }
+
+    public function validarRevision(Request $request, $id)
+    {
+        $presupuesto = Presupuesto::findOrFail($id);
+
+        if ($presupuesto->empresa_id !== auth()->user()->company_id) {
+            abort(403);
+        }
+
+        if (! auth()->user()->hasRole('administrador')) {
+            abort(403);
+        }
+
+        if ($presupuesto->estado !== 'pendiente_revision') {
+            return redirect()->back()->with('error', 'Solo se puede validar presupuestos pendientes de revisión.');
+        }
+
+        $nota = $request->input('nota_revision');
+
+        $presupuesto->update([
+            'estado'      => 'validado',
+            'validado_en' => now(),
+            'nota_revision' => $nota,
+            'revisado_por' => auth()->id(),
+        ]);
+
+        $this->logAudit($presupuesto, 'validado', 'Presupuesto validado por el administrador.' . ($nota ? " Nota: {$nota}" : ''));
+
+        // Notify all admins and the creator
+        $notification = new PresupuestoRevisionResultadoNotification($presupuesto, 'validado', $nota);
+        $notified = collect();
+        User::where('company_id', $presupuesto->empresa_id)
+            ->whereHas('roles', fn ($q) => $q->where('name', 'administrador'))
+            ->each(function (User $admin) use ($notification, &$notified) {
+                $admin->notify($notification);
+                $notified->push($admin->id);
+            });
+        if ($presupuesto->created_by && ! $notified->contains($presupuesto->created_by)) {
+            $creator = User::find($presupuesto->created_by);
+            $creator?->notify($notification);
+        }
+
+        return redirect()->route('admin.presupuestos.show', $presupuesto->id)
+            ->with('success', 'Presupuesto validado correctamente.');
+    }
+
+    public function rechazarRevision(Request $request, $id)
+    {
+        $presupuesto = Presupuesto::findOrFail($id);
+
+        if ($presupuesto->empresa_id !== auth()->user()->company_id) {
+            abort(403);
+        }
+
+        if (! auth()->user()->hasRole('administrador')) {
+            abort(403);
+        }
+
+        if ($presupuesto->estado !== 'pendiente_revision') {
+            return redirect()->back()->with('error', 'Solo se puede rechazar la revisión de presupuestos pendientes de revisión.');
+        }
+
+        $nota = $request->input('nota_revision');
+
+        $presupuesto->update([
+            'estado'        => 'borrador',
+            'nota_revision' => $nota,
+            'revisado_por'  => auth()->id(),
+        ]);
+
+        $this->logAudit($presupuesto, 'rechazado_revision', 'Revisión rechazada por el administrador. El presupuesto vuelve a borrador.' . ($nota ? " Nota: {$nota}" : ''));
+
+        // Notify all admins and the creator
+        $notification = new PresupuestoRevisionResultadoNotification($presupuesto, 'rechazado_revision', $nota);
+        $notified = collect();
+        User::where('company_id', $presupuesto->empresa_id)
+            ->whereHas('roles', fn ($q) => $q->where('name', 'administrador'))
+            ->each(function (User $admin) use ($notification, &$notified) {
+                $admin->notify($notification);
+                $notified->push($admin->id);
+            });
+        if ($presupuesto->created_by && ! $notified->contains($presupuesto->created_by)) {
+            $creator = User::find($presupuesto->created_by);
+            $creator?->notify($notification);
+        }
+
+        return redirect()->route('admin.presupuestos.show', $presupuesto->id)
+            ->with('success', 'Revisión rechazada. El presupuesto ha vuelto a estado borrador.');
+    }
+
+    public function volverBorrador(Request $request, $id)
+    {
+        $presupuesto = Presupuesto::findOrFail($id);
+
+        if ($presupuesto->empresa_id !== auth()->user()->company_id) {
+            abort(403);
+        }
+
+        if (! auth()->user()->hasRole('administrador')) {
+            abort(403);
+        }
+
+        if ($presupuesto->estado !== 'validado') {
+            return redirect()->back()->with('error', 'Solo se puede volver a borrador un presupuesto validado.');
+        }
+
+        $presupuesto->update([
+            'estado'        => 'borrador',
+            'validado_en'   => null,
+            'nota_revision' => null,
+            'revisado_por'  => null,
+        ]);
+
+        $this->logAudit($presupuesto, 'vuelto_borrador', 'El presupuesto ha sido devuelto a estado borrador por el administrador.');
+
+        // Notify all admins and the creator
+        $notification = new PresupuestoRevisionResultadoNotification($presupuesto, 'vuelto_borrador');
+        $notified = collect();
+        User::where('company_id', $presupuesto->empresa_id)
+            ->whereHas('roles', fn ($q) => $q->where('name', 'administrador'))
+            ->each(function (User $admin) use ($notification, &$notified) {
+                $admin->notify($notification);
+                $notified->push($admin->id);
+            });
+        if ($presupuesto->created_by && ! $notified->contains($presupuesto->created_by)) {
+            $creator = User::find($presupuesto->created_by);
+            $creator?->notify($notification);
+        }
+
+        return redirect()->route('admin.presupuestos.show', $presupuesto->id)
+            ->with('success', 'Presupuesto devuelto a estado borrador.');
     }
 
     private function notifyPresupuestoEstado(Presupuesto $presupuesto): void

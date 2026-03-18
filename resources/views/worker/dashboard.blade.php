@@ -4,11 +4,13 @@
         $canUseNotas = $notasEnabled ?? false;
 
         $estadoBadgeClasses = [
-            'gray' => 'bg-slate-100 text-slate-700',
-            'blue' => 'bg-blue-100 text-blue-700',
+            'gray'   => 'bg-slate-100 text-slate-700',
+            'orange' => 'bg-orange-100 text-orange-700',
+            'teal'   => 'bg-teal-100 text-teal-700',
+            'blue'   => 'bg-blue-100 text-blue-700',
             'purple' => 'bg-violet-100 text-violet-700',
-            'green' => 'bg-emerald-100 text-emerald-700',
-            'red' => 'bg-rose-100 text-rose-700',
+            'green'  => 'bg-emerald-100 text-emerald-700',
+            'red'    => 'bg-rose-100 text-rose-700',
         ];
 
         $incidentStatusClasses = [
@@ -58,6 +60,14 @@
             'borrador' => [
                 'label' => 'Borrador',
                 'bar' => 'bg-slate-400',
+            ],
+            'pendiente_revision' => [
+                'label' => 'Pendiente de revisión',
+                'bar' => 'bg-orange-500',
+            ],
+            'validado' => [
+                'label' => 'Validado',
+                'bar' => 'bg-teal-500',
             ],
             'enviado' => [
                 'label' => 'Enviado',
@@ -163,6 +173,28 @@
             <div class="rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-4 text-sm text-emerald-800 shadow-sm">
                 {{ session('success') }}
             </div>
+        @endif
+
+        @if(($presupuestoStats['pendiente_revision'] ?? 0) > 0)
+            <section>
+                <a href="{{ route('admin.presupuestos.index', ['estado' => 'pendiente_revision']) }}"
+                   class="flex flex-col gap-4 rounded-3xl border border-orange-200 bg-orange-50 p-5 shadow-sm transition hover:bg-orange-100 sm:flex-row sm:items-center">
+                    <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-orange-100 shadow-inner">
+                        <svg class="h-6 w-6 text-orange-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                        </svg>
+                    </div>
+                    <div class="flex-1">
+                        <p class="font-semibold text-orange-900">
+                            {{ $presupuestoStats['pendiente_revision'] }} {{ $presupuestoStats['pendiente_revision'] === 1 ? 'presupuesto pendiente' : 'presupuestos pendientes' }} de revisión
+                        </p>
+                        <p class="mt-0.5 text-sm text-orange-700">Haz clic para ver el estado de tus presupuestos pendientes de validación.</p>
+                    </div>
+                    <svg class="h-5 w-5 shrink-0 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+                    </svg>
+                </a>
+            </section>
         @endif
 
         <section class="space-y-4">

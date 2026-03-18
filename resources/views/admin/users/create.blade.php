@@ -38,14 +38,26 @@
                     @error('email')<p class="mt-1 text-xs text-rose-600">{{ $message }}</p>@enderror
                 </div>
 
-                <div>
+                <div x-data="{ role: '{{ old('role', 'trabajador') }}' }">
                     <label class="mb-1 block text-sm font-medium text-slate-700">Rol <span class="text-rose-500">*</span></label>
-                    <select name="role"
+                    <select name="role" x-model="role"
                             class="w-full rounded-2xl border border-slate-300 px-3 py-2.5 text-sm focus:border-indigo-500 focus:ring-indigo-500 @error('role') border-rose-400 @enderror">
-                        <option value="trabajador" {{ old('role', 'trabajador') === 'trabajador' ? 'selected' : '' }}>Trabajador</option>
-                        <option value="administrador" {{ old('role') === 'administrador' ? 'selected' : '' }}>Administrador</option>
+                        <option value="trabajador">Trabajador</option>
+                        <option value="administrador">Administrador</option>
                     </select>
                     @error('role')<p class="mt-1 text-xs text-rose-600">{{ $message }}</p>@enderror
+
+                    <div x-show="role === 'trabajador'" x-transition class="mt-3 rounded-2xl border border-amber-200 bg-amber-50 p-4">
+                        <label class="flex cursor-pointer items-start gap-3">
+                            <input type="checkbox" name="revisar_presupuestos" value="1"
+                                   {{ old('revisar_presupuestos') ? 'checked' : '' }}
+                                   class="mt-0.5 h-4 w-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500">
+                            <span>
+                                <span class="block text-sm font-medium text-slate-700">Revisar presupuestos</span>
+                                <span class="mt-0.5 block text-xs text-slate-500">El administrador deberá validar los presupuestos antes de que el trabajador pueda descargarlos o enviarlos al cliente.</span>
+                            </span>
+                        </label>
+                    </div>
                 </div>
 
                 <div>

@@ -116,6 +116,10 @@ Route::middleware(['auth', 'two_factor'])->group(function () {
         Route::post('admin/presupuestos/{id}/duplicar', [PresupuestoController::class, 'duplicar'])->name('admin.presupuestos.duplicar');
         Route::get('admin/presupuestos/{id}/pdf', [PresupuestoController::class, 'downloadPdf'])->name('admin.presupuestos.pdf');
         Route::post('admin/presupuestos/{id}/send-email', [PresupuestoController::class, 'sendEmail'])->name('admin.presupuestos.send-email');
+        Route::post('admin/presupuestos/{id}/solicitar-revision', [PresupuestoController::class, 'solicitarRevision'])->name('admin.presupuestos.solicitar-revision');
+        Route::post('admin/presupuestos/{id}/validar-revision', [PresupuestoController::class, 'validarRevision'])->name('admin.presupuestos.validar-revision');
+        Route::post('admin/presupuestos/{id}/rechazar-revision', [PresupuestoController::class, 'rechazarRevision'])->name('admin.presupuestos.rechazar-revision');
+        Route::post('admin/presupuestos/{id}/volver-borrador', [PresupuestoController::class, 'volverBorrador'])->name('admin.presupuestos.volver-borrador');
         Route::get('admin/presupuestos-configuracion', [PresupuestoConfiguracionController::class, 'index'])->name('admin.presupuestos.configuracion');
         Route::post('admin/presupuestos-configuracion', [PresupuestoConfiguracionController::class, 'update'])->name('admin.presupuestos.configuracion.update');
 

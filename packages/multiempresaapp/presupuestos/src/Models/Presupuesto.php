@@ -21,22 +21,25 @@ class Presupuesto extends Model
         'subtotal_bruto', 'subtotal_descuentos', 'total_base_imponible', 'total_iva', 'total',
         'notas', 'validez_hasta', 'forma_pago', 'observaciones', 'token_publico',
         'enviado_en', 'visto_en', 'aceptado_en', 'rechazado_en', 'created_by',
+        'pendiente_revision_en', 'validado_en', 'nota_revision', 'revisado_por',
     ];
 
     protected function casts(): array
     {
         return [
-            'fecha'              => 'date',
-            'validez_hasta'      => 'date',
-            'enviado_en'         => 'datetime',
-            'visto_en'           => 'datetime',
-            'aceptado_en'        => 'datetime',
-            'rechazado_en'       => 'datetime',
-            'subtotal_bruto'     => 'decimal:2',
-            'subtotal_descuentos' => 'decimal:2',
-            'total_base_imponible' => 'decimal:2',
-            'total_iva'          => 'decimal:2',
-            'total'              => 'decimal:2',
+            'fecha'                   => 'date',
+            'validez_hasta'           => 'date',
+            'enviado_en'              => 'datetime',
+            'visto_en'                => 'datetime',
+            'aceptado_en'             => 'datetime',
+            'rechazado_en'            => 'datetime',
+            'pendiente_revision_en'   => 'datetime',
+            'validado_en'             => 'datetime',
+            'subtotal_bruto'          => 'decimal:2',
+            'subtotal_descuentos'     => 'decimal:2',
+            'total_base_imponible'    => 'decimal:2',
+            'total_iva'               => 'decimal:2',
+            'total'                   => 'decimal:2',
         ];
     }
 
@@ -88,24 +91,28 @@ class Presupuesto extends Model
     public function getEstadoLabelAttribute(): string
     {
         return match ($this->estado) {
-            'borrador'  => 'Borrador',
-            'enviado'   => 'Enviado',
-            'visto'     => 'Visto',
-            'aceptado'  => 'Aceptado',
-            'rechazado' => 'Rechazado',
-            default     => ucfirst($this->estado),
+            'borrador'            => 'Borrador',
+            'pendiente_revision'  => 'Pendiente de revisión',
+            'validado'            => 'Validado',
+            'enviado'             => 'Enviado',
+            'visto'               => 'Visto',
+            'aceptado'            => 'Aceptado',
+            'rechazado'           => 'Rechazado',
+            default               => ucfirst($this->estado),
         };
     }
 
     public function getEstadoColorAttribute(): string
     {
         return match ($this->estado) {
-            'borrador'  => 'gray',
-            'enviado'   => 'blue',
-            'visto'     => 'purple',
-            'aceptado'  => 'green',
-            'rechazado' => 'red',
-            default     => 'gray',
+            'borrador'            => 'gray',
+            'pendiente_revision'  => 'orange',
+            'validado'            => 'teal',
+            'enviado'             => 'blue',
+            'visto'               => 'purple',
+            'aceptado'            => 'green',
+            'rechazado'           => 'red',
+            default               => 'gray',
         };
     }
 }

@@ -6,6 +6,8 @@
     @php
         $colorMap = [
             'gray'   => 'bg-slate-100 text-slate-700',
+            'orange' => 'bg-orange-100 text-orange-700',
+            'teal'   => 'bg-teal-100 text-teal-700',
             'blue'   => 'bg-blue-100 text-blue-700',
             'purple' => 'bg-violet-100 text-violet-700',
             'green'  => 'bg-emerald-100 text-emerald-700',
@@ -278,8 +280,28 @@
                 </div>
             </div>
 
+            {{-- Nota de revisión --}}
+            @if ($presupuesto->nota_revision)
+                <div class="overflow-hidden rounded-3xl border border-amber-200 bg-amber-50 shadow-sm">
+                    <div class="border-b border-amber-100 px-6 py-4">
+                        <h3 class="text-sm font-semibold text-amber-900">Nota del administrador</h3>
+                    </div>
+                    <div class="px-6 py-5">
+                        <p class="text-sm text-amber-800">{{ $presupuesto->nota_revision }}</p>
+                    </div>
+                </div>
+            @endif
+
             {{-- Acciones --}}
-            @php $esBorrador = $presupuesto->estado === 'borrador'; @endphp
+            @php
+                $esBorrador          = $presupuesto->estado === 'borrador';
+                $esPendienteRevision = $presupuesto->estado === 'pendiente_revision';
+                $esValidado          = $presupuesto->estado === 'validado';
+                $workerConRevision   = $isWorker && $revisarPresupuestos;
+                // Worker with revisar_presupuestos: in borrador, can only view/edit/delete/request-review; can't send/download/whatsapp/email
+                // In validado: can only view (no edit/delete)
+                $workerCanSend       = ! $isWorker || ! $revisarPresupuestos || $esValidado;
+            @endphp
             <div x-data="{
                 showModal: false,
                 pendingAction: null,
@@ -324,17 +346,113 @@
                     @csrf
                 </form>
 
-                <a href="{{ route('admin.presupuestos.edit', $presupuesto->id) }}"
-                   class="inline-flex items-center rounded-2xl bg-amber-500 px-4 py-2.5 text-sm font-medium text-white shadow-sm transition hover:bg-amber-600">
-                    Editar
-                </a>
+                {{-- Editar: hidden for workers on validado/pendiente_revision --}}
+                @if (! ($isWorker && ($esValidado || $esPendienteRevision)))
+                    <a href="{{ route('admin.presupuestos.edit', $presupuesto->id) }}"
+                       class="inline-flex items-center rounded-2xl bg-amber-500 px-4 py-2.5 text-sm font-medium text-white shadow-sm transition hover:bg-amber-600">
+                        Editar
+                    </a>
+                @endif
 
-                @if (in_array($presupuesto->estado, ['borrador', 'visto']))
+                {{-- Solicitar revisión: only workers with revisar_presupuestos in borrador --}}
+                @if ($workerConRevision && $esBorrador)
+                    <form method="POST" action="{{ route('admin.presupuestos.solicitar-revision', $presupuesto->id) }}">
+                        @csrf
+                        <button type="submit"
+                                class="inline-flex items-center rounded-2xl bg-orange-500 px-4 py-2.5 text-sm font-medium text-white shadow-sm transition hover:bg-orange-600">
+                            Solicitar revisión
+                        </button>
+                    </form>
+                @endif
+
+                {{-- Marcar como enviado: not for workers with revisar_presupuestos (unless validado) --}}
+                @if ($workerCanSend && in_array($presupuesto->estado, ['borrador', 'visto', 'validado']))
                     <form method="POST" action="{{ route('admin.presupuestos.enviar', $presupuesto->id) }}">
                         @csrf
                         <button type="submit"
                                 class="inline-flex items-center rounded-2xl bg-blue-600 px-4 py-2.5 text-sm font-medium text-white shadow-sm transition hover:bg-blue-700">
                             Marcar como enviado
+                        </button>
+                    </form>
+                @endif
+
+                {{-- Validar/Rechazar revisión: only admins on pendiente_revision --}}
+                @if ($isAdmin && $esPendienteRevision)
+                    <div x-data="{ showValidarModal: false, showRechazarModal: false }">
+                        <button type="button" @click="showValidarModal = true"
+                                class="inline-flex items-center rounded-2xl bg-teal-600 px-4 py-2.5 text-sm font-medium text-white shadow-sm transition hover:bg-teal-700">
+                            Validar
+                        </button>
+                        <button type="button" @click="showRechazarModal = true"
+                                class="inline-flex items-center rounded-2xl bg-rose-600 px-4 py-2.5 text-sm font-medium text-white shadow-sm transition hover:bg-rose-700">
+                            Rechazar revisión
+                        </button>
+
+                        {{-- Validar modal --}}
+                        <div x-show="showValidarModal" x-transition.opacity
+                             class="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
+                             @click.self="showValidarModal = false">
+                            <div class="mx-4 w-full max-w-sm rounded-3xl bg-white p-6 shadow-2xl">
+                                <h3 class="mb-4 text-base font-semibold text-slate-900">Validar presupuesto</h3>
+                                <form method="POST" action="{{ route('admin.presupuestos.validar-revision', $presupuesto->id) }}">
+                                    @csrf
+                                    <div class="mb-4">
+                                        <label class="mb-1 block text-sm font-medium text-slate-700">Nota (opcional)</label>
+                                        <textarea name="nota_revision" rows="3"
+                                                  class="w-full rounded-2xl border border-slate-300 px-3 py-2 text-sm focus:border-teal-500 focus:ring-teal-500"
+                                                  placeholder="Añade una nota al trabajador..."></textarea>
+                                    </div>
+                                    <div class="flex gap-3">
+                                        <button type="submit"
+                                                class="flex-1 inline-flex items-center justify-center rounded-2xl bg-teal-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-teal-700">
+                                            Sí, validar
+                                        </button>
+                                        <button type="button" @click="showValidarModal = false"
+                                                class="flex-1 inline-flex items-center justify-center rounded-2xl bg-slate-100 px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-200">
+                                            Cancelar
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+
+                        {{-- Rechazar revisión modal --}}
+                        <div x-show="showRechazarModal" x-transition.opacity
+                             class="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
+                             @click.self="showRechazarModal = false">
+                            <div class="mx-4 w-full max-w-sm rounded-3xl bg-white p-6 shadow-2xl">
+                                <h3 class="mb-4 text-base font-semibold text-slate-900">Rechazar revisión</h3>
+                                <form method="POST" action="{{ route('admin.presupuestos.rechazar-revision', $presupuesto->id) }}">
+                                    @csrf
+                                    <div class="mb-4">
+                                        <label class="mb-1 block text-sm font-medium text-slate-700">Nota (opcional)</label>
+                                        <textarea name="nota_revision" rows="3"
+                                                  class="w-full rounded-2xl border border-slate-300 px-3 py-2 text-sm focus:border-rose-500 focus:ring-rose-500"
+                                                  placeholder="Indica el motivo del rechazo..."></textarea>
+                                    </div>
+                                    <div class="flex gap-3">
+                                        <button type="submit"
+                                                class="flex-1 inline-flex items-center justify-center rounded-2xl bg-rose-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-rose-700">
+                                            Sí, rechazar
+                                        </button>
+                                        <button type="button" @click="showRechazarModal = false"
+                                                class="flex-1 inline-flex items-center justify-center rounded-2xl bg-slate-100 px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-200">
+                                            Cancelar
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                @endif
+
+                {{-- Volver a borrador: only admins on validado --}}
+                @if ($isAdmin && $esValidado)
+                    <form method="POST" action="{{ route('admin.presupuestos.volver-borrador', $presupuesto->id) }}">
+                        @csrf
+                        <button type="submit"
+                                class="inline-flex items-center rounded-2xl bg-slate-500 px-4 py-2.5 text-sm font-medium text-white shadow-sm transition hover:bg-slate-600">
+                            Volver a borrador
                         </button>
                     </form>
                 @endif
@@ -347,7 +465,8 @@
                     </button>
                 </form>
 
-                {{-- Descargar PDF --}}
+                {{-- Descargar PDF: restricted for workers with revisar_presupuestos unless validado --}}
+                @if ($workerCanSend)
                 <button type="button"
                         @click="trigger('pdf', '{{ route('admin.presupuestos.pdf', $presupuesto->id) }}')"
                         class="inline-flex items-center rounded-2xl bg-rose-600 px-4 py-2.5 text-sm font-medium text-white shadow-sm transition hover:bg-rose-700">
@@ -356,9 +475,10 @@
                     </svg>
                     Descargar PDF
                 </button>
+                @endif
 
-                {{-- Enviar por WhatsApp --}}
-                @if ($canUseEnvioEnlace && $presupuesto->cliente?->telefono)
+                {{-- Enviar por WhatsApp: restricted for workers with revisar_presupuestos unless validado --}}
+                @if ($canUseEnvioEnlace && $presupuesto->cliente?->telefono && $workerCanSend)
                     @php
                         $phone = preg_replace('/[^0-9]/', '', $presupuesto->cliente->telefono);
                         if (strlen($phone) === 9) $phone = '34' . $phone;
@@ -375,8 +495,8 @@
                     </button>
                 @endif
 
-                {{-- Enviar por Email --}}
-                @if ($canUseEnvioEnlace && $presupuesto->cliente?->email)
+                {{-- Enviar por Email: restricted for workers with revisar_presupuestos unless validado --}}
+                @if ($canUseEnvioEnlace && $presupuesto->cliente?->email && $workerCanSend)
                     <form id="form-send-email" method="POST" action="{{ route('admin.presupuestos.send-email', $presupuesto->id) }}">
                         @csrf
                     </form>
@@ -404,7 +524,7 @@
                 </a>
 
                 {{-- Modal: marcar como enviado --}}
-                @if($esBorrador)
+                @if($esBorrador || $esValidado)
                     <div x-show="showModal"
                          x-transition.opacity
                          class="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
@@ -419,7 +539,7 @@
                                 <h3 class="text-base font-semibold text-slate-900">¿Marcar como enviado?</h3>
                             </div>
 
-                            <p class="mb-5 text-sm text-slate-600">El presupuesto está en estado <strong>Borrador</strong>. ¿Deseas marcarlo como <strong>Enviado</strong>?</p>
+                            <p class="mb-5 text-sm text-slate-600">El presupuesto está en estado <strong>{{ $presupuesto->estado_label }}</strong>. ¿Deseas marcarlo como <strong>Enviado</strong>?</p>
 
                             <div class="flex gap-3">
                                 <button type="button" @click="confirm(true)"
@@ -451,6 +571,8 @@
                         'purple' => ['bg' => 'bg-violet-100', 'text' => 'text-violet-700'],
                         'green'  => ['bg' => 'bg-emerald-100', 'text' => 'text-emerald-700'],
                         'red'    => ['bg' => 'bg-rose-100', 'text' => 'text-rose-700'],
+                        'orange' => ['bg' => 'bg-orange-100', 'text' => 'text-orange-700'],
+                        'teal'   => ['bg' => 'bg-teal-100', 'text' => 'text-teal-700'],
                     ];
                 @endphp
 
