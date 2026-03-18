@@ -149,6 +149,11 @@
                                   {{ request()->routeIs('superadmin.noticias.*') ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50' }}">
                             Noticias
                         </a>
+                        <a href="{{ route('superadmin.contact-messages.index') }}"
+                           class="px-3 py-2 rounded-lg text-sm font-medium transition
+                                  {{ request()->routeIs('superadmin.contact-messages.*') ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50' }}">
+                            Contacto
+                        </a>
 
 
 <div x-data="{ analyticsOpen: false }" class="relative">
@@ -437,6 +442,7 @@
                                 <a href="{{ route('superadmin.users.index') }}" class="flex items-center rounded-2xl px-4 py-3 text-sm font-medium text-slate-700 transition hover:bg-slate-50">Usuarios</a>
                                 <a href="{{ route('superadmin.plans.index') }}" class="flex items-center rounded-2xl px-4 py-3 text-sm font-medium text-slate-700 transition hover:bg-slate-50">Planes</a>
                                 <a href="{{ route('superadmin.noticias.index') }}" class="flex items-center rounded-2xl px-4 py-3 text-sm font-medium text-slate-700 transition hover:bg-slate-50">Noticias</a>
+                                <a href="{{ route('superadmin.contact-messages.index') }}" class="flex items-center rounded-2xl px-4 py-3 text-sm font-medium text-slate-700 transition hover:bg-slate-50">Contacto</a>
                                 <a href="{{ route('superadmin.settings') }}" class="flex items-center rounded-2xl px-4 py-3 text-sm font-medium text-slate-700 transition hover:bg-slate-50">Configuración</a>
 
 

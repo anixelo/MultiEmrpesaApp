@@ -76,8 +76,10 @@ class PresupuestoController extends Controller
             ->whereBetween('created_at', [now()->startOfMonth(), now()->endOfMonth()])
             ->count() : 0;
         $canUseEnvioEnlace = $company ? $company->canUseEnvioEnlace() : false;
+        $isWorker = auth()->user()->hasRole('trabajador');
+        $revisarPresupuestos = auth()->user()->revisar_presupuestos;
 
-        return view('presupuestos::presupuestos.index', compact('presupuestos', 'hasEmpresa', 'maxPresupuestos', 'currentMonthCount', 'canUseEnvioEnlace'));
+        return view('presupuestos::presupuestos.index', compact('presupuestos', 'hasEmpresa', 'maxPresupuestos', 'currentMonthCount', 'canUseEnvioEnlace', 'isWorker', 'revisarPresupuestos'));
     }
 
     public function create(Request $request)

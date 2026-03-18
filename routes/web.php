@@ -9,6 +9,7 @@ use App\Http\Controllers\SuperAdmin\CompanyController;
 use App\Http\Controllers\SuperAdmin\UserController as SuperAdminUserController;
 use App\Http\Controllers\SuperAdmin\DashboardController as SuperAdminDashboardController;
 use App\Http\Controllers\SuperAdmin\NoticiaController as SuperAdminNoticiaController;
+use App\Http\Controllers\SuperAdmin\ContactMessageController as SuperAdminContactMessageController;
 use App\Http\Controllers\SuperAdmin\SettingsController as SuperAdminSettingsController;
 use App\Http\Controllers\Admin\EmpresaController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
@@ -158,6 +159,7 @@ Route::middleware(['auth', 'two_factor'])->group(function () {
         Route::resource('users', SuperAdminUserController::class)->except(['show']);
         Route::resource('plans', SuperAdminPlanController::class)->except(['show']);
         Route::resource('noticias', SuperAdminNoticiaController::class)->except(['show']);
+        Route::resource('contact-messages', SuperAdminContactMessageController::class)->only(['index', 'show', 'destroy']);
         Route::post('/companies/{company}/assign-plan', [SuperAdminPlanController::class, 'assignPlan'])->name('companies.assign-plan');
         Route::post('/users/{user}/impersonate', [SuperAdminUserController::class, 'impersonate'])->name('users.impersonate');
 

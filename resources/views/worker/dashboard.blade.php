@@ -335,6 +335,7 @@
                                 @foreach($recentPresupuestos as $p)
                                     @php
                                         $badgeClass = $estadoBadgeClasses[$p->estado_color] ?? 'bg-slate-100 text-slate-700';
+                                        $workerCanSend = ! ($revisarPresupuestos && $p->estado !== 'validado');
                                     @endphp
                                     <tr class="rounded-2xl bg-slate-50 shadow-sm ring-1 ring-slate-200 transition hover:bg-white hover:shadow-md hover:ring-indigo-100">
                                         <td class="whitespace-nowrap rounded-l-2xl px-4 py-4 text-sm font-semibold text-slate-900">
@@ -373,13 +374,15 @@
                                                     <div x-show="open" x-transition
                                                          :style="'position:fixed;top:' + dy + 'px;left:' + dx + 'px'"
                                                          class="z-[9999] w-52 rounded-2xl border border-slate-200 bg-white py-2 shadow-xl">
+                                                        @if ($workerCanSend)
                                                         <a href="{{ route('admin.presupuestos.pdf', $p->id) }}"
                                                            class="flex items-center gap-2 px-4 py-2 text-sm text-slate-700 hover:bg-slate-50">
                                                             <svg class="h-4 w-4 text-rose-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
                                                             Descargar PDF
                                                         </a>
+                                                        @endif
 
-                                                        @if ($canUseEnvioEnlace)
+                                                        @if ($canUseEnvioEnlace && $workerCanSend)
                                                             @if ($p->cliente?->telefono)
                                                                 @php
                                                                     $phone = preg_replace('/[^0-9]/', '', $p->cliente->telefono);
@@ -442,6 +445,7 @@
                     @foreach($recentPresupuestos as $p)
                         @php
                             $badgeClass = $estadoBadgeClasses[$p->estado_color] ?? 'bg-slate-100 text-slate-700';
+                            $workerCanSend = ! ($revisarPresupuestos && $p->estado !== 'validado');
                         @endphp
                         <div class="rounded-3xl border border-slate-200 bg-white p-4 shadow-sm">
                             <div class="flex items-start justify-between gap-3">
@@ -463,8 +467,10 @@
                                 <div class="flex flex-wrap justify-end gap-2">
                                     <a href="{{ route('admin.presupuestos.show', $p->id) }}" class="inline-flex items-center rounded-xl bg-indigo-50 px-3 py-2 text-xs font-medium text-indigo-700">Ver</a>
                                     <a href="{{ route('admin.presupuestos.edit', $p->id) }}" class="inline-flex items-center rounded-xl bg-amber-50 px-3 py-2 text-xs font-medium text-amber-700">Editar</a>
-                                    <a href="{{ route('admin.presupuestos.pdf', $p->id) }}" class="inline-flex items-center rounded-xl bg-rose-50 px-3 py-2 text-xs font-medium text-rose-700">PDF</a>
-                                    @if ($canUseEnvioEnlace)
+                                    @if ($workerCanSend)
+                                        <a href="{{ route('admin.presupuestos.pdf', $p->id) }}" class="inline-flex items-center rounded-xl bg-rose-50 px-3 py-2 text-xs font-medium text-rose-700">PDF</a>
+                                    @endif
+                                    @if ($canUseEnvioEnlace && $workerCanSend)
                                         <a href="{{ route('presupuestos.public', $p->token_publico) }}" target="_blank" class="inline-flex items-center rounded-xl bg-slate-100 px-3 py-2 text-xs font-medium text-slate-700">Enlace</a>
                                     @endif
                                 </div>
