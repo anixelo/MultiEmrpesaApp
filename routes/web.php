@@ -42,9 +42,18 @@ Route::get('/terminos', [PageController::class, 'terms'])->name('pages.terms');
 Route::get('/contacto', [PageController::class, 'contact'])->name('pages.contact');
 Route::post('/contacto', [PageController::class, 'contactSend'])->name('pages.contact.send');
 
-// Public news detail
-Route::get('/noticias/{slug}', [NoticiaController::class, 'show'])->name('noticias.show');
-Route::get('/noticias/tag/{slug}', [NoticiaController::class, 'byTag'])->name('noticias.tag');
+// Public news: /tag/{slug} for tags, legacy /noticias/* redirects to new URLs
+Route::get('/tag/{slug}', [NoticiaController::class, 'byTag'])->name('noticias.tag');
+Route::get('/noticias/tag/{slug}', function (string $slug) {
+    return redirect()->route('noticias.tag', $slug, 301);
+});
+Route::get('/noticias/{slug}', function (string $slug) {
+    $noticia = \MultiempresaApp\Noticias\Models\Noticia::with('categoria')->where('slug', $slug)->first();
+    if (!$noticia || !$noticia->categoria) {
+        abort(404);
+    }
+    return redirect()->route('noticias.show', [$noticia->categoria->slug, $noticia->slug], 301);
+});
 Route::get('/sitemap.xml', [NoticiaController::class, 'sitemap'])->name('sitemap');
 
 // Google OAuth
@@ -184,6 +193,10 @@ Route::middleware(['auth', 'two_factor'])->group(function () {
 });
 
 require __DIR__ . '/auth.php';
+
+// Public news article: /{categoria}/{slug} — must be before /{slug} catch-all
+Route::get('/{categoria}/{slug}', [NoticiaController::class, 'show'])->name('noticias.show')
+    ->where(['categoria' => '[a-z0-9][a-z0-9\-]*', 'slug' => '[a-z0-9][a-z0-9\-]*']);
 
 // Public category page (clean slug) — must be last to avoid catching other routes
 Route::get('/{slug}', [NoticiaController::class, 'byCategoria'])->name('noticias.categoria')

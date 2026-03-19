@@ -10,9 +10,14 @@ use MultiempresaApp\Noticias\Models\Tag;
 
 class NoticiaController extends Controller
 {
-    public function show(string $slug)
+    public function show(string $categoria, string $slug)
     {
         $noticia = Noticia::with('tags', 'categoria')->publicadas()->where('slug', $slug)->firstOrFail();
+
+        // Canonical redirect if the categoria slug in the URL doesn't match
+        if ($noticia->categoria && $noticia->categoria->slug !== $categoria) {
+            return redirect()->route('noticias.show', [$noticia->categoria->slug, $slug], 301);
+        }
 
         // Related news: same tags first, then fill with latest
         $tagIds = $noticia->tags->pluck('id');
@@ -20,6 +25,7 @@ class NoticiaController extends Controller
         if ($tagIds->isNotEmpty()) {
             $relacionadas = Noticia::with('tags', 'categoria')
                 ->publicadas()
+                ->whereHas('categoria')
                 ->where('id', '!=', $noticia->id)
                 ->whereHas('tags', fn ($q) => $q->whereIn('tags.id', $tagIds))
                 ->latest('publicado_en')
@@ -30,6 +36,7 @@ class NoticiaController extends Controller
         }
 
         $otrasNoticias = Noticia::with('categoria')->publicadas()
+            ->whereHas('categoria')
             ->where('id', '!=', $noticia->id)
             ->latest('publicado_en')
             ->take(3)
@@ -44,6 +51,7 @@ class NoticiaController extends Controller
 
         $noticias = Noticia::with('tags', 'categoria')
             ->publicadas()
+            ->whereHas('categoria')
             ->whereHas('tags', fn ($q) => $q->where('tags.slug', $slug))
             ->latest('publicado_en')
             ->paginate(12);
@@ -66,7 +74,7 @@ class NoticiaController extends Controller
 
     public function sitemap(): Response
     {
-        $noticias   = Noticia::publicadas()->latest('publicado_en')->get(['slug', 'updated_at']);
+        $noticias   = Noticia::with('categoria')->publicadas()->whereHas('categoria')->latest('publicado_en')->get(['id', 'slug', 'updated_at', 'categoria_id']);
         $tags       = Tag::whereHas('noticias', fn ($q) => $q->where('publicado', true))->get(['slug', 'updated_at']);
         $categorias = Categoria::whereHas('noticias', fn ($q) => $q->where('publicado', true))->get(['slug', 'updated_at']);
 

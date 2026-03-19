@@ -21,7 +21,7 @@
     {{-- Individual news articles --}}
     @foreach($noticias as $noticia)
     <url>
-        <loc>{{ route('noticias.show', $noticia->slug) }}</loc>
+        <loc>{{ route('noticias.show', [$noticia->categoria->slug, $noticia->slug]) }}</loc>
         <lastmod>{{ $noticia->updated_at->toAtomString() }}</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.8</priority>
