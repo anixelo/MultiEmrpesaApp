@@ -55,7 +55,7 @@
         <nav class="flex items-center gap-2 text-sm text-gray-500">
             <a href="/" class="hover:text-indigo-600 transition">Inicio</a>
             <svg class="w-4 h-4 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
-            <a href="/#noticias" class="hover:text-indigo-600 transition">Noticias</a>
+            <a href="/#noticias" class="hover:text-indigo-600 transition">Contenidos</a>
             <svg class="w-4 h-4 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
             <span class="text-gray-700">{{ $tag->nombre }}</span>
         </nav>
