@@ -96,7 +96,11 @@
         <nav class="flex items-center gap-2 text-sm text-gray-500">
             <a href="/" class="hover:text-indigo-600 transition">Inicio</a>
             <svg class="w-4 h-4 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
-            <a href="/#noticias" class="hover:text-indigo-600 transition">Noticias</a>
+            <a href="/#noticias" class="hover:text-indigo-600 transition">Contenidos</a>
+            @if($noticia->categoria)
+            <svg class="w-4 h-4 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+            <a href="{{ route('noticias.categoria', $noticia->categoria->slug) }}" class="hover:text-indigo-600 transition">{{ $noticia->categoria->titulo }}</a>
+            @endif
             <svg class="w-4 h-4 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
             <span class="text-gray-700 truncate max-w-xs">{{ $noticia->titulo }}</span>
         </nav>
@@ -109,10 +113,18 @@
         {{-- Header --}}
         <header class="mb-8">
             <div class="flex items-center gap-2 mb-4">
+                @if($noticia->categoria)
+                <a href="{{ route('noticias.categoria', $noticia->categoria->slug) }}"
+                   class="inline-flex items-center gap-1.5 bg-indigo-100 text-indigo-700 text-xs font-semibold px-3 py-1.5 rounded-full hover:bg-indigo-200 transition-colors">
+                    <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M2 6a2 2 0 012-2h4l2 2h4a2 2 0 012 2v1H8a3 3 0 00-3 3v1.5a1.5 1.5 0 01-3 0V6z" clip-rule="evenodd"/><path d="M6 12a2 2 0 012-2h8a2 2 0 012 2v2a2 2 0 01-2 2H2h2a2 2 0 002-2v-2z"/></svg>
+                    {{ $noticia->categoria->titulo }}
+                </a>
+                @else
                 <span class="inline-flex items-center gap-1.5 bg-indigo-100 text-indigo-700 text-xs font-semibold px-3 py-1.5 rounded-full">
-                    <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M2 5a2 2 0 012-2h8a2 2 0 012 2v10a2 2 0 002 2H4a2 2 0 01-2-2V5zm3 1h6v4H5V6zm6 6H5v2h6v-2z" clip-rule="evenodd"/><path d="M15 7h1a2 2 0 012 2v5.5a1.5 1.5 0 01-3 0V7z"/></svg>
-                    Noticias
+                    <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M2 6a2 2 0 012-2h4l2 2h4a2 2 0 012 2v1H8a3 3 0 00-3 3v1.5a1.5 1.5 0 01-3 0V6z" clip-rule="evenodd"/><path d="M6 12a2 2 0 012-2h8a2 2 0 012 2v2a2 2 0 01-2 2H2h2a2 2 0 002-2v-2z"/></svg>
+                    Contenidos
                 </span>
+                @endif
                 @if($noticia->publicado_en)
                 <time class="text-xs text-gray-400" datetime="{{ $noticia->publicado_en->toISOString() }}">
                     {{ $noticia->publicado_en->format('d \d\e F \d\e Y') }}
