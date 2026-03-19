@@ -8,6 +8,16 @@
         <priority>1.0</priority>
     </url>
 
+    {{-- Category pages --}}
+    @foreach($categorias as $categoria)
+    <url>
+        <loc>{{ route('noticias.categoria', $categoria->slug) }}</loc>
+        <lastmod>{{ $categoria->updated_at->toAtomString() }}</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.7</priority>
+    </url>
+    @endforeach
+
     {{-- Individual news articles --}}
     @foreach($noticias as $noticia)
     <url>

@@ -213,6 +213,24 @@
         </label>
     </div>
 
+    {{-- Categoría --}}
+    <div>
+        <label for="categoria_id" class="block text-sm font-medium text-gray-700 mb-1">Categoría</label>
+        <select id="categoria_id" name="categoria_id"
+                class="block w-full rounded-xl border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+            <option value="">— Sin categoría —</option>
+            @foreach($categorias as $cat)
+                <option value="{{ $cat->id }}"
+                    {{ old('categoria_id', $noticia->categoria_id ?? '') == $cat->id ? 'selected' : '' }}>
+                    {{ $cat->titulo }}
+                </option>
+            @endforeach
+        </select>
+        @error('categoria_id')
+            <p class="text-xs text-red-600 mt-1">{{ $message }}</p>
+        @enderror
+    </div>
+
     {{-- Tags --}}
     <div x-data="tagInput({{ json_encode(collect(old('tags', isset($noticia) ? $noticia->tags->pluck('nombre')->toArray() : []))->values()->all()) }})">
         <label class="block text-sm font-medium text-gray-700 mb-1">Etiquetas</label>
