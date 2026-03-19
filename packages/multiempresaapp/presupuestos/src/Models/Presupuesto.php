@@ -83,6 +83,11 @@ class Presupuesto extends Model
         return $this->hasMany(PresupuestoAudit::class)->orderBy('created_at', 'desc');
     }
 
+    public function comentarios()
+    {
+        return $this->hasMany(PresupuestoComentario::class)->orderBy('created_at', 'asc');
+    }
+
     public function scopeDeEmpresa($query, $empresaId)
     {
         return $query->where('empresa_id', $empresaId);

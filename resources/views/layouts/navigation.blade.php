@@ -372,6 +372,13 @@
                                 </a>
                                 @endif
 
+                                @if(auth()->user()->company?->canUseNotas())
+                                <a href="{{ route('admin.notas.index') }}"
+                                   class="flex items-center rounded-2xl px-4 py-3 text-sm font-medium text-slate-700 transition hover:bg-slate-50">
+                                    Notas
+                                </a>
+                                @endif
+
                                 <div x-data="{ datosOpen: false }" class="rounded-2xl border border-slate-200 bg-slate-50/70">
                                     <button @click="datosOpen = !datosOpen"
                                             class="flex w-full items-center justify-between px-4 py-3 text-sm font-medium text-slate-700">

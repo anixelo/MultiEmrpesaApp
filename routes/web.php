@@ -61,6 +61,7 @@ Route::get('/presupuestos/p/{token}', [PresupuestoController::class, 'public'])-
 Route::get('/presupuestos/p/{token}/pdf', [PresupuestoController::class, 'downloadPublicPdf'])->name('presupuestos.public.pdf');
 Route::post('/presupuestos/p/{token}/aceptar', [PresupuestoController::class, 'aceptar'])->name('presupuestos.aceptar');
 Route::post('/presupuestos/p/{token}/rechazar', [PresupuestoController::class, 'rechazar'])->name('presupuestos.rechazar');
+Route::post('/presupuestos/p/{token}/comentarios', [PresupuestoController::class, 'storePublicComment'])->name('presupuestos.public.comentarios.store');
 
 // Authenticated & 2FA verified routes
 Route::middleware(['auth', 'two_factor'])->group(function () {
@@ -121,6 +122,7 @@ Route::middleware(['auth', 'two_factor'])->group(function () {
         Route::post('admin/presupuestos/{id}/validar-revision', [PresupuestoController::class, 'validarRevision'])->name('admin.presupuestos.validar-revision');
         Route::post('admin/presupuestos/{id}/rechazar-revision', [PresupuestoController::class, 'rechazarRevision'])->name('admin.presupuestos.rechazar-revision');
         Route::post('admin/presupuestos/{id}/volver-borrador', [PresupuestoController::class, 'volverBorrador'])->name('admin.presupuestos.volver-borrador');
+        Route::post('admin/presupuestos/{id}/comentarios', [PresupuestoController::class, 'storeComment'])->name('admin.presupuestos.comentarios.store');
         Route::get('admin/presupuestos-configuracion', [PresupuestoConfiguracionController::class, 'index'])->name('admin.presupuestos.configuracion');
         Route::post('admin/presupuestos-configuracion', [PresupuestoConfiguracionController::class, 'update'])->name('admin.presupuestos.configuracion.update');
 

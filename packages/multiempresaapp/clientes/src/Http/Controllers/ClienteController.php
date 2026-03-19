@@ -5,6 +5,7 @@ namespace MultiempresaApp\Clientes\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use MultiempresaApp\Clientes\Models\Cliente;
+use MultiempresaApp\Presupuestos\Models\Presupuesto;
 
 class ClienteController extends Controller
 {
@@ -59,7 +60,13 @@ class ClienteController extends Controller
             abort(403);
         }
 
-        return view('clientes::clientes.show', compact('cliente'));
+        $presupuestos = Presupuesto::with(['negocio'])
+            ->where('empresa_id', auth()->user()->company_id)
+            ->where('cliente_id', $cliente->id)
+            ->latest()
+            ->get();
+
+        return view('clientes::clientes.show', compact('cliente', 'presupuestos'));
     }
 
     public function edit($id)

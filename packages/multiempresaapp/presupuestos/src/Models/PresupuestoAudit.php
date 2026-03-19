@@ -54,6 +54,7 @@ class PresupuestoAudit extends Model
             'validado'            => 'Validado por administrador',
             'rechazado_revision'  => 'Revisión rechazada',
             'vuelto_borrador'     => 'Vuelto a borrador',
+            'descargado_pdf'      => 'PDF descargado',
             default               => ucfirst($this->accion),
         };
     }
@@ -75,6 +76,7 @@ class PresupuestoAudit extends Model
             'validado'            => 'teal',
             'rechazado_revision'  => 'red',
             'vuelto_borrador'     => 'gray',
+            'descargado_pdf'      => 'blue',
             default               => 'gray',
         };
     }
