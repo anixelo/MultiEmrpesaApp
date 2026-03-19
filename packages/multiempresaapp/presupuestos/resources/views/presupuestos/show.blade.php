@@ -666,6 +666,43 @@
             </div>
             @endif
 
+            {{-- Comentarios --}}
+            <div class="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm">
+                <div class="border-b border-slate-100 px-6 py-4">
+                    <h3 class="text-sm font-semibold text-slate-900">Comentarios</h3>
+                </div>
+
+                @if ($presupuesto->comentarios->isEmpty())
+                    <div class="px-6 py-6 text-center text-sm text-slate-400">No hay comentarios aún.</div>
+                @else
+                    <div class="divide-y divide-slate-100">
+                        @foreach ($presupuesto->comentarios as $comentario)
+                            <div class="px-6 py-4">
+                                <div class="flex items-center justify-between gap-2">
+                                    <span class="text-sm font-semibold text-slate-800">{{ $comentario->autor }}</span>
+                                    <span class="text-xs text-slate-400">{{ $comentario->created_at->format('d/m/Y H:i') }}</span>
+                                </div>
+                                <p class="mt-1 whitespace-pre-wrap text-sm text-slate-600">{{ $comentario->contenido }}</p>
+                            </div>
+                        @endforeach
+                    </div>
+                @endif
+
+                <div class="border-t border-slate-100 px-6 py-4">
+                    <form method="POST" action="{{ route('admin.presupuestos.comentarios.store', $presupuesto->id) }}" class="space-y-3">
+                        @csrf
+                        <textarea name="contenido" rows="3" placeholder="Escribe un comentario..."
+                                  class="w-full rounded-2xl border border-slate-300 bg-white px-4 py-2.5 text-sm text-slate-700 shadow-sm outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 resize-none"></textarea>
+                        <div class="flex justify-end">
+                            <button type="submit"
+                                    class="inline-flex items-center rounded-2xl bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm transition hover:bg-indigo-700">
+                                Añadir comentario
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
         </div>
     </div>
 </x-app-layout>

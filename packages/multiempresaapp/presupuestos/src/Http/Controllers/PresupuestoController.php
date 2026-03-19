@@ -16,6 +16,7 @@ use Barryvdh\DomPDF\Facade\Pdf;
 use MultiempresaApp\Notas\Models\Nota;
 use MultiempresaApp\Presupuestos\Models\Presupuesto;
 use MultiempresaApp\Presupuestos\Models\PresupuestoAudit;
+use MultiempresaApp\Presupuestos\Models\PresupuestoComentario;
 use MultiempresaApp\Presupuestos\Models\PresupuestoConfiguracion;
 use MultiempresaApp\Presupuestos\Models\PresupuestoLinea;
 use MultiempresaApp\Presupuestos\Services\PresupuestoCalculator;
@@ -199,7 +200,7 @@ class PresupuestoController extends Controller
 
     public function show($id)
     {
-        $presupuesto = Presupuesto::with(['cliente', 'lineas.servicio', 'audits.usuario'])->findOrFail($id);
+        $presupuesto = Presupuesto::with(['cliente', 'lineas.servicio', 'audits.usuario', 'comentarios.usuario'])->findOrFail($id);
 
         if ($presupuesto->empresa_id !== auth()->user()->company_id) {
             abort(403);
@@ -429,7 +430,7 @@ class PresupuestoController extends Controller
 
     public function public(string $token)
     {
-        $presupuesto = Presupuesto::with(['cliente', 'lineas', 'empresa', 'negocio'])
+        $presupuesto = Presupuesto::with(['cliente', 'lineas', 'empresa', 'negocio', 'comentarios.usuario'])
             ->where('token_publico', $token)
             ->firstOrFail();
 
@@ -673,9 +674,50 @@ class PresupuestoController extends Controller
             abort(403);
         }
 
+        $this->logAudit($presupuesto, 'descargado_pdf', 'PDF descargado por ' . auth()->user()->name . '.');
+
         $pdf = Pdf::loadView('presupuestos::presupuestos.pdf', compact('presupuesto'));
 
         return $pdf->download('presupuesto-' . $presupuesto->numero . '.pdf');
+    }
+
+    public function storeComment(Request $request, $id)
+    {
+        $presupuesto = Presupuesto::findOrFail($id);
+
+        if ($presupuesto->empresa_id !== auth()->user()->company_id) {
+            abort(403);
+        }
+
+        $request->validate(['contenido' => 'required|string|max:2000']);
+
+        PresupuestoComentario::create([
+            'presupuesto_id' => $presupuesto->id,
+            'user_id'        => auth()->id(),
+            'autor_nombre'   => auth()->user()->name,
+            'contenido'      => $request->contenido,
+        ]);
+
+        return redirect()->back()->with('success', 'Comentario añadido.');
+    }
+
+    public function storePublicComment(Request $request, string $token)
+    {
+        $presupuesto = Presupuesto::where('token_publico', $token)->firstOrFail();
+
+        $request->validate([
+            'autor_nombre' => 'required|string|max:255',
+            'contenido'    => 'required|string|max:2000',
+        ]);
+
+        PresupuestoComentario::create([
+            'presupuesto_id' => $presupuesto->id,
+            'user_id'        => null,
+            'autor_nombre'   => $request->autor_nombre,
+            'contenido'      => $request->contenido,
+        ]);
+
+        return redirect()->back()->with('success', 'Comentario añadido.');
     }
 
     public function sendEmail(Request $request, $id)
