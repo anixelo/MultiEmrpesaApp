@@ -1004,10 +1004,10 @@
     </section>
 
     @php
-        $noticias = \MultiempresaApp\Noticias\Models\Noticia::publicadas()
-            ->latest('publicado_en')
-            ->take(6)
-            ->get();
+    $noticias = \MultiempresaApp\Noticias\Models\Noticia::with('categoria')->publicadas()
+        ->latest('publicado_en')
+        ->take(6)
+        ->get();
     @endphp
 
     @if($noticias->isNotEmpty())
@@ -1026,7 +1026,7 @@
                 <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
                     @foreach($noticias as $noticia)
                         <article>
-                            <a href="{{ route('noticias.show', $noticia->slug) }}"
+                            <a href="{{ $noticia->categoria ? route('noticias.show', [$noticia->categoria->slug, $noticia->slug]) : '#' }}"
                                class="group block bg-white border border-gray-100 rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-all hover:-translate-y-0.5">
                                 @if($noticia->imagen)
                                     <div class="aspect-video overflow-hidden">

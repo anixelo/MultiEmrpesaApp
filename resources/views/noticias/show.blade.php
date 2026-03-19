@@ -7,13 +7,15 @@
     {{-- SEO --}}
     <title>{{ $noticia->titulo }} — {{ config('app.name') }}</title>
     <meta name="description" content="{{ $noticia->meta_description ?: \Illuminate\Support\Str::limit(strip_tags($noticia->contenido), 155) }}">
-    <link rel="canonical" href="{{ route('noticias.show', $noticia->slug) }}">
+    @if($noticia->categoria)
+    <link rel="canonical" href="{{ route('noticias.show', [$noticia->categoria->slug, $noticia->slug]) }}">
+    @endif
 
     {{-- Open Graph --}}
     <meta property="og:type" content="article">
     <meta property="og:title" content="{{ $noticia->titulo }}">
     <meta property="og:description" content="{{ $noticia->meta_description ?: \Illuminate\Support\Str::limit(strip_tags($noticia->contenido), 155) }}">
-    <meta property="og:url" content="{{ route('noticias.show', $noticia->slug) }}">
+    <meta property="og:url" content="{{ $noticia->categoria ? route('noticias.show', [$noticia->categoria->slug, $noticia->slug]) : url()->current() }}">
     @if($noticia->imagen)
     <meta property="og:image" content="{{ Storage::url($noticia->imagen) }}">
     @endif
@@ -189,7 +191,7 @@
         <h2 class="text-xl font-bold text-gray-900 mb-6">Noticias relacionadas</h2>
         <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
             @foreach($relacionadas as $rel)
-            <a href="{{ route('noticias.show', $rel->slug) }}"
+            <a href="{{ route('noticias.show', [$rel->categoria->slug, $rel->slug]) }}"
                class="group bg-white border border-gray-100 rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow">
                 @if($rel->imagen)
                 <div class="aspect-video overflow-hidden">
@@ -226,7 +228,7 @@
         <h2 class="text-xl font-bold text-gray-900 mb-6">Más noticias</h2>
         <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
             @foreach($otrasNoticias as $otra)
-            <a href="{{ route('noticias.show', $otra->slug) }}"
+            <a href="{{ route('noticias.show', [$otra->categoria->slug, $otra->slug]) }}"
                class="group bg-white border border-gray-100 rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow">
                 @if($otra->imagen)
                 <div class="aspect-video overflow-hidden">
