@@ -78,13 +78,27 @@
                 Categoría
             </span>
             <h1 class="text-3xl font-bold text-gray-900">{{ $categoria->titulo }}</h1>
+            </div>
             @if($categoria->contenido)
-                <div class="text-gray-600 mt-3 max-w-2xl mx-auto prose prose-sm">{!! $categoria->contenido !!}</div>
+        <div class="max-w-none text-gray-700 text-base leading-relaxed
+                    [&_h1]:text-3xl [&_h1]:font-bold [&_h1]:text-gray-900 [&_h1]:mt-6 [&_h1]:mb-3
+                    [&_h2]:text-2xl [&_h2]:font-bold [&_h2]:text-gray-900 [&_h2]:mt-5 [&_h2]:mb-2
+                    [&_h3]:text-xl [&_h3]:font-bold [&_h3]:text-gray-900 [&_h3]:mt-4 [&_h3]:mb-2
+                    [&_p]:my-3
+                    [&_a]:text-indigo-600 [&_a]:no-underline hover:[&_a]:underline
+                    [&_strong]:text-gray-900 [&_strong]:font-bold
+                    [&_ul]:list-disc [&_ul]:pl-6 [&_ul]:my-3
+                    [&_ol]:list-decimal [&_ol]:pl-6 [&_ol]:my-3
+                    [&_li]:my-1
+                    [&_blockquote]:border-l-4 [&_blockquote]:border-gray-300 [&_blockquote]:pl-4 [&_blockquote]:italic [&_blockquote]:text-gray-600 [&_blockquote]:my-4
+                    [&_hr]:my-6 [&_hr]:border-gray-200">
+            {!! $categoria->contenido !!}
+        </div>
             @endif
             <p class="text-gray-500 mt-2">{{ trans_choice('{0} Sin publicaciones|{1} :count publicación|[2,*] :count publicaciones', $noticias->total()) }}</p>
         </div>
     </div>
-</div>
+
 
 {{-- News grid --}}
 <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
