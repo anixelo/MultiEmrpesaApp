@@ -3,6 +3,7 @@
 namespace MultiempresaApp\Noticias\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Str;
 
@@ -16,6 +17,7 @@ class Noticia extends Model
         'meta_description',
         'publicado',
         'publicado_en',
+        'categoria_id',
     ];
 
     protected function casts(): array
@@ -67,5 +69,10 @@ class Noticia extends Model
     public function tags(): BelongsToMany
     {
         return $this->belongsToMany(Tag::class, 'noticia_tag');
+    }
+
+    public function categoria(): BelongsTo
+    {
+        return $this->belongsTo(Categoria::class);
     }
 }

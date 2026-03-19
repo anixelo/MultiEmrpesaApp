@@ -64,6 +64,16 @@
                                                 <p class="line-clamp-1 text-sm font-semibold text-slate-900">{{ $noticia->titulo }}</p>
                                                 <p class="mt-1 text-xs text-slate-400">{{ $noticia->slug }}</p>
 
+                                                @if($noticia->categoria)
+                                                    <div class="mt-1">
+                                                        <a href="{{ route('noticias.categoria', $noticia->categoria->slug) }}"
+                                                           target="_blank"
+                                                           class="inline-flex items-center rounded-lg bg-violet-50 px-2 py-0.5 text-xs font-medium text-violet-600 transition hover:bg-violet-100">
+                                                            {{ $noticia->categoria->titulo }}
+                                                        </a>
+                                                    </div>
+                                                @endif
+
                                                 @if($noticia->tags->isNotEmpty())
                                                     <div class="mt-2 flex flex-wrap gap-1">
                                                         @foreach($noticia->tags as $tag)
@@ -159,6 +169,16 @@
                                         {{ $noticia->created_at->format('d/m/Y') }}
                                     </span>
                                 </div>
+
+                                @if($noticia->categoria)
+                                    <div class="mt-1">
+                                        <a href="{{ route('noticias.categoria', $noticia->categoria->slug) }}"
+                                           target="_blank"
+                                           class="inline-flex items-center rounded-lg bg-violet-50 px-2 py-0.5 text-xs font-medium text-violet-600 transition hover:bg-violet-100">
+                                            {{ $noticia->categoria->titulo }}
+                                        </a>
+                                    </div>
+                                @endif
 
                                 @if($noticia->tags->isNotEmpty())
                                     <div class="mt-2 flex flex-wrap gap-1">

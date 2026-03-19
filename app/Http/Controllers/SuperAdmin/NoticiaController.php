@@ -10,19 +10,21 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
 use MultiempresaApp\Noticias\Models\Noticia;
 use MultiempresaApp\Noticias\Models\Tag;
+use MultiempresaApp\Noticias\Models\Categoria;
 
 class NoticiaController extends Controller
 {
     public function index(): View
     {
-        $noticias = Noticia::with('tags')->latest()->paginate(20);
+        $noticias = Noticia::with('tags', 'categoria')->latest()->paginate(20);
         return view('superadmin.noticias.index', compact('noticias'));
     }
 
     public function create(): View
     {
-        $tags = Tag::orderBy('nombre')->get();
-        return view('superadmin.noticias.create', compact('tags'));
+        $tags       = Tag::orderBy('nombre')->get();
+        $categorias = Categoria::orderBy('titulo')->get();
+        return view('superadmin.noticias.create', compact('tags', 'categorias'));
     }
 
     public function store(Request $request): RedirectResponse
@@ -35,6 +37,7 @@ class NoticiaController extends Controller
             'publicado'        => ['nullable', 'boolean'],
             'tags'             => ['nullable', 'array'],
             'tags.*'           => ['string', 'max:100'],
+            'categoria_id'     => ['nullable', 'integer', 'exists:categorias,id'],
         ]);
 
         $data = [
@@ -44,6 +47,7 @@ class NoticiaController extends Controller
             'meta_description' => $request->meta_description,
             'publicado'        => $request->boolean('publicado'),
             'publicado_en'     => $request->boolean('publicado') ? now() : null,
+            'categoria_id'     => $request->input('categoria_id') ?: null,
         ];
 
         if ($request->hasFile('imagen')) {
@@ -64,8 +68,9 @@ class NoticiaController extends Controller
     public function edit(Noticia $noticia): View
     {
         $noticia->load('tags');
-        $tags = Tag::orderBy('nombre')->get();
-        return view('superadmin.noticias.edit', compact('noticia', 'tags'));
+        $tags       = Tag::orderBy('nombre')->get();
+        $categorias = Categoria::orderBy('titulo')->get();
+        return view('superadmin.noticias.edit', compact('noticia', 'tags', 'categorias'));
     }
 
     public function update(Request $request, Noticia $noticia): RedirectResponse
@@ -78,6 +83,7 @@ class NoticiaController extends Controller
             'publicado'        => ['nullable', 'boolean'],
             'tags'             => ['nullable', 'array'],
             'tags.*'           => ['string', 'max:100'],
+            'categoria_id'     => ['nullable', 'integer', 'exists:categorias,id'],
         ]);
 
         $wasPublicado = $noticia->publicado;
@@ -87,6 +93,7 @@ class NoticiaController extends Controller
             'contenido'        => $request->contenido,
             'meta_description' => $request->meta_description,
             'publicado'        => $request->boolean('publicado'),
+            'categoria_id'     => $request->input('categoria_id') ?: null,
         ];
 
         if ($request->boolean('publicado') && !$wasPublicado) {
