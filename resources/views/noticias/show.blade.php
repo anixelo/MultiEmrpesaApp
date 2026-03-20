@@ -70,22 +70,28 @@
         alt="Logo {{ config('app.name') }}" 
         class="w-8 h-8 shrink-0"
     >
-    <span>{{ config('app.name') }}</span>
+    <span>{{ config('app.name') }} </span>
 </a>
-            <nav class="hidden md:flex items-center gap-6">
-                <a href="/#features" class="text-sm text-gray-600 hover:text-indigo-600 transition">Funcionalidades</a>
-                <a href="/#pricing" class="text-sm text-gray-600 hover:text-indigo-600 transition">Precios</a>
+            <nav class=" md:flex items-center gap-6">
+                <a href="/#features" class="hidden sm:inline text-sm text-gray-600 hover:text-indigo-600 transition">Funcionalidades</a>
+                <a href="/#pricing" class="hidden sm:inline text-sm text-gray-600 hover:text-indigo-600 transition">Precios</a>
                 @auth
                     <a href="{{ route('dashboard') }}" class="bg-indigo-600 text-white text-sm px-4 py-2 rounded-lg hover:bg-indigo-700 transition">
                         Ir al Dashboard
                     </a>
                 @else
-                    <a href="{{ route('login') }}" class="text-sm text-gray-600 hover:text-indigo-600 transition">Iniciar sesión</a>
+                    <a href="{{ route('login') }}" class="hidden sm:inline text-sm text-gray-600 hover:text-indigo-600 transition">Iniciar sesión</a>
                     <a href="{{ route('register') }}" class="bg-indigo-600 text-white text-sm px-4 py-2 rounded-lg hover:bg-indigo-700 transition">
                         Registrarse
                     </a>
                 @endauth
             </nav>
+
+
+ 
+
+
+
         </div>
     </div>
 </header>
@@ -93,7 +99,7 @@
 {{-- Breadcrumb --}}
 <div class="bg-gray-50 border-b border-gray-100">
     <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
-        <nav class="flex items-center gap-2 text-sm text-gray-500">
+        <nav class="flex items-center gap-1 text-sm text-gray-500">
             <a href="/" class="hover:text-indigo-600 transition">Inicio</a>
             <svg class="w-4 h-4 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
             <a href="/#noticias" class="hover:text-indigo-600 transition">Contenidos</a>
@@ -101,8 +107,9 @@
             <svg class="w-4 h-4 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
             <a href="{{ route('noticias.categoria', $noticia->categoria->slug) }}" class="hover:text-indigo-600 transition">{{ $noticia->categoria->titulo }}</a>
             @endif
-            <svg class="w-4 h-4 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
-            <span class="text-gray-700 truncate max-w-xs">{{ $noticia->titulo }}</span>
+            <svg class=" w-4 h-4 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+            <span class="hidden sm:inline text-gray-700 truncate max-w-xs">{{ $noticia->titulo }}</span>
+            <span class="block hidden sm:hidden text-gray-700">...</span>
         </nav>
     </div>
 </div>
@@ -127,7 +134,7 @@
                 @endif
                 @if($noticia->publicado_en)
                 <time class="text-xs text-gray-400" datetime="{{ $noticia->publicado_en->toISOString() }}">
-                    {{ $noticia->publicado_en->format('d \d\e F \d\e Y') }}
+                    {{ \Carbon\Carbon::parse($noticia->publicado_en)->locale('es')->translatedFormat('d \d\e F \d\e Y') }}
                 </time>
                 @endif
             </div>
@@ -137,18 +144,7 @@
             @if($noticia->meta_description)
             <p class="text-lg text-gray-600 leading-relaxed">{{ $noticia->meta_description }}</p>
             @endif
-            {{-- Tags --}}
-            @if($noticia->tags->isNotEmpty())
-            <div class="flex flex-wrap gap-2 mt-4">
-                @foreach($noticia->tags as $tag)
-                <a href="{{ route('noticias.tag', $tag->slug) }}"
-                   class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-700 hover:bg-indigo-100 hover:text-indigo-700 transition-colors">
-                    <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M17.707 9.293a1 1 0 010 1.414l-7 7a1 1 0 01-1.414 0l-7-7A.997.997 0 012 10V5a3 3 0 013-3h5c.256 0 .512.098.707.293l7 7zM5 6a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd"/></svg>
-                    {{ $tag->nombre }}
-                </a>
-                @endforeach
-            </div>
-            @endif
+
         </header>
 
         {{-- Featured image --}}
@@ -217,16 +213,8 @@
                 @endif
                 <div class="p-4">
                     <h3 class="font-semibold text-gray-900 text-sm line-clamp-2 group-hover:text-indigo-600 transition-colors">{{ $rel->titulo }}</h3>
-                    @if($rel->tags->isNotEmpty())
-                    <div class="flex flex-wrap gap-1 mt-2">
-                        @foreach($rel->tags->take(3) as $t)
-                        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs bg-gray-100 text-gray-600">{{ $t->nombre }}</span>
-                        @endforeach
-                    </div>
-                    @endif
-                    @if($rel->publicado_en)
-                    <time class="text-xs text-gray-400 mt-1 block">{{ $rel->publicado_en->format('d/m/Y') }}</time>
-                    @endif
+
+
                 </div>
             </a>
             @endforeach
@@ -254,9 +242,7 @@
                 @endif
                 <div class="p-4">
                     <h3 class="font-semibold text-gray-900 text-sm line-clamp-2 group-hover:text-indigo-600 transition-colors">{{ $otra->titulo }}</h3>
-                    @if($otra->publicado_en)
-                    <time class="text-xs text-gray-400 mt-1 block">{{ $otra->publicado_en->format('d/m/Y') }}</time>
-                    @endif
+
                 </div>
             </a>
             @endforeach
@@ -265,12 +251,164 @@
     @endif
 </main>
 
-{{-- Footer --}}
-<footer class="bg-white border-t border-gray-200 py-8 mt-12">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-sm text-gray-500">
-        © {{ date('Y') }} {{ config('app.name') }} — By Anixelo
+ 
+
+
+<footer class="border-t border-gray-200 bg-gradient-to-b from-white via-gray-50 to-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="py-12 sm:py-14 lg:py-16">
+            <div class="grid grid-cols-1 gap-10 md:grid-cols-12 md:gap-8 lg:gap-12">
+
+                {{-- Marca --}}
+                <div class="md:col-span-4 lg:col-span-4">
+                    <div class="max-w-md mx-auto text-center md:mx-0 md:text-left">
+                        <a href="/" class="inline-flex items-center gap-3 group">
+                            <div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-white shadow-sm ring-1 ring-gray-200 transition group-hover:shadow-md group-hover:ring-indigo-200">
+                                <img
+                                    src="/pwa-icons/icon-192x192.png"
+                                    alt="Logo {{ config('app.name') }} "
+                                    class="h-9 w-9 shrink-0 rounded-xl"
+                                    width="36"
+                                    height="36"
+                                >
+                            </div>
+
+                            <div class="min-w-0">
+                                <p class="text-base font-semibold tracking-tight text-gray-900">
+                                    {{ config('app.name') }}
+                                </p>
+                                <p class="text-sm text-gray-500">
+                                    Gestión sencilla y profesional
+                                </p>
+                            </div>
+                        </a>
+
+                        <p class="mt-5 text-sm leading-7 text-gray-500 sm:text-[15px]">
+                            Organiza tu trabajo, mejora tus procesos y mantén todo bajo control
+                            desde una sola plataforma, con una experiencia clara, rápida y pensada
+                            para el día a día.
+                        </p>
+
+                        <div class="mt-6 flex flex-col items-center gap-3 sm:flex-row sm:flex-wrap sm:justify-center md:justify-start">
+                            <a
+                                href="{{ route('register') }}"
+                                class="inline-flex items-center justify-center rounded-xl bg-indigo-600 px-5 py-2.5 text-sm font-medium text-white shadow-sm transition hover:bg-indigo-700 hover:shadow-md"
+                            >
+                                Registrarse
+                            </a>
+
+                            <a
+                                href="{{ route('login') }}"
+                                class="inline-flex items-center justify-center rounded-xl border border-gray-200 bg-white px-5 py-2.5 text-sm font-medium text-gray-700 transition hover:border-indigo-200 hover:text-indigo-600"
+                            >
+                                Iniciar sesión
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                {{-- Navegación --}}
+                <div class="md:col-span-4 lg:col-span-4">
+                    <div class="text-center md:text-left">
+                        <h2 class="text-sm font-semibold tracking-wide text-gray-900">
+                            Explorar
+                        </h2>
+
+                        <nav aria-label="Enlaces del pie" class="mt-4">
+                            <ul class="grid grid-cols-1 gap-2.5 sm:grid-cols-2 sm:gap-x-6 sm:gap-y-3">
+                                <li>
+                                    <a href="/#features" class="inline-flex rounded-lg text-sm text-gray-500 transition hover:text-indigo-600">
+                                        Funcionalidades
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/#how-it-works" class="inline-flex rounded-lg text-sm text-gray-500 transition hover:text-indigo-600">
+                                        Cómo funciona
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/#approval-flow" class="inline-flex rounded-lg text-sm text-gray-500 transition hover:text-indigo-600">
+                                        Flujo de aprobación
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/#why-use-it" class="inline-flex rounded-lg text-sm text-gray-500 transition hover:text-indigo-600">
+                                        Por qué usarlo
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/#comparison" class="inline-flex rounded-lg text-sm text-gray-500 transition hover:text-indigo-600">
+                                        Comparativa
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/#pricing" class="inline-flex rounded-lg text-sm text-gray-500 transition hover:text-indigo-600">
+                                        Precios
+                                    </a>
+                                </li>
+                                <li class="sm:col-span-2">
+                                    <a href="#faq" class="inline-flex rounded-lg text-sm text-gray-500 transition hover:text-indigo-600">
+                                        Preguntas frecuentes
+                                    </a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+
+                {{-- Legal --}}
+                <div class="md:col-span-4 lg:col-span-4">
+                    <div class="text-center md:text-left">
+                        <h2 class="text-sm font-semibold tracking-wide text-gray-900">
+                            Legal y contacto
+                        </h2>
+
+                        <ul class="mt-4 space-y-2.5">
+                            <li>
+                                <a href="{{ route('pages.privacy') }}" class="inline-flex rounded-lg text-sm text-gray-500 transition hover:text-indigo-600">
+                                    Política de privacidad
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{{ route('pages.terms') }}" class="inline-flex rounded-lg text-sm text-gray-500 transition hover:text-indigo-600">
+                                    Términos y condiciones
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{{ route('pages.contact') }}" class="inline-flex rounded-lg text-sm text-gray-500 transition hover:text-indigo-600">
+                                    Contacto
+                                </a>
+                            </li>
+                        </ul>
+
+                        <div class="mt-6 inline-flex items-center rounded-full border border-indigo-100 bg-indigo-50 px-4 py-2 text-xs font-medium text-indigo-700">
+                            Plataforma pensada para ahorrar tiempo
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {{-- Barra inferior --}}
+            <div class="mt-10 border-t border-gray-200 pt-6 sm:mt-12 sm:pt-7">
+                <div class="flex flex-col items-center justify-between gap-3 text-center sm:gap-4 md:flex-row md:text-left">
+                    <p class="text-sm text-gray-500">
+                        © {{ date('Y') }} {{ config('app.name') }} · By Anixelo
+                    </p>
+
+                    <p class="max-w-md text-xs leading-6 text-gray-400 md:text-right">
+                        Hecho con cuidado para ofrecer una experiencia clara, rápida y agradable.
+                    </p>
+                </div>
+            </div>
+        </div>
     </div>
 </footer>
+
+
+
+
+
+
 
 <script>
 if ('serviceWorker' in navigator) {

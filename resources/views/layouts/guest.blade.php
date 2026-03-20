@@ -7,6 +7,10 @@
 
         <title>{{ config('app.name', 'MultiEmpresaApp') }}</title>
 
+        @if(request()->routeIs('login') || request()->routeIs('register'))
+            <meta name="robots" content="noindex, nofollow">
+        @endif
+
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">
         <link href="https://fonts.bunny.net/css?family=figtree:400,500,600,700&display=swap" rel="stylesheet" />

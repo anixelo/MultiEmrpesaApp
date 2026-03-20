@@ -1046,11 +1046,7 @@
                                 @endif
 
                                 <div class="p-5">
-                                    @if($noticia->publicado_en)
-                                        <time class="text-xs text-indigo-500 font-medium mb-2 block" datetime="{{ $noticia->publicado_en->toDateString() }}">
-                                            {{ \Carbon\Carbon::parse($noticia->publicado_en)->locale('es')->translatedFormat('d \d\e F \d\e Y') }}
-                                        </time>
-                                    @endif
+
 
                                     <h3 class="font-semibold text-gray-900 text-base leading-snug line-clamp-2 group-hover:text-indigo-600 transition-colors mb-2">
                                         {{ $noticia->titulo }}
@@ -1159,27 +1155,152 @@
     </section>
 </main>
 
-<footer class="bg-white border-t border-gray-200 py-10">
+<footer class="border-t border-gray-200 bg-gradient-to-b from-white via-gray-50 to-white">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-gray-500">
-            <p>© {{ date('Y') }} {{ $appName }} · By Anixelo</p>
+        <div class="py-12 sm:py-14 lg:py-16">
+            <div class="grid grid-cols-1 gap-10 md:grid-cols-12 md:gap-8 lg:gap-12">
 
-            <nav class="flex flex-wrap items-center justify-center gap-4" aria-label="Enlaces del pie">
-                <a href="#features" class="hover:text-indigo-600 transition">Funcionalidades</a>
-                <a href="#how-it-works" class="hover:text-indigo-600 transition">Cómo funciona</a>
-                <a href="#approval-flow" class="hover:text-indigo-600 transition">Flujo de aprobación</a>
-                <a href="#why-use-it" class="hover:text-indigo-600 transition">Por qué usarlo</a>
-                <a href="#comparison" class="hover:text-indigo-600 transition">Comparativa</a>
-                <a href="#pricing" class="hover:text-indigo-600 transition">Precios</a>
-                <a href="#faq" class="hover:text-indigo-600 transition">Preguntas frecuentes</a>
-                <span class="text-gray-300 hidden sm:inline">|</span>
-                <a href="{{ route('pages.privacy') }}" class="hover:text-indigo-600 transition">Política de privacidad</a>
-                <a href="{{ route('pages.terms') }}" class="hover:text-indigo-600 transition">Términos y condiciones</a>
-                <a href="{{ route('pages.contact') }}" class="hover:text-indigo-600 transition">Contacto</a>
-                <span class="text-gray-300 hidden sm:inline">|</span>
-                <a href="{{ route('login') }}" class="hover:text-indigo-600 transition">Iniciar sesión</a>
-                <a href="{{ route('register') }}" class="hover:text-indigo-600 transition">Registrarse</a>
-            </nav>
+                {{-- Marca --}}
+                <div class="md:col-span-4 lg:col-span-4">
+                    <div class="max-w-md mx-auto text-center md:mx-0 md:text-left">
+                        <a href="/" class="inline-flex items-center gap-3 group">
+                            <div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-white shadow-sm ring-1 ring-gray-200 transition group-hover:shadow-md group-hover:ring-indigo-200">
+                                <img
+                                    src="/pwa-icons/icon-192x192.png"
+                                    alt="Logo {{ $appName }}"
+                                    class="h-9 w-9 shrink-0 rounded-xl"
+                                    width="36"
+                                    height="36"
+                                >
+                            </div>
+
+                            <div class="min-w-0">
+                                <p class="text-base font-semibold tracking-tight text-gray-900">
+                                    {{ $appName }}
+                                </p>
+                                <p class="text-sm text-gray-500">
+                                    Gestión sencilla y profesional
+                                </p>
+                            </div>
+                        </a>
+
+                        <p class="mt-5 text-sm leading-7 text-gray-500 sm:text-[15px]">
+                            Organiza tu trabajo, mejora tus procesos y mantén todo bajo control
+                            desde una sola plataforma, con una experiencia clara, rápida y pensada
+                            para el día a día.
+                        </p>
+
+                        <div class="mt-6 flex flex-col items-center gap-3 sm:flex-row sm:flex-wrap sm:justify-center md:justify-start">
+                            <a
+                                href="{{ route('register') }}"
+                                class="inline-flex items-center justify-center rounded-xl bg-indigo-600 px-5 py-2.5 text-sm font-medium text-white shadow-sm transition hover:bg-indigo-700 hover:shadow-md"
+                            >
+                                Registrarse
+                            </a>
+
+                            <a
+                                href="{{ route('login') }}"
+                                class="inline-flex items-center justify-center rounded-xl border border-gray-200 bg-white px-5 py-2.5 text-sm font-medium text-gray-700 transition hover:border-indigo-200 hover:text-indigo-600"
+                            >
+                                Iniciar sesión
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                {{-- Navegación --}}
+                <div class="md:col-span-4 lg:col-span-4">
+                    <div class="text-center md:text-left">
+                        <h2 class="text-sm font-semibold tracking-wide text-gray-900">
+                            Explorar
+                        </h2>
+
+                        <nav aria-label="Enlaces del pie" class="mt-4">
+                            <ul class="grid grid-cols-1 gap-2.5 sm:grid-cols-2 sm:gap-x-6 sm:gap-y-3">
+                                <li>
+                                    <a href="#features" class="inline-flex rounded-lg text-sm text-gray-500 transition hover:text-indigo-600">
+                                        Funcionalidades
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#how-it-works" class="inline-flex rounded-lg text-sm text-gray-500 transition hover:text-indigo-600">
+                                        Cómo funciona
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#approval-flow" class="inline-flex rounded-lg text-sm text-gray-500 transition hover:text-indigo-600">
+                                        Flujo de aprobación
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#why-use-it" class="inline-flex rounded-lg text-sm text-gray-500 transition hover:text-indigo-600">
+                                        Por qué usarlo
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#comparison" class="inline-flex rounded-lg text-sm text-gray-500 transition hover:text-indigo-600">
+                                        Comparativa
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#pricing" class="inline-flex rounded-lg text-sm text-gray-500 transition hover:text-indigo-600">
+                                        Precios
+                                    </a>
+                                </li>
+                                <li class="sm:col-span-2">
+                                    <a href="#faq" class="inline-flex rounded-lg text-sm text-gray-500 transition hover:text-indigo-600">
+                                        Preguntas frecuentes
+                                    </a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+
+                {{-- Legal --}}
+                <div class="md:col-span-4 lg:col-span-4">
+                    <div class="text-center md:text-left">
+                        <h2 class="text-sm font-semibold tracking-wide text-gray-900">
+                            Legal y contacto
+                        </h2>
+
+                        <ul class="mt-4 space-y-2.5">
+                            <li>
+                                <a href="{{ route('pages.privacy') }}" class="inline-flex rounded-lg text-sm text-gray-500 transition hover:text-indigo-600">
+                                    Política de privacidad
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{{ route('pages.terms') }}" class="inline-flex rounded-lg text-sm text-gray-500 transition hover:text-indigo-600">
+                                    Términos y condiciones
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{{ route('pages.contact') }}" class="inline-flex rounded-lg text-sm text-gray-500 transition hover:text-indigo-600">
+                                    Contacto
+                                </a>
+                            </li>
+                        </ul>
+
+                        <div class="mt-6 inline-flex items-center rounded-full border border-indigo-100 bg-indigo-50 px-4 py-2 text-xs font-medium text-indigo-700">
+                            Plataforma pensada para ahorrar tiempo
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {{-- Barra inferior --}}
+            <div class="mt-10 border-t border-gray-200 pt-6 sm:mt-12 sm:pt-7">
+                <div class="flex flex-col items-center justify-between gap-3 text-center sm:gap-4 md:flex-row md:text-left">
+                    <p class="text-sm text-gray-500">
+                        © {{ date('Y') }} {{ $appName }} · By Anixelo
+                    </p>
+
+                    <p class="max-w-md text-xs leading-6 text-gray-400 md:text-right">
+                        Hecho con cuidado para ofrecer una experiencia clara, rápida y agradable.
+                    </p>
+                </div>
+            </div>
         </div>
     </div>
 </footer>

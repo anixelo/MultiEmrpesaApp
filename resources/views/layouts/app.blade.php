@@ -362,25 +362,341 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     {{-- Footer --}}
-    <footer class="bg-white border-t border-gray-200 py-4 mt-auto">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-xs text-gray-400">
-            @auth
-            <div class="mb-2 flex flex-wrap justify-center gap-4">
-                @if(auth()->user()->isWorker())
-                <a href="{{ route('worker.incidents.index') }}" class="text-gray-500 hover:text-indigo-600 transition">Incidencias</a>
-                @endif
-                @if(auth()->user()->isAdmin())
-                <a href="{{ route('admin.incidents.index') }}" class="text-gray-500 hover:text-indigo-600 transition">Incidencias</a>
-                <a href="{{ route('admin.subscription') }}" class="text-gray-500 hover:text-indigo-600 transition">Suscripción</a>
-                @endif
-                @if(auth()->user()->isSuperAdmin())
-                <a href="{{ route('superadmin.incidents.index') }}" class="text-gray-500 hover:text-indigo-600 transition">Incidencias</a>
-                @endif
+<footer class="mt-auto border-t border-gray-200 bg-gradient-to-b from-white via-gray-50 to-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="py-10 sm:py-12 lg:py-14">
+            <div class="grid grid-cols-1 gap-10 md:grid-cols-12 md:gap-8 lg:gap-12">
+
+                {{-- Marca --}}
+                <div class="md:col-span-4">
+                    <div class="max-w-md mx-auto text-center md:mx-0 md:text-left">
+                        <a href="{{ route('dashboard') }}" class="inline-flex items-center gap-3 group rounded-2xl">
+                            <div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-white shadow-sm ring-1 ring-gray-200 transition group-hover:shadow-md group-hover:ring-indigo-200">
+                                <img
+                                    src="/pwa-icons/icon-192x192.png"
+                                    alt="Logo {{ config('app.name') }}"
+                                    class="h-9 w-9 shrink-0 rounded-xl"
+                                    width="36"
+                                    height="36"
+                                >
+                            </div>
+
+                            <div class="min-w-0">
+                                <p class="text-base font-semibold tracking-tight text-gray-900">
+                                    {{ config('app.name') }}
+                                </p>
+                                <p class="text-sm text-gray-500">
+                                    Tu espacio de trabajo
+                                </p>
+                            </div>
+                        </a>
+
+                        <p class="mt-5 text-sm leading-7 text-gray-500 sm:text-[15px]">
+                            Gestiona presupuestos, datos, usuarios y configuraciones desde un entorno
+                            claro, cómodo y pensado para el trabajo diario.
+                        </p>
+
+                        @auth
+                            <div class="mt-6 flex flex-wrap items-center justify-center gap-2 md:justify-start">
+                                <span class="inline-flex items-center rounded-full px-3 py-1 text-xs font-medium
+                                    @if(auth()->user()->isSuperAdmin()) bg-purple-100 text-purple-700
+                                    @elseif(auth()->user()->isAdmin()) bg-blue-100 text-blue-700
+                                    @else bg-emerald-100 text-emerald-700 @endif">
+                                    @if(auth()->user()->isSuperAdmin())
+                                        Área superadmin
+                                    @elseif(auth()->user()->isAdmin())
+                                        Área de administración
+                                    @else
+                                        Área de trabajo
+                                    @endif
+                                </span>
+
+                                @if(Route::has('notifications.index'))
+                                    @php $footerUnread = auth()->user()->unreadNotifications->count(); @endphp
+                                    <a href="{{ route('notifications.index') }}"
+                                       class="inline-flex items-center rounded-full border border-gray-200 bg-white px-3 py-1 text-xs font-medium text-gray-600 transition hover:border-indigo-200 hover:text-indigo-600">
+                                        Notificaciones
+                                        @if($footerUnread > 0)
+                                            <span class="ml-2 inline-flex min-w-5 items-center justify-center rounded-full bg-red-500 px-1.5 py-0.5 text-[10px] font-bold text-white">
+                                                {{ $footerUnread > 9 ? '9+' : $footerUnread }}
+                                            </span>
+                                        @endif
+                                    </a>
+                                @endif
+                            </div>
+                        @endauth
+                    </div>
+                </div>
+
+                {{-- Navegación principal --}}
+                <div class="md:col-span-4">
+                    <div class="text-center md:text-left">
+                        <h2 class="text-sm font-semibold tracking-wide text-gray-900">
+                            Navegación
+                        </h2>
+
+                        <nav aria-label="Navegación principal del pie" class="mt-4">
+                            <ul class="grid grid-cols-1 gap-2.5 sm:grid-cols-2 sm:gap-x-6 sm:gap-y-3">
+                                <li>
+                                    <a href="{{ route('dashboard') }}" class="inline-flex rounded-lg text-sm text-gray-500 transition hover:text-indigo-600">
+                                        Dashboard
+                                    </a>
+                                </li>
+
+                                @auth
+                                    @if(auth()->user()->isWorker())
+                                        @if(Route::has('worker.dashboard'))
+                                            <li>
+                                                <a href="{{ route('worker.dashboard') }}" class="inline-flex rounded-lg text-sm text-gray-500 transition hover:text-indigo-600">
+                                                    Panel
+                                                </a>
+                                            </li>
+                                        @endif
+
+                                        @if(Route::has('admin.presupuestos.index'))
+                                            <li>
+                                                <a href="{{ route('admin.presupuestos.index') }}" class="inline-flex rounded-lg text-sm text-gray-500 transition hover:text-indigo-600">
+                                                    Presupuestos
+                                                </a>
+                                            </li>
+                                        @endif
+
+                                        @if(auth()->user()->company?->canUsePlantillas() && Route::has('admin.plantillas-presupuesto.index'))
+                                            <li>
+                                                <a href="{{ route('admin.plantillas-presupuesto.index') }}" class="inline-flex rounded-lg text-sm text-gray-500 transition hover:text-indigo-600">
+                                                    Plantillas
+                                                </a>
+                                            </li>
+                                        @endif
+
+                                        @if(Route::has('worker.incidents.index'))
+                                            <li>
+                                                <a href="{{ route('worker.incidents.index') }}" class="inline-flex rounded-lg text-sm text-gray-500 transition hover:text-indigo-600">
+                                                    Incidencias
+                                                </a>
+                                            </li>
+                                        @endif
+                                    @endif
+
+                                    @if(auth()->user()->isAdmin())
+                                        @if(Route::has('admin.dashboard'))
+                                            <li>
+                                                <a href="{{ route('admin.dashboard') }}" class="inline-flex rounded-lg text-sm text-gray-500 transition hover:text-indigo-600">
+                                                    Panel
+                                                </a>
+                                            </li>
+                                        @endif
+
+                                        @if(Route::has('admin.presupuestos.index'))
+                                            <li>
+                                                <a href="{{ route('admin.presupuestos.index') }}" class="inline-flex rounded-lg text-sm text-gray-500 transition hover:text-indigo-600">
+                                                    Presupuestos
+                                                </a>
+                                            </li>
+                                        @endif
+
+                                        @if(auth()->user()->company?->canUseNotas() && Route::has('admin.notas.index'))
+                                            <li>
+                                                <a href="{{ route('admin.notas.index') }}" class="inline-flex rounded-lg text-sm text-gray-500 transition hover:text-indigo-600">
+                                                    Notas
+                                                </a>
+                                            </li>
+                                        @endif
+
+                                        @if(auth()->user()->company?->canUsePlantillas() && Route::has('admin.plantillas-presupuesto.index'))
+                                            <li>
+                                                <a href="{{ route('admin.plantillas-presupuesto.index') }}" class="inline-flex rounded-lg text-sm text-gray-500 transition hover:text-indigo-600">
+                                                    Plantillas
+                                                </a>
+                                            </li>
+                                        @endif
+
+                                        @if(Route::has('admin.users.index'))
+                                            <li>
+                                                <a href="{{ route('admin.users.index') }}" class="inline-flex rounded-lg text-sm text-gray-500 transition hover:text-indigo-600">
+                                                    Usuarios
+                                                </a>
+                                            </li>
+                                        @endif
+
+                                        @if(Route::has('admin.subscription'))
+                                            <li>
+                                                <a href="{{ route('admin.subscription') }}" class="inline-flex rounded-lg text-sm text-gray-500 transition hover:text-indigo-600">
+                                                    Suscripción
+                                                </a>
+                                            </li>
+                                        @endif
+
+                                        @if(Route::has('admin.incidents.index'))
+                                            <li>
+                                                <a href="{{ route('admin.incidents.index') }}" class="inline-flex rounded-lg text-sm text-gray-500 transition hover:text-indigo-600">
+                                                    Incidencias
+                                                </a>
+                                            </li>
+                                        @endif
+                                    @endif
+
+                                    @if(auth()->user()->isSuperAdmin())
+                                        @if(Route::has('superadmin.dashboard'))
+                                            <li>
+                                                <a href="{{ route('superadmin.dashboard') }}" class="inline-flex rounded-lg text-sm text-gray-500 transition hover:text-indigo-600">
+                                                    Panel general
+                                                </a>
+                                            </li>
+                                        @endif
+
+                                        @if(Route::has('superadmin.companies.index'))
+                                            <li>
+                                                <a href="{{ route('superadmin.companies.index') }}" class="inline-flex rounded-lg text-sm text-gray-500 transition hover:text-indigo-600">
+                                                    Cuentas
+                                                </a>
+                                            </li>
+                                        @endif
+
+                                        @if(Route::has('superadmin.users.index'))
+                                            <li>
+                                                <a href="{{ route('superadmin.users.index') }}" class="inline-flex rounded-lg text-sm text-gray-500 transition hover:text-indigo-600">
+                                                    Usuarios
+                                                </a>
+                                            </li>
+                                        @endif
+
+                                        @if(Route::has('superadmin.plans.index'))
+                                            <li>
+                                                <a href="{{ route('superadmin.plans.index') }}" class="inline-flex rounded-lg text-sm text-gray-500 transition hover:text-indigo-600">
+                                                    Planes
+                                                </a>
+                                            </li>
+                                        @endif
+
+                                        @if(Route::has('superadmin.noticias.index'))
+                                            <li>
+                                                <a href="{{ route('superadmin.noticias.index') }}" class="inline-flex rounded-lg text-sm text-gray-500 transition hover:text-indigo-600">
+                                                    Noticias
+                                                </a>
+                                            </li>
+                                        @endif
+
+                                        @if(Route::has('superadmin.analytics.index'))
+                                            <li>
+                                                <a href="{{ route('superadmin.analytics.index') }}" class="inline-flex rounded-lg text-sm text-gray-500 transition hover:text-indigo-600">
+                                                    Analytics
+                                                </a>
+                                            </li>
+                                        @endif
+
+                                        @if(Route::has('superadmin.incidents.index'))
+                                            <li>
+                                                <a href="{{ route('superadmin.incidents.index') }}" class="inline-flex rounded-lg text-sm text-gray-500 transition hover:text-indigo-600">
+                                                    Incidencias
+                                                </a>
+                                            </li>
+                                        @endif
+                                    @endif
+                                @endauth
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+
+                {{-- Cuenta, seguridad y legal --}}
+                <div class="md:col-span-4">
+                    <div class="text-center md:text-left">
+                        <h2 class="text-sm font-semibold tracking-wide text-gray-900">
+                            Cuenta y ayuda
+                        </h2>
+
+                        <ul class="mt-4 space-y-2.5">
+                            @if(Route::has('profile.edit'))
+                                <li>
+                                    <a href="{{ route('profile.edit') }}" class="inline-flex rounded-lg text-sm text-gray-500 transition hover:text-indigo-600">
+                                        Mi perfil
+                                    </a>
+                                </li>
+                            @endif
+
+                            @if(Route::has('two-factor.setup'))
+                                <li>
+                                    <a href="{{ route('two-factor.setup') }}" class="inline-flex items-center gap-2 rounded-lg text-sm text-gray-500 transition hover:text-indigo-600">
+                                        Seguridad (2FA)
+                                        @auth
+                                            @if(auth()->user()->two_factor_enabled)
+                                                <span class="inline-flex rounded-full bg-green-100 px-2 py-0.5 text-[10px] font-semibold text-green-700">
+                                                    Activo
+                                                </span>
+                                            @endif
+                                        @endauth
+                                    </a>
+                                </li>
+                            @endif
+
+                            @if(Route::has('notifications.index'))
+                                <li>
+                                    <a href="{{ route('notifications.index') }}" class="inline-flex rounded-lg text-sm text-gray-500 transition hover:text-indigo-600">
+                                        Notificaciones
+                                    </a>
+                                </li>
+                            @endif
+
+                            @if(Route::has('pages.contact'))
+                                <li>
+                                    <a href="{{ route('pages.contact') }}" class="inline-flex rounded-lg text-sm text-gray-500 transition hover:text-indigo-600">
+                                        Contacto
+                                    </a>
+                                </li>
+                            @endif
+
+                            @if(Route::has('pages.privacy'))
+                                <li>
+                                    <a href="{{ route('pages.privacy') }}" class="inline-flex rounded-lg text-sm text-gray-500 transition hover:text-indigo-600">
+                                        Política de privacidad
+                                    </a>
+                                </li>
+                            @endif
+
+                            @if(Route::has('pages.terms'))
+                                <li>
+                                    <a href="{{ route('pages.terms') }}" class="inline-flex rounded-lg text-sm text-gray-500 transition hover:text-indigo-600">
+                                        Términos y condiciones
+                                    </a>
+                                </li>
+                            @endif
+                        </ul>
+
+                        <div class="mt-6 flex flex-wrap items-center justify-center gap-2 md:justify-start">
+                            <span class="inline-flex items-center rounded-full border border-indigo-100 bg-indigo-50 px-4 py-2 text-xs font-medium text-indigo-700">
+                                Área privada segura
+                            </span>
+
+                            @auth
+                                <form method="POST" action="{{ route('logout') }}" class="inline-flex">
+                                    @csrf
+                                    <button type="submit"
+                                            class="inline-flex items-center rounded-full border border-rose-100 bg-rose-50 px-4 py-2 text-xs font-medium text-rose-600 transition hover:bg-rose-100">
+                                        Cerrar sesión
+                                    </button>
+                                </form>
+                            @endauth
+                        </div>
+                    </div>
+                </div>
             </div>
-            @endauth
-            © {{ date('Y') }} {{ config('app.name') }} — By Anixelo
+
+            {{-- Barra inferior --}}
+            <div class="mt-10 border-t border-gray-200 pt-6 sm:mt-12 sm:pt-7">
+                <div class="flex flex-col items-center justify-between gap-3 text-center md:flex-row md:text-left">
+                    <p class="text-sm text-gray-500">
+                        © {{ date('Y') }} {{ config('app.name') }} · By Anixelo
+                    </p>
+
+                    <p class="max-w-md text-xs leading-6 text-gray-400 md:text-right">
+                        Entorno privado diseñado para trabajar con claridad, rapidez y seguridad.
+                    </p>
+                </div>
+            </div>
         </div>
-    </footer>
+    </div>
+</footer>
 </div>
 
 @livewireScripts

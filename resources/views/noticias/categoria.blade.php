@@ -31,15 +31,15 @@
     >
     <span>{{ config('app.name') }}</span>
 </a>
-            <nav class="hidden md:flex items-center gap-6">
-                <a href="/#features" class="text-sm text-gray-600 hover:text-indigo-600 transition">Funcionalidades</a>
-                <a href="/#pricing" class="text-sm text-gray-600 hover:text-indigo-600 transition">Precios</a>
+            <nav class="md:flex items-center gap-6">
+                <a href="/#features" class="hidden sm:inline  text-sm text-gray-600 hover:text-indigo-600 transition">Funcionalidades</a>
+                <a href="/#pricing" class="hidden sm:inline text-sm text-gray-600 hover:text-indigo-600 transition">Precios</a>
                 @auth
                     <a href="{{ route('dashboard') }}" class="bg-indigo-600 text-white text-sm px-4 py-2 rounded-lg hover:bg-indigo-700 transition">
                         Ir al Dashboard
                     </a>
                 @else
-                    <a href="{{ route('login') }}" class="text-sm text-gray-600 hover:text-indigo-600 transition">Iniciar sesión</a>
+                    <a href="{{ route('login') }}" class="hidden sm:inline text-sm text-gray-600 hover:text-indigo-600 transition">Iniciar sesión</a>
                     <a href="{{ route('register') }}" class="bg-indigo-600 text-white text-sm px-4 py-2 rounded-lg hover:bg-indigo-700 transition">
                         Registrarse
                     </a>
@@ -95,7 +95,16 @@
             {!! $categoria->contenido !!}
         </div>
             @endif
-            <p class="text-gray-500 mt-2">{{ trans_choice('{0} Sin publicaciones|{1} :count publicación|[2,*] :count publicaciones', $noticias->total()) }}</p>
+    <div class="mt-5 flex justify-center">
+        <div class="inline-flex items-center gap-2 rounded-full bg-white border border-violet-100 px-4 py-2 shadow-sm">
+            <svg class="w-4 h-4 text-violet-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V9a2 2 0 00-2-2h-2" />
+            </svg>
+            <p class="text-sm font-medium text-gray-600">
+                {{ trans_choice('{0} Sin publicaciones|{1} :count publicación|[2,*] :count publicaciones', $noticias->total()) }}
+            </p>
+        </div>
+    </div>
         </div>
     </div>
 
@@ -130,9 +139,6 @@
                     <p class="text-sm text-gray-500 line-clamp-2 mb-3">{{ $noticia->meta_description }}</p>
                     @endif
                     <div class="flex items-center justify-between mt-2">
-                        @if($noticia->publicado_en)
-                        <time class="text-xs text-gray-400">{{ $noticia->publicado_en->format('d/m/Y') }}</time>
-                        @endif
                         @if($noticia->tags->isNotEmpty())
                         <div class="flex flex-wrap gap-1">
                             @foreach($noticia->tags->take(3) as $t)
@@ -158,11 +164,156 @@
 </main>
 
 {{-- Footer --}}
-<footer class="bg-white border-t border-gray-200 py-8 mt-12">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-sm text-gray-500">
-        © {{ date('Y') }} {{ config('app.name') }} — By Anixelo
+<footer class="border-t border-gray-200 bg-gradient-to-b from-white via-gray-50 to-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="py-12 sm:py-14 lg:py-16">
+            <div class="grid grid-cols-1 gap-10 md:grid-cols-12 md:gap-8 lg:gap-12">
+
+                {{-- Marca --}}
+                <div class="md:col-span-4 lg:col-span-4">
+                    <div class="max-w-md mx-auto text-center md:mx-0 md:text-left">
+                        <a href="/" class="inline-flex items-center gap-3 group">
+                            <div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-white shadow-sm ring-1 ring-gray-200 transition group-hover:shadow-md group-hover:ring-indigo-200">
+                                <img
+                                    src="/pwa-icons/icon-192x192.png"
+                                    alt="Logo {{ config('app.name') }} "
+                                    class="h-9 w-9 shrink-0 rounded-xl"
+                                    width="36"
+                                    height="36"
+                                >
+                            </div>
+
+                            <div class="min-w-0">
+                                <p class="text-base font-semibold tracking-tight text-gray-900">
+                                    {{ config('app.name') }}
+                                </p>
+                                <p class="text-sm text-gray-500">
+                                    Gestión sencilla y profesional
+                                </p>
+                            </div>
+                        </a>
+
+                        <p class="mt-5 text-sm leading-7 text-gray-500 sm:text-[15px]">
+                            Organiza tu trabajo, mejora tus procesos y mantén todo bajo control
+                            desde una sola plataforma, con una experiencia clara, rápida y pensada
+                            para el día a día.
+                        </p>
+
+                        <div class="mt-6 flex flex-col items-center gap-3 sm:flex-row sm:flex-wrap sm:justify-center md:justify-start">
+                            <a
+                                href="{{ route('register') }}"
+                                class="inline-flex items-center justify-center rounded-xl bg-indigo-600 px-5 py-2.5 text-sm font-medium text-white shadow-sm transition hover:bg-indigo-700 hover:shadow-md"
+                            >
+                                Registrarse
+                            </a>
+
+                            <a
+                                href="{{ route('login') }}"
+                                class="inline-flex items-center justify-center rounded-xl border border-gray-200 bg-white px-5 py-2.5 text-sm font-medium text-gray-700 transition hover:border-indigo-200 hover:text-indigo-600"
+                            >
+                                Iniciar sesión
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                {{-- Navegación --}}
+                <div class="md:col-span-4 lg:col-span-4">
+                    <div class="text-center md:text-left">
+                        <h2 class="text-sm font-semibold tracking-wide text-gray-900">
+                            Explorar
+                        </h2>
+
+                        <nav aria-label="Enlaces del pie" class="mt-4">
+                            <ul class="grid grid-cols-1 gap-2.5 sm:grid-cols-2 sm:gap-x-6 sm:gap-y-3">
+                                <li>
+                                    <a href="/#features" class="inline-flex rounded-lg text-sm text-gray-500 transition hover:text-indigo-600">
+                                        Funcionalidades
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/#how-it-works" class="inline-flex rounded-lg text-sm text-gray-500 transition hover:text-indigo-600">
+                                        Cómo funciona
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/#approval-flow" class="inline-flex rounded-lg text-sm text-gray-500 transition hover:text-indigo-600">
+                                        Flujo de aprobación
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/#why-use-it" class="inline-flex rounded-lg text-sm text-gray-500 transition hover:text-indigo-600">
+                                        Por qué usarlo
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/#comparison" class="inline-flex rounded-lg text-sm text-gray-500 transition hover:text-indigo-600">
+                                        Comparativa
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/#pricing" class="inline-flex rounded-lg text-sm text-gray-500 transition hover:text-indigo-600">
+                                        Precios
+                                    </a>
+                                </li>
+                                <li class="sm:col-span-2">
+                                    <a href="#faq" class="inline-flex rounded-lg text-sm text-gray-500 transition hover:text-indigo-600">
+                                        Preguntas frecuentes
+                                    </a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+
+                {{-- Legal --}}
+                <div class="md:col-span-4 lg:col-span-4">
+                    <div class="text-center md:text-left">
+                        <h2 class="text-sm font-semibold tracking-wide text-gray-900">
+                            Legal y contacto
+                        </h2>
+
+                        <ul class="mt-4 space-y-2.5">
+                            <li>
+                                <a href="{{ route('pages.privacy') }}" class="inline-flex rounded-lg text-sm text-gray-500 transition hover:text-indigo-600">
+                                    Política de privacidad
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{{ route('pages.terms') }}" class="inline-flex rounded-lg text-sm text-gray-500 transition hover:text-indigo-600">
+                                    Términos y condiciones
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{{ route('pages.contact') }}" class="inline-flex rounded-lg text-sm text-gray-500 transition hover:text-indigo-600">
+                                    Contacto
+                                </a>
+                            </li>
+                        </ul>
+
+                        <div class="mt-6 inline-flex items-center rounded-full border border-indigo-100 bg-indigo-50 px-4 py-2 text-xs font-medium text-indigo-700">
+                            Plataforma pensada para ahorrar tiempo
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {{-- Barra inferior --}}
+            <div class="mt-10 border-t border-gray-200 pt-6 sm:mt-12 sm:pt-7">
+                <div class="flex flex-col items-center justify-between gap-3 text-center sm:gap-4 md:flex-row md:text-left">
+                    <p class="text-sm text-gray-500">
+                        © {{ date('Y') }} {{ config('app.name') }} · By Anixelo
+                    </p>
+
+                    <p class="max-w-md text-xs leading-6 text-gray-400 md:text-right">
+                        Hecho con cuidado para ofrecer una experiencia clara, rápida y agradable.
+                    </p>
+                </div>
+            </div>
+        </div>
     </div>
 </footer>
+
 
 <script>
 if ('serviceWorker' in navigator) {
