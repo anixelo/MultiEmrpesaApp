@@ -48,6 +48,22 @@
                                 Presupuestos
                             </a>
 
+                            @if(auth()->user()->company?->canUseNotas())
+                                <a href="{{ route('admin.notas.index') }}"
+                                   class="px-3 py-2 rounded-xl text-sm font-medium transition
+                                          {{ request()->routeIs('admin.notas.*') ? 'bg-indigo-50 text-indigo-700 shadow-sm ring-1 ring-indigo-100' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50' }}">
+                                    Notas
+                                </a>
+                            @endif
+
+
+                                    <a href="{{ route('admin.clientes.index') }}"
+                                       class="px-3 py-2 rounded-xl text-sm font-medium transition
+                                          {{ request()->routeIs('admin.clientes.*') ? 'bg-indigo-50 text-indigo-700 shadow-sm ring-1 ring-indigo-100' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50' }}">
+                                        Clientes
+                                    </a>
+
+
                             @if(auth()->user()->company?->canUsePlantillas())
                                 <a href="{{ route('admin.plantillas-presupuesto.index') }}"
                                    class="px-3 py-2 rounded-xl text-sm font-medium transition
@@ -56,11 +72,13 @@
                                 </a>
                             @endif
 
+                            
+
                             <div x-data="{ datosOpen: false }" class="relative">
                                 <button @click="datosOpen = !datosOpen"
                                         @click.outside="datosOpen = false"
                                         class="flex items-center gap-1 px-3 py-2 rounded-xl text-sm font-medium transition
-                                               {{ request()->routeIs('admin.clientes.*') || request()->routeIs('admin.servicios.*') || request()->routeIs('admin.empresas.*') ? 'bg-indigo-50 text-indigo-700 shadow-sm ring-1 ring-indigo-100' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50' }}">
+                                               {{ request()->routeIs('admin.servicios.*') || request()->routeIs('admin.empresas.*') ? 'bg-indigo-50 text-indigo-700 shadow-sm ring-1 ring-indigo-100' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50' }}">
                                     Datos
                                     <svg class="w-3.5 h-3.5 transition" :class="{ 'rotate-180': datosOpen }" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/>
@@ -71,10 +89,7 @@
                                      x-transition
                                      x-cloak
                                      class="absolute left-0 mt-2 w-48 rounded-2xl border border-gray-200 bg-white p-1.5 shadow-xl z-50">
-                                    <a href="{{ route('admin.clientes.index') }}"
-                                       class="flex items-center rounded-xl px-3 py-2 text-sm transition {{ request()->routeIs('admin.clientes.*') ? 'bg-indigo-50 text-indigo-700 font-medium' : 'text-gray-700 hover:bg-gray-50' }}">
-                                        Clientes
-                                    </a>
+
                                     <a href="{{ route('admin.servicios.index') }}"
                                        class="flex items-center rounded-xl px-3 py-2 text-sm transition {{ request()->routeIs('admin.servicios.*') ? 'bg-indigo-50 text-indigo-700 font-medium' : 'text-gray-700 hover:bg-gray-50' }}">
                                         Conceptos
@@ -109,6 +124,12 @@
                                 </a>
                             @endif
 
+                                    <a href="{{ route('admin.clientes.index') }}"
+                                       class="px-3 py-2 rounded-xl text-sm font-medium transition
+                                          {{ request()->routeIs('admin.clientes.*') ? 'bg-indigo-50 text-indigo-700 shadow-sm ring-1 ring-indigo-100' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50' }}">
+                                        Clientes
+                                    </a>
+
                             @if(auth()->user()->company?->canUsePlantillas())
                                 <a href="{{ route('admin.plantillas-presupuesto.index') }}"
                                    class="px-3 py-2 rounded-xl text-sm font-medium transition
@@ -121,7 +142,7 @@
                                 <button @click="datosOpen = !datosOpen"
                                         @click.outside="datosOpen = false"
                                         class="flex items-center gap-1 px-3 py-2 rounded-xl text-sm font-medium transition
-                                               {{ request()->routeIs('admin.clientes.*') || request()->routeIs('admin.servicios.*') || request()->routeIs('admin.empresas.*') ? 'bg-indigo-50 text-indigo-700 shadow-sm ring-1 ring-indigo-100' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50' }}">
+                                               {{  request()->routeIs('admin.servicios.*') || request()->routeIs('admin.empresas.*') ? 'bg-indigo-50 text-indigo-700 shadow-sm ring-1 ring-indigo-100' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50' }}">
                                     Datos
                                     <svg class="w-3.5 h-3.5 transition" :class="{ 'rotate-180': datosOpen }" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/>
@@ -132,10 +153,7 @@
                                      x-transition
                                      x-cloak
                                      class="absolute left-0 mt-2 w-48 rounded-2xl border border-gray-200 bg-white p-1.5 shadow-xl z-50">
-                                    <a href="{{ route('admin.clientes.index') }}"
-                                       class="flex items-center rounded-xl px-3 py-2 text-sm transition {{ request()->routeIs('admin.clientes.*') ? 'bg-indigo-50 text-indigo-700 font-medium' : 'text-gray-700 hover:bg-gray-50' }}">
-                                        Clientes
-                                    </a>
+ 
                                     <a href="{{ route('admin.servicios.index') }}"
                                        class="flex items-center rounded-xl px-3 py-2 text-sm transition {{ request()->routeIs('admin.servicios.*') ? 'bg-indigo-50 text-indigo-700 font-medium' : 'text-gray-700 hover:bg-gray-50' }}">
                                         Conceptos
@@ -469,6 +487,19 @@
                                     Presupuestos
                                 </a>
 
+                                @if(auth()->user()->company?->canUseNotas())
+                                    <a href="{{ route('admin.notas.index') }}" class="flex items-center rounded-2xl px-4 py-3 text-sm font-medium text-slate-700 transition hover:bg-slate-50">
+                                        Notas
+                                    </a>
+                                @endif
+
+
+                                <a href="{{ route('admin.clientes.index') }}" class="flex items-center rounded-2xl px-4 py-3 text-sm font-medium text-slate-700 transition hover:bg-slate-50">
+                                    Clientes
+                                </a>
+
+
+
                                 @if(auth()->user()->company?->canUsePlantillas())
                                     <a href="{{ route('admin.plantillas-presupuesto.index') }}" class="flex items-center rounded-2xl px-4 py-3 text-sm font-medium text-slate-700 transition hover:bg-slate-50">
                                         Plantillas
@@ -484,7 +515,7 @@
                                         </svg>
                                     </button>
                                     <div x-show="datosOpen" x-transition x-cloak class="space-y-1 px-2 pb-2">
-                                        <a href="{{ route('admin.clientes.index') }}" class="block rounded-xl px-3 py-2 text-sm text-slate-600 transition hover:bg-white hover:text-slate-900">Clientes</a>
+                                        
                                         <a href="{{ route('admin.servicios.index') }}" class="block rounded-xl px-3 py-2 text-sm text-slate-600 transition hover:bg-white hover:text-slate-900">Conceptos</a>
                                         <a href="{{ route('admin.empresas.index') }}" class="block rounded-xl px-3 py-2 text-sm text-slate-600 transition hover:bg-white hover:text-slate-900">Empresas</a>
                                     </div>
@@ -506,6 +537,10 @@
                                     </a>
                                 @endif
 
+                                <a href="{{ route('admin.clientes.index') }}" class="flex items-center rounded-2xl px-4 py-3 text-sm font-medium text-slate-700 transition hover:bg-slate-50">
+                                    Clientes
+                                </a>
+
                                 @if(auth()->user()->company?->canUsePlantillas())
                                     <a href="{{ route('admin.plantillas-presupuesto.index') }}" class="flex items-center rounded-2xl px-4 py-3 text-sm font-medium text-slate-700 transition hover:bg-slate-50">
                                         Plantillas
@@ -521,7 +556,7 @@
                                         </svg>
                                     </button>
                                     <div x-show="datosOpen" x-transition x-cloak class="space-y-1 px-2 pb-2">
-                                        <a href="{{ route('admin.clientes.index') }}" class="block rounded-xl px-3 py-2 text-sm text-slate-600 transition hover:bg-white hover:text-slate-900">Clientes</a>
+                                        
                                         <a href="{{ route('admin.servicios.index') }}" class="block rounded-xl px-3 py-2 text-sm text-slate-600 transition hover:bg-white hover:text-slate-900">Conceptos</a>
                                         <a href="{{ route('admin.empresas.index') }}" class="block rounded-xl px-3 py-2 text-sm text-slate-600 transition hover:bg-white hover:text-slate-900">Empresas</a>
                                     </div>
